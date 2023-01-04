@@ -63,6 +63,7 @@
     width: auto;
     max-width: 96cqw;
     margin-right: 0.25em;
+    image-rendering: pixelated;
 
     &.still-image {
       height: 2.55em;
