@@ -822,8 +822,8 @@ const unfavorite = ({ id, credentials }) => {
     .then((data) => parseStatus(data))
 }
 
-const retweet = ({ id, credentials }) => {
-  return promisedRequest({ url: MASTODON_RETWEET_URL(id), method: 'POST', credentials })
+const retweet = ({ id, visibility, credentials }) => {
+  return promisedRequest({ url: MASTODON_RETWEET_URL(id), method: 'POST', payload: { visibility }, credentials })
     .then((data) => parseStatus(data))
 }
 

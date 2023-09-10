@@ -26,7 +26,7 @@ const ScopeSelector = {
   ],
   data () {
     return {
-      currentScope: this.initialscope;
+      currentScope: this.initialScope
     }
   },
   computed: {
