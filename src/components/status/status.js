@@ -215,6 +215,7 @@ const Status = {
     retweeter () { return this.statusoid.user.name || this.statusoid.user.screen_name_ui },
     retweeterHtml () { return this.statusoid.user.name },
     retweeterProfileLink () { return this.generateUserProfileLink(this.statusoid.user.id, this.statusoid.user.screen_name) },
+    retweeterVisibility () { return this.statusoid.visibility },
     status () {
       if (this.retweet) {
         return this.statusoid.retweeted_status
@@ -439,6 +440,9 @@ const Status = {
     },
     visibilityLocalized () {
       return this.$i18n.t('general.scope_in_timeline.' + this.status.visibility)
+    },
+    retweeterVisibilityLocalized () {
+      return this.$i18n.t('general.scope_in_timeline.' + this.statusoid.visibility)
     },
     isEdited () {
       return this.status.edited_at !== null

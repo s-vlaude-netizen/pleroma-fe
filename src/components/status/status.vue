@@ -113,6 +113,18 @@
              />
              {{ $t('timeline.repeated') }}
           </div>
+
+          <span
+            v-if="retweeterVisibility"
+            class="visibility-icon"
+            :title="retweeterVisibilityLocalized"
+          >
+            <FAIcon
+              fixed-width
+              class="fa-scale-110"
+              :icon="visibilityIcon(retweeterVisibility)"
+            />
+          </span>
         </div>
       </div>
 
