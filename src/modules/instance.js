@@ -185,10 +185,13 @@ const instance = {
           const result = await res.json()
           const values = Array.isArray(result) ? Object.assign({}, ...result) : result
           const emoji = Object.entries(values).map(([key, value]) => {
-            const imageUrl = value.image_url
+            let imageUrl = value.image_url
+            if (typeof imageUrl == 'string' && imageUrl.startsWith('/'))
+              imageUrl = state.server + imageUrl;
+
             return {
               displayText: key,
-              imageUrl: imageUrl ? state.server + imageUrl : value,
+              imageUrl: imageUrl ? imageUrl : value,
               tags: imageUrl ? value.tags.sort((a, b) => a > b ? 1 : 0) : ['utf'],
               replacement: `:${key}: `
             }
