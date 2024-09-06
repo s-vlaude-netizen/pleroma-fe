@@ -1588,7 +1588,7 @@ const getFollowedHashtags = ({ credentials, pagination: savedPagination }) => {
   const url = `${MASTODON_FOLLOWED_TAGS_URL}?${queryParams.toString()}`
   let pagination = {};
   return fetch(url, {
-    credentials
+    headers: authHeaders(credentials),
   }).then((data) => {
     pagination = parseLinkHeaderPagination(data.headers.get('Link'), {
       flakeId: false
@@ -1610,7 +1610,7 @@ const getFollowRequests = ({ credentials, pagination: savedPagination }) => {
   const url = `${MASTODON_FOLLOW_REQUESTS_URL}?${queryParams.toString()}`
   let pagination = {};
   return fetch(url, {
-    credentials
+    headers: authHeaders(credentials),
   }).then((data) => {
     pagination = parseLinkHeaderPagination(data.headers.get('Link'), { flakeId: true });
     return data.json()
