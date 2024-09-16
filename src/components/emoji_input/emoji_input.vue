@@ -20,6 +20,7 @@
         ref="picker"
         show-keep-open
         :class="{ hide: !showPicker }"
+        :visible="showPicker"
         :enable-sticker-picker="enableStickerPicker"
         class="emoji-picker-panel"
         @emoji="insert"
