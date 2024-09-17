@@ -278,5 +278,7 @@
   &.-expanded.status-fadein {
     margin: calc(var(--status-margin, $status-margin) / 2);
   }
+
+  scroll-margin-block-start: var(--timeline-scroll-margin-top);
 }
 </style>
