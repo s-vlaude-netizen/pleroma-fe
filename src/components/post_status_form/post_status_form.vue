@@ -195,6 +195,7 @@
           :class="{ 'visibility-tray-edit': isEdit }"
         >
           <scope-selector
+            ref="scopeselector"
             v-if="!disableVisibilitySelector"
             :user-default="userDefaultScope"
             :original-scope="copyMessageScope"

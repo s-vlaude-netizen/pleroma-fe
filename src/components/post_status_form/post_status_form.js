@@ -343,16 +343,22 @@ const PostStatusForm = {
       this.saveDraft()
     },
     clearStatus () {
-      const newStatus = this.newStatus
+      const config = this.$store.getters.mergedConfig
+      const postLanguage = config.postLanguage || interfaceToISOLanguage(config.interfaceLanguage)
       this.newStatus = {
         status: '',
         spoilerText: '',
         files: [],
-        visibility: newStatus.visibility,
-        contentType: newStatus.contentType,
-        language: newStatus.language,
+        nsfw: !!config.sensitiveByDefault,
+        visibility: this.suggestedVisibility(),
+        contentType: config.postContentType,
+        language: postLanguage,
         poll: {},
         mediaDescriptions: {}
+      }
+      const scopeselector = this.$refs.scopeselector
+      if (scopeselector) {
+        scopeselector.currentScope = this.newStatus.visibility
       }
       this.pollFormVisible = false
       this.$refs.mediaUpload && this.$refs.mediaUpload.clearFile()
