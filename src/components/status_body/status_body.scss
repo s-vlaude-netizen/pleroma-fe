@@ -61,9 +61,6 @@
   }
 
   .text {
-    & > * {
-      white-space: pre-wrap;
-    }
     &.-single-line {
       white-space: nowrap;
       text-overflow: ellipsis;
