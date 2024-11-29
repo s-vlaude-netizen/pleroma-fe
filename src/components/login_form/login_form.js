@@ -43,7 +43,7 @@ const LoginForm = {
       }
 
       oauthApi.getOrCreateApp(data)
-        .then((app) => { oauthApi.login({ ...app, ...data }) })
+        .then((app) => { oauthApi.login({ ...data, ...app }) })
     },
     submitPassword () {
       const { clientId } = this.oauth
