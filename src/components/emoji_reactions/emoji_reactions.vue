@@ -69,8 +69,8 @@
     }
     &.unicode-emoji {
       display: inline-block;
-      font-size: 2.55em;
-      line-height: 1em;
+      font-size: 2.125em; // assuming default line height of 1.2rem and emojis that don't exceed line height
+      line-height: 2.55rem;
     }
   }
   &:focus {
