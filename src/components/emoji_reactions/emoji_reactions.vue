@@ -58,7 +58,7 @@
 }
 
 .emoji-reaction {
-  padding: 0 0.5em;
+  padding: 2px 0.5em;
   margin-right: 0.5em;
   margin-top: 0.5em;
   display: flex;
