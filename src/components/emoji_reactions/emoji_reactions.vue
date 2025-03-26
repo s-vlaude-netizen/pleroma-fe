@@ -97,9 +97,9 @@
 }
 
 .button-default.picked-reaction {
-  border: 1px solid var(--accent, $fallback--link);
-  margin-left: -1px; // offset the border, can't use inset shadows either
-  margin-right: calc(0.5em - 1px);
+  &, &:hover {
+    box-shadow: inset 0 0 0 1px var(--accent, $fallback--link);
+  }
 }
 
 </style>
