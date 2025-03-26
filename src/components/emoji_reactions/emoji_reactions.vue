@@ -11,7 +11,7 @@
         @click="emojiOnClick(reaction.name, $event)"
         @mouseenter="fetchEmojiReactionsByIfMissing()"
       >
-        <span
+        <template
           v-if="reaction.url !== null"
         >
           <StillImage
@@ -19,16 +19,15 @@
             :title="reaction.name"
             :alt="reaction.name"
             class="reaction-emoji"
-            height="2.55em"
           />
           {{ reaction.count }}
-        </span>
-        <span v-else>
+        </template>
+        <template v-else>
           <span class="reaction-emoji unicode-emoji">
             {{ reaction.name }}
           </span>
           <span>{{ reaction.count }}</span>
-        </span>
+        </template>
       </button>
     </UserListPopover>
     <a
@@ -53,23 +52,26 @@
   container-type: inline-size;
 }
 
-.unicode-emoji {
-  font-size: 210%;
-}
-
 .emoji-reaction {
   padding: 2px 0.5em;
   margin-right: 0.5em;
   margin-top: 0.5em;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
+  align-items: end;
+
   .reaction-emoji {
     width: auto;
     max-width: 96cqw;
-    height: 2.55em !important;
     margin-right: 0.25em;
+
+    &.still-image {
+      height: 2.55em;
+    }
+    &.unicode-emoji {
+      display: inline-block;
+      font-size: 2.55em;
+      line-height: 1em;
+    }
   }
   &:focus {
     outline: none;
