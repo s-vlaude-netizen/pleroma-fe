@@ -15,12 +15,13 @@ put a file that looks like this
 
 ```json
 {
-  "myPack": "/static/stickers/myPack"
+  "myPack": "/static/stickers/myPack/"
 }
 ```
 
 This file is a mapping from name to pack directory location. It says "we have a pack called myPack, look for
-it at `/static/stickers/myPack`". You can add as many packs as you like in this manner.
+it inside `/static/stickers/myPack`". You can add as many packs as you like in this manner.
+Note that a single leading and a trailing slash are **required** to work correctly!
 
 ## Creating the pack
 
