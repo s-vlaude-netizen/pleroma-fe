@@ -1,3 +1,19 @@
+const checkCanvasExtractPermission = () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1;
+  canvas.height = 1;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return false;
+
+  ctx.fillStyle = '#0f161e';
+  ctx.fillRect(0, 0, 1, 1);
+
+  const { data } = ctx.getImageData(0, 0, 1, 1);
+
+  return data.join(',') === '15,22,30,255';
+};
+
 const createFaviconService = () => {
   const favicons = []
   const faviconWidth = 128
@@ -6,6 +22,8 @@ const createFaviconService = () => {
   const gapWidth = 24
 
   const initFaviconService = () => {
+    if (!checkCanvasExtractPermission()) return;
+
     const nodes = document.querySelectorAll('link[rel="icon"]')
     nodes.forEach(favicon => {
       if (favicon) {
