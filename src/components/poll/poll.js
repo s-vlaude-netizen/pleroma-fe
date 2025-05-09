@@ -50,6 +50,13 @@ export default {
     totalVotesCount () {
       return this.poll.votes_count
     },
+    totalFractionBase () {
+      // Due to a backend bug, we might not have any voter count info for remote polls
+      // in this case, fall back to count of votes even for multiple cjoice polls
+      // to be able to at least display _something_
+      const total_base = this.poll.multiple ? this.poll.voters_count : this.poll.votes_count
+      return total_base > 0 ? total_base : this.poll.votes_count
+    },
     containerClass () {
       return {
         loading: this.loading
@@ -70,10 +77,11 @@ export default {
   },
   methods: {
     percentageForOption (count) {
-      return this.totalVotesCount === 0 ? 0 : Math.round(count / this.totalVotesCount * 100)
+      const total = this.totalFractionBase
+      return total === 0 ? 0 : Math.round(count / total * 100)
     },
     resultTitle (option) {
-      return `${option.votes_count}/${this.totalVotesCount} ${this.$t('polls.votes')}`
+      return `${option.votes_count}/${this.totalFractionBase} ${this.$t('polls.votes')}`
     },
     fetchPoll () {
       this.$store.dispatch('refreshPoll', { id: this.statusId, pollId: this.poll.id })
