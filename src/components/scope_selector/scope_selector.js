@@ -6,6 +6,8 @@ import {
   faGlobe
 } from '@fortawesome/free-solid-svg-icons'
 
+import scopeUtils from 'src/lib/scope_utils.js'
+
 library.add(
   faEnvelope,
   faGlobe,
@@ -13,25 +15,18 @@ library.add(
   faLockOpen
 )
 
-const SCOPE_LEVELS = {
-  'direct': 0,
-  'private': 1,
-  'local': 2,
-  'unlisted': 2,
-  'public': 3
-}
-
 const ScopeSelector = {
   props: [
     'showAll',
     'userDefault',
+    // scope of parent object
     'originalScope',
     'initialScope',
     'onScopeChange'
   ],
   data () {
     return {
-      currentScope: this.initialScope
+      currentScope: this.initialscope;
     }
   },
   computed: {
@@ -39,16 +34,16 @@ const ScopeSelector = {
       return !this.showPublic && !this.showUnlisted && !this.showPrivate && !this.showDirect
     },
     showPublic () {
-      return this.originalScope !== 'direct' && this.shouldShow('public')
+      return this.shouldShow('public')
     },
     showLocal () {
-      return this.originalScope !== 'direct' && this.shouldShow('local')
+      return this.shouldShow('local')
     },
     showUnlisted () {
-      return this.originalScope !== 'direct' && this.shouldShow('unlisted')
+      return this.shouldShow('unlisted')
     },
     showPrivate () {
-      return this.originalScope !== 'direct' && this.shouldShow('private')
+      return this.shouldShow('private')
     },
     showDirect () {
       return this.shouldShow('direct')
@@ -65,15 +60,10 @@ const ScopeSelector = {
   },
   methods: {
     shouldShow (scope) {
-      if (!this.originalScope) {
+      if (!this.originalScope)
         return true
-      }
-
-      if (this.originalScope === 'local') {
-        return scope === 'direct' || scope === 'local'
-      }
-
-      return SCOPE_LEVELS[scope] <= SCOPE_LEVELS[this.originalScope]
+      else
+        return scopeUtils.compare(scope, this.originalScope) <= 0
     },
     changeVis (scope) {
       this.currentScope = scope
