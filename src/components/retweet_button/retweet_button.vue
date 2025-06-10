@@ -49,6 +49,12 @@
         @cancelled="hideConfirmDialog"
       >
         {{ $t('status.repeat_confirm') }}
+        <scope-selector
+          :user-default="userDefaultScope"
+          :original-scope="statusScope"
+          :initial-scope="initialScope"
+          :on-scope-change="changeVis"
+        />
       </confirm-modal>
     </teleport>
   </div>

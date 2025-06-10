@@ -10,6 +10,7 @@ import fileTypeService from '../../services/file_type/file_type.service.js'
 import { findOffset } from '../../services/offset_finder/offset_finder.service.js'
 import { reject, map, uniqBy, debounce } from 'lodash'
 import { usePostLanguageOptions } from 'src/lib/post_language'
+import scopeUtils from 'src/lib/scope_utils.js'
 import suggestor from '../emoji_input/suggestor.js'
 import { mapGetters, mapState } from 'vuex'
 import Checkbox from '../checkbox/checkbox.vue'
@@ -762,15 +763,9 @@ const PostStatusForm = {
       this.$store.dispatch('openSettingsModalTab', 'profile')
     },
     suggestedVisibility () {
-      if (this.copyMessageScope) {
-        if (this.copyMessageScope === 'direct') {
-          return this.copyMessageScope
-        }
-        if (this.copyMessageScope !== 'public' && this.$store.state.users.currentUser.default_scope !== 'private') {
-          return this.copyMessageScope
-        }
-      }
-      return this.$store.state.users.currentUser.default_scope
+      const maxScope = this.copyMessageScope
+      const defaultScope = this.$store.state.users.currentUser.default_scope
+      return scopeUtils.negotiate(defaultScope, maxScope)
     }
   }
 }
