@@ -7,15 +7,21 @@
                 "replace": "Αντικατάσταση"
             },
             "mrf_policies": "Ενεργοποιημένες πολιτικές MRF",
-            "mrf_policies_desc": "",
+            "mrf_policies_desc": "Οι πολιτικές MRF επηρεάζουν τη συμπεριφορά του instance. Οι ακόλουθες πολιτικές είναι ενεργοποιημένες:",
             "simple": {
                 "accept": "Αποδοχή",
                 "accept_desc": "Αυτό το instance αποδέχεται μηνύματα μόνο από τα ακόλουθα instances:",
                 "ftl_removal": "Αφαίρεση από το χρονολόγιο \"Γνωστού Δίκτυου\"",
                 "ftl_removal_desc": "Αυτό το instance αφαιρεί αυτά τα instances από το χρονολόγιο \"Γνωστού Δικτύου\":",
+                "media_nsfw": "Επιβολή ορισμού μέσων ως ευαίσθητων",
+                "media_nsfw_desc": "Αυτό το instance αναγκάζει τα μέσα να ορίζονται ως ευαίσθητα στις αναρτήσεις στα ακόλουθα instances:",
+                "media_removal": "Αφαίρεση Μέσων",
+                "media_removal_desc": "Αυτό το instance αφαιρεί τα μέσα από τις αναρτήσεις των ακόλουθων instances:",
                 "quarantine": "Καραντίνα",
                 "quarantine_desc": "Αυτό το instance δε θα στέλνει αναρτήσεις στα ακόλουθα instances:",
                 "reason": "Λόγος",
+                "reject": "Απόρριψη",
+                "reject_desc": "Αυτό το instance δε θα δέχεται μηνύματα από τα παρακάτω instances:",
                 "simple_policies": "Πολιτικές του instance"
             }
         },
@@ -32,11 +38,20 @@
         "inactive_message": "Αυτή η ανακοίνωση είναι ανενεργή",
         "page_header": "Ανακοινώσεις",
         "post_action": "Ανάρτηση",
+        "post_error": "Σφάλμα: {error}",
+        "post_form_header": "Ανάρτηση ανακοίνωσης",
+        "post_placeholder": "Περιεχόμενο ανακοίνωσης",
+        "published_time_display": "Δημοσιεύτηκε {time}",
+        "start_time_display": "Ξεκινάει από {time}",
         "title": "Ανακοίνωση"
     },
     "chats": {
+        "chats": "Συνομιλίες",
+        "delete": "Διαγραφή",
         "delete_confirm": "Θέλετε σίγουρα να διαγράψετε αυτό το μήνυμα;",
+        "empty_chat_list_placeholder": "Δεν έχετε καμία συνομιλία. Ξεκινήστε μια νέα συνομιλία!",
         "empty_message_error": "Δε μπορεί να σταλεί κενό μήνυμα",
+        "error_loading_chat": "Κάτι δεν πήγε καλά κατά τη φόρτωση της συνομιλίας.",
         "error_sending_message": "Κάτι πήγε λάθος κατά την αποστολή του μηνύματος.",
         "message_user": "Στείλε μήνυμα στον/στην {nickname}",
         "more": "Περισσότερα",
@@ -47,11 +62,15 @@
         "today": "Σήμερα"
     },
     "domain_mute_card": {
-        "mute": "Σίγαση"
+        "mute": "Σίγαση",
+        "mute_progress": "Σίγαση…",
+        "unmute": "Αφαίρεση σίγασης",
+        "unmute_progress": "Αφαίρεση σίγασης…"
     },
     "emoji": {
         "add_emoji": "Εισαγωγή emoji",
         "load_all": "Φόρτωση όλων των {emojiAmount} emoji",
+        "load_all_hint": "Φορτώθηκαν τα πρώτα {saneAmount} emoji, η φόρτωση όλων των emoji μπορεί να προκαλέσει θέματα απόδοσης.",
         "recent": "Χρησιμοποιήθηκαν πρόσφατα",
         "search_emoji": "Αναζήτηση για ένα emoji",
         "stickers": "Αυτοκόλλητα"
@@ -63,7 +82,10 @@
         "export": "Εξαγωγή"
     },
     "features_panel": {
-        "text_limit": "Όριο κειμένου"
+        "media_proxy": "Διαμεσολαβητής μέσων",
+        "text_limit": "Όριο κειμένου",
+        "title": "Δυνατότητες",
+        "upload_limit": "Όριο upload"
     },
     "file_type": {
         "audio": "Ήχος",
@@ -79,6 +101,8 @@
         "enable": "Ενεργοποίηση",
         "error_retry": "Παρακαλώ δοκιμάστε ξανά",
         "flash_content": "Κάντε κλικ για την εμφάνιση Flash περιεχομένου με τη χρήση του Ruffle (Πειραματικό, μπορεί να μη λειτουργεί).",
+        "flash_fail": "Η φόρτωση περιεχομένου flash απέτυχε, δείτε στην κονσόλα για λεπτομέρειες.",
+        "generic_error": "Προέκυψε ένα σφάλμα",
         "loading": "Φόρτωση…",
         "more": "Περισσότερα",
         "optional": "προαιρετικό",
@@ -104,6 +128,7 @@
         "save_without_cropping": "Αποθήκευση χωρίς περικοπή"
     },
     "importer": {
+        "error": "Προέκυψε ένα σφάλμα κατά την εισαγωγή αυτού του αρχείου.",
         "success": "Εισήχθη επιτυχώς."
     },
     "languages": {
