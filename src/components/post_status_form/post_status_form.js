@@ -513,7 +513,7 @@ const PostStatusForm = {
     addMediaFile (fileInfo) {
       this.newStatus.files.push(fileInfo)
 
-      if (this.$store.getters.mergedConfig.sensitiveIfSubject && this.newStatus.spoilerText !== '') {
+      if (this.$store.getters.mergedConfig.sensitiveIfSubject && this.newStatus.spoilerText !== '' || !!this.$store.getters.mergedConfig.sensitiveByDefault) {
         this.newStatus.nsfw = true
       }
       this.$emit('resize', { delayed: true })
