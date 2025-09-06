@@ -728,7 +728,7 @@
         "security": "Security",
         "security_tab": "Security",
         "sensitive_by_default": "Mark posts as sensitive by default",
-        "sensitive_if_subject": "Automatically mark images as sensitive if a content warning is specified",
+        "sensitive_if_subject": "Automatically mark post as sensitive if a content warning is specified",
         "set_new_avatar": "Set new avatar",
         "set_new_mascot": "Set new mascot",
         "set_new_profile_background": "Set new profile background",
