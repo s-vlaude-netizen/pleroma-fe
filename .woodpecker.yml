@@ -42,10 +42,13 @@ steps:
       - develop
       - stable
     image: node:20
-    secrets:
-    - SCW_ACCESS_KEY
-    - SCW_SECRET_KEY
-    - SCW_DEFAULT_ORGANIZATION_ID
+    environment:
+      SCW_ACCESS_KEY:
+        from_secret: SCW_ACCESS_KEY
+      SCW_SECRET_KEY:
+        from_secret: SCW_SECRET_KEY
+      SCW_DEFAULT_ORGANIZATION_ID:
+        from_secret: SCW_DEFAULT_ORGANIZATION_ID
     commands:
       - apt-get update && apt-get install -y rclone wget zip
       - wget https://github.com/scaleway/scaleway-cli/releases/download/v2.30.0/scaleway-cli_2.30.0_linux_amd64
@@ -64,11 +67,13 @@ steps:
       - stable
     environment:
       CI: "true"
+      SCW_ACCESS_KEY:
+        from_secret: SCW_ACCESS_KEY
+      SCW_SECRET_KEY:
+        from_secret: SCW_SECRET_KEY
+      SCW_DEFAULT_ORGANIZATION_ID:
+        from_secret: SCW_DEFAULT_ORGANIZATION_ID
     image: python:3.10-slim
-    secrets:
-    - SCW_ACCESS_KEY
-    - SCW_SECRET_KEY
-    - SCW_DEFAULT_ORGANIZATION_ID
     commands:
     - apt-get update && apt-get install -y rclone wget git zip
     - wget https://github.com/scaleway/scaleway-cli/releases/download/v2.30.0/scaleway-cli_2.30.0_linux_amd64
