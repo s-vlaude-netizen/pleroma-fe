@@ -19,6 +19,10 @@
     min-height: 200px;
     position: relative;
     overflow: hidden;
+
+    .status-popover & {
+      height: 200px;
+    }
   }
 
   .description-container {
@@ -121,6 +125,12 @@
       padding: 0 0.5em;
       white-space: pre-line;
       text-align: center;
+
+      .status-popover & {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        height: 1lh;
+      }
     }
   }
 
