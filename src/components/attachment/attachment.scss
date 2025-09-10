@@ -16,7 +16,7 @@
 
   .attachment-wrapper {
     flex: 1 1 auto;
-    height: 200px;
+    min-height: 200px;
     position: relative;
     overflow: hidden;
   }
