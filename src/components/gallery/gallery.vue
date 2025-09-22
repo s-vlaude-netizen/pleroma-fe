@@ -100,8 +100,6 @@
     flex-grow: 1;
     .Status & {
       max-height: 30em;
-      overflow-y: auto; /* makes long alt text on files scrollable */
-      scrollbar-color: var(--border) #0000;
     }
 
     &.-audio {

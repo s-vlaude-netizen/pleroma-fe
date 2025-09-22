@@ -19,6 +19,7 @@
     min-height: 200px;
     position: relative;
     overflow: hidden;
+    align-content: center;
 
     .status-popover & {
       height: 200px;
@@ -125,6 +126,9 @@
       padding: 0 0.5em;
       white-space: pre-line;
       text-align: center;
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-color: var(--border) #0000;
 
       .status-popover & {
         text-overflow: ellipsis;
