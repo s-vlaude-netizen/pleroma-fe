@@ -13,6 +13,7 @@ const StillImage = {
     return {
       stopGifs: this.$store.getters.mergedConfig.stopGifs || window.matchMedia('(prefers-reduced-motion: reduce)').matches,
       isAnimated: false,
+      isPixelArt: false,
       imageTypeLabel: ''
     }
   },
@@ -34,10 +35,17 @@ const StillImage = {
       if (!image) return
       this.imageLoadHandler && this.imageLoadHandler(image)
       this.detectAnimation(image)
+      this.detectPixelArt(image)
       this.drawThumbnail()
     },
     onError () {
       this.imageLoadError && this.imageLoadError()
+    },
+    detectPixelArt (image) {
+      // Safe maximum: 32x32 image, equivalent or smaller
+      this.isPixelArt ||= image.naturalHeight * image.naturalWidth <= 32 * 32;
+      // Common size for oldweb badges.
+      this.isPixelArt ||= image.naturalWidth == 88 && image.naturalHeight == 31;
     },
     detectAnimation (image) {
       const mediaProxyAvailable = this.$store.state.instance.mediaProxyAvailable

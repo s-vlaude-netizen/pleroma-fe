@@ -51,7 +51,10 @@
   .emoji {
     display: inline-block;
     height: var(--emoji-size, 32px);
-    image-rendering: pixelated;
+
+    &.pixelart {
+      image-rendering: pixelated;
+    }
   }
 
   .img,

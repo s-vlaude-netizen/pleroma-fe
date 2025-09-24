@@ -63,7 +63,6 @@
     width: auto;
     max-width: 96cqw;
     margin-right: 0.25em;
-    image-rendering: pixelated;
 
     &.still-image {
       height: 2.55em;
@@ -72,6 +71,9 @@
       display: inline-block;
       font-size: 2.125em; // assuming default line height of 1.2rem and emojis that don't exceed line height
       line-height: 2.55rem;
+    }
+    &.pixelart {
+      image-rendering: pixelated;
     }
   }
   &:focus {
