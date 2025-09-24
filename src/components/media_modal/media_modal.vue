@@ -24,14 +24,15 @@
         :min-scale="pinchZoomMinScale"
         :reset-to-min-scale-limit="pinchZoomScaleResetLimit"
       >
-        <img
+        <StillImage
           :class="{ loading }"
           class="modal-image"
           :src="currentMedia.url"
           :alt="currentMedia.description"
           :title="currentMedia.description"
           @load="onImageLoaded"
-        >
+          noStopGifs="true"
+        />
       </PinchZoom>
     </SwipeClick>
     <VideoAttachment
