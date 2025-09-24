@@ -95,5 +95,8 @@
       visibility: visible;
     }
   }
+  &.pixelart {
+    image-rendering: pixelated;
+  }
 }
 </style>

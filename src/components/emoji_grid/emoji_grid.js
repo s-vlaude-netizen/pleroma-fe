@@ -1,3 +1,5 @@
+import StillImage from '../still-image/still-image.vue'
+
 const EMOJI_SIZE = 32 + 8
 const GROUP_TITLE_HEIGHT = 24
 const BUFFER_SIZE = 3 * EMOJI_SIZE
@@ -16,6 +18,9 @@ const EmojiGrid = {
       scrollPos: 0,
       resizeObserver: null
     }
+  },
+  components: {
+    StillImage
   },
   mounted () {
     const rect = this.$refs.container.getBoundingClientRect()

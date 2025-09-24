@@ -1,6 +1,7 @@
 import { defineAsyncComponent } from 'vue'
 import Checkbox from '../checkbox/checkbox.vue'
 import EmojiGrid from '../emoji_grid/emoji_grid.vue'
+import StillImage from '../still-image/still-image.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faBoxOpen,
@@ -39,7 +40,8 @@ const EmojiPicker = {
   components: {
     StickerPicker: defineAsyncComponent(() => import('../sticker_picker/sticker_picker.vue')),
     Checkbox,
-    EmojiGrid
+    EmojiGrid,
+    StillImage
   },
   methods: {
     debouncedSearch: debounce(function (e) {

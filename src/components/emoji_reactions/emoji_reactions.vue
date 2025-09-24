@@ -72,9 +72,6 @@
       font-size: 2.125em; // assuming default line height of 1.2rem and emojis that don't exceed line height
       line-height: 2.55rem;
     }
-    &.pixelart {
-      image-rendering: pixelated;
-    }
   }
   &:focus {
     outline: none;

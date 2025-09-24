@@ -7,11 +7,17 @@ const StillImage = {
     'imageLoadHandler',
     'alt',
     'height',
-    'width'
+    'width',
+    'noStopGifs'
   ],
   data () {
     return {
-      stopGifs: this.$store.getters.mergedConfig.stopGifs || window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      stopGifs:
+        !this.noStopGifs
+        && (
+          this.$store.getters.mergedConfig.stopGifs
+          || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ),
       isAnimated: false,
       isPixelArt: false,
       imageTypeLabel: ''
@@ -46,6 +52,7 @@ const StillImage = {
       this.isPixelArt ||= image.naturalHeight * image.naturalWidth <= 32 * 32;
       // Common size for oldweb badges.
       this.isPixelArt ||= image.naturalWidth == 88 && image.naturalHeight == 31;
+      console.log(image.src+" is "+image.naturalHeight+"x"+image.naturalWidth+" - "+(this.isPixelArt ? "pixel art" : "normal"))
     },
     detectAnimation (image) {
       const mediaProxyAvailable = this.$store.state.instance.mediaProxyAvailable
@@ -215,7 +222,7 @@ const StillImage = {
         }
     
         context.clearRect(0, 0, canvas.width, canvas.height);  // Clear the previous unscaled image
-        context.imageSmoothingEnabled = true;
+        context.imageSmoothingEnabled = !this.isPixelArt;
         context.imageSmoothingQuality = 'high';
 
         // Draw the good one for realsies

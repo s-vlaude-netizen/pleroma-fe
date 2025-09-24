@@ -47,10 +47,11 @@
             v-if="!suggestion.mfm"
             class="image"
           >
-            <img
+            <StillImage
               v-if="suggestion.img"
               :src="suggestion.img"
-            >
+              noStopGifs="true"
+            />
             <span v-else>{{ suggestion.replacement }}</span>
           </span>
           <div class="label">
