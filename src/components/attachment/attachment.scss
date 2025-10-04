@@ -16,9 +16,14 @@
 
   .attachment-wrapper {
     flex: 1 1 auto;
-    height: 200px;
+    min-height: 200px;
     position: relative;
     overflow: hidden;
+    align-content: center;
+
+    .status-popover & {
+      height: 200px;
+    }
   }
 
   .description-container {
@@ -115,6 +120,22 @@
     align-items: center;
     justify-content: center;
     padding-top: 0.5em;
+
+    p {
+      line-height: 1.5;
+      padding: 0 0.5em;
+      white-space: pre-line;
+      text-align: center;
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-color: var(--border) #0000;
+
+      .status-popover & {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        height: 1lh;
+      }
+    }
   }
 
 
