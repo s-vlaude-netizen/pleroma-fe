@@ -1,6 +1,7 @@
 {
     "about": {
         "bubble_instances": "ローカルバブルインスタンス",
+        "bubble_instances_description": "かんりしゃがだいひょうするためにえらんだインスタンス",
         "mrf": {
             "federation": "フェデレーション",
             "keyword": {

@@ -950,6 +950,7 @@
             "title": "版本"
         },
         "virtual_scrolling": "优化时间线渲染",
+        "widen_timeline": "加宽时间线以填充水平空间",
         "word_filter": "词语过滤",
         "wordfilter": "词语过滤器"
     },
