@@ -34,10 +34,11 @@
           @click.stop.prevent="onEmoji(item.emoji)"
         >
           <span v-if="!item.emoji.imageUrl">{{ item.emoji.replacement }}</span>
-          <img
+          <StillImage
             v-else
             :src="item.emoji.imageUrl"
-          >
+            noStopGifs="true"
+          />
         </span>
       </template>
     </div>

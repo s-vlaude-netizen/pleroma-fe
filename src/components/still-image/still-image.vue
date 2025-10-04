@@ -2,7 +2,7 @@
   <div
     ref="still-image"
     class="still-image"
-    :class="{ animated: animated }"
+    :class="{ animated: animated, pixelart: isPixelArt }"
     :style="style"
   >
     <div
@@ -94,6 +94,9 @@
     &:hover img {
       visibility: visible;
     }
+  }
+  &.pixelart {
+    image-rendering: pixelated;
   }
 }
 </style>

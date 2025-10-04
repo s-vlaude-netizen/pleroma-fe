@@ -1,5 +1,6 @@
 import Completion from '../../services/completion/completion.js'
 import EmojiPicker from '../emoji_picker/emoji_picker.vue'
+import StillImage from '../still-image/still-image.vue'
 import { take } from 'lodash'
 import { findOffset } from '../../services/offset_finder/offset_finder.service.js'
 
@@ -120,7 +121,8 @@ const EmojiInput = {
     }
   },
   components: {
-    EmojiPicker
+    EmojiPicker,
+    StillImage
   },
   computed: {
     padEmoji () {

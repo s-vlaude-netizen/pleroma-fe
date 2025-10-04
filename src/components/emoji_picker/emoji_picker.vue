@@ -18,10 +18,11 @@
           @click.prevent="highlight(group.id)"
         >
           <span v-if="!group.first.imageUrl">{{ group.first.replacement }}</span>
-          <img
+          <StillImage
             v-else
             :src="group.first.imageUrl"
-          >
+            noStopGifs="true"
+          />
         </span>
         <span
           v-if="stickerPickerEnabled"
