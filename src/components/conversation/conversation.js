@@ -267,11 +267,11 @@ const conversation = {
     },
     replies () {
       let i = 1
-       
+
       return reduce(this.conversation, (result, { id, in_reply_to_status_id }) => {
-         
+
         const irid = in_reply_to_status_id
-         
+
         if (irid) {
           result[irid] = result[irid] || []
           result[irid].push({
@@ -414,6 +414,14 @@ const conversation = {
     },
     toggleExpanded () {
       this.expanded = !this.expanded
+      const navHeight = document.getElementById("nav").offsetHeight
+      const headingHeight = document.getElementsByClassName("timeline-heading")[0].offsetHeight
+      document.documentElement.style.setProperty("--timeline-scroll-margin-top", `${navHeight + headingHeight}px`)
+      this.$nextTick(() => {
+        if (!this.expanded) {
+          this.$el.scrollIntoView({ block: 'nearest' })
+        }
+      })
     },
     getConversationId (statusId) {
       const status = this.$store.state.statuses.allStatusesObject[statusId]

@@ -24,6 +24,7 @@
       <button
         v-if="options.length > 2"
         class="delete-option button-unstyled -hover-highlight"
+        type="button"
         @click="deleteOption(index)"
       >
         <FAIcon icon="times" />
@@ -32,6 +33,7 @@
     <button
       v-if="options.length < maxOptions"
       class="add-option faint button-unstyled -hover-highlight"
+      type="button"
       @click="addOption"
     >
       <FAIcon

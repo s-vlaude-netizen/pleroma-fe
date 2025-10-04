@@ -326,6 +326,7 @@ export const parseStatus = (data) => {
     }
     output.pinned = data.pinned
     output.muted = data.muted
+    output.language = data.language
   } else {
     output.favorited = data.favorited
     output.fave_num = data.fave_num

@@ -27,12 +27,17 @@ const EmojiPicker = {
       required: false,
       type: Boolean,
       default: false
+    },
+    visible: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   },
   data () {
     return {
       keyword: '',
-      activeGroup: 'standard',
+      activeGroup: this.getDefaultGroup(),
       showingStickers: false,
       keepOpen: false
     }
@@ -84,6 +89,11 @@ const EmojiPicker = {
       return list.filter(emoji => {
         return (regex.test(emoji.displayText) || (!emoji.imageUrl && emoji.replacement === this.keyword))
       })
+    },
+    getDefaultGroup () {
+      if (!this.visible) return null
+      const recentEmojis = this.$store.getters.recentEmojis
+      return recentEmojis.length === 0 ? 'standard' : 'recent'
     }
   },
   computed: {
@@ -149,6 +159,13 @@ const EmojiPicker = {
     },
     stickerPickerEnabled () {
       return (this.$store.state.instance.stickers || []).length !== 0 && this.enableStickerPicker
+    }
+  },
+  watch: {
+    visible (val, oldVal) {
+      if (val && this.activeGroup === null) {
+        this.activeGroup = this.getDefaultGroup()
+      }
     }
   }
 }

@@ -86,6 +86,7 @@ const PostStatusForm = {
     'quoteId',
     'repliedUser',
     'attentions',
+    'copyMessageLanguage',
     'copyMessageScope',
     'subject',
     'disableSubject',
@@ -154,8 +155,7 @@ const PostStatusForm = {
       statusText = buildMentionsString({ user: this.repliedUser, attentions: this.attentions }, currentUser)
     }
 
-    const { postContentType: contentType, postLanguage: defaultPostLanguage, sensitiveByDefault, sensitiveIfSubject, interfaceLanguage, alwaysShowSubjectInput } = this.$store.getters.mergedConfig
-    const postLanguage = defaultPostLanguage || interfaceToISOLanguage(interfaceLanguage)
+    const { postContentType: contentType, sensitiveByDefault, sensitiveIfSubject, alwaysShowSubjectInput } = this.$store.getters.mergedConfig
 
     let statusParams = {
       spoilerText: this.subject || '',
@@ -166,7 +166,7 @@ const PostStatusForm = {
       poll: {},
       mediaDescriptions: {},
       visibility: this.suggestedVisibility(),
-      language: postLanguage,
+      language: this.suggestedLanguage(),
       contentType
     }
 
@@ -181,7 +181,7 @@ const PostStatusForm = {
         poll: this.statusPoll || {},
         mediaDescriptions: this.statusMediaDescriptions || {},
         visibility: this.statusScope || this.suggestedVisibility(),
-        language: this.statusLanguage || postLanguage,
+        language: this.statusLanguage || this.suggestedLanguage(),
         contentType: statusContentType
       }
     }
@@ -343,16 +343,21 @@ const PostStatusForm = {
       this.saveDraft()
     },
     clearStatus () {
-      const newStatus = this.newStatus
+      const config = this.$store.getters.mergedConfig
       this.newStatus = {
         status: '',
         spoilerText: '',
         files: [],
-        visibility: newStatus.visibility,
-        contentType: newStatus.contentType,
-        language: newStatus.language,
+        nsfw: !!config.sensitiveByDefault,
+        visibility: this.suggestedVisibility(),
+        contentType: config.postContentType,
+        language: this.suggestedLanguage(),
         poll: {},
         mediaDescriptions: {}
+      }
+      const scopeselector = this.$refs.scopeselector
+      if (scopeselector) {
+        scopeselector.currentScope = this.newStatus.visibility
       }
       this.pollFormVisible = false
       this.$refs.mediaUpload && this.$refs.mediaUpload.clearFile()
@@ -761,6 +766,15 @@ const PostStatusForm = {
     },
     openProfileTab () {
       this.$store.dispatch('openSettingsModalTab', 'profile')
+    },
+    suggestedLanguage () {
+      // Make sure the inherited language is actually valid
+      if (this.postLanguageOptions.find(o => o.value === this.copyMessageLanguage)) {
+        return this.copyMessageLanguage
+      }
+      const { postLanguage: defaultPostLanguage, interfaceLanguage } = this.$store.getters.mergedConfig
+      const postLanguage = defaultPostLanguage || interfaceToISOLanguage(interfaceLanguage)
+      return postLanguage
     },
     suggestedVisibility () {
       const maxScope = this.copyMessageScope

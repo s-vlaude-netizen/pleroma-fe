@@ -18,6 +18,7 @@
         >
           <button
             class="button-unstyled -link"
+            type="button"
             @click="openProfileTab"
           >
             {{ $t('post_status.account_not_locked_warning_link') }}
@@ -136,6 +137,7 @@
             class="form-post-subject"
             @input="onSubjectInput"
             @focus="focusSubjectInput()"
+            @keydown.exact.enter.prevent
           >
         </EmojiInput>
         <i18n-t
@@ -193,6 +195,7 @@
           :class="{ 'visibility-tray-edit': isEdit }"
         >
           <scope-selector
+            ref="scopeselector"
             v-if="!disableVisibilitySelector"
             :user-default="userDefaultScope"
             :original-scope="copyMessageScope"
@@ -272,6 +275,7 @@
           <button
             class="emoji-icon button-unstyled"
             :title="$t('emoji.add_emoji')"
+            type="button"
             @click="showEmojiPicker"
           >
             <FAIcon icon="smile-beam" />
@@ -281,6 +285,7 @@
             class="poll-icon button-unstyled"
             :class="{ selected: pollFormVisible }"
             :title="$t('polls.add_poll')"
+            type="button"
             @click="togglePollForm"
           >
             <FAIcon icon="poll-h" />
@@ -290,6 +295,7 @@
             class="spoiler-icon button-unstyled"
             :class="{ selected: subjectVisible }"
             :title="$t('post_status.toggle_content_warning')"
+            type="button"
             @click="toggleSubjectVisible"
           >
             <FAIcon icon="eye-slash" />
