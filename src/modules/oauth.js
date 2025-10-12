@@ -3,8 +3,7 @@ const oauth = {
     clientId: false,
     clientSecret: false,
     /* App token is authentication for app without any user, used mostly for
-     * MastoAPI's registration of new users, stored so that we can fall back to
-     * it on logout
+     * MastoAPI's registration of new users and unnecessary otherwise
      */
     appToken: false,
     /* User token is authentication for app with user, this is for every calls
@@ -23,8 +22,9 @@ const oauth = {
     setToken (state, token) {
       state.userToken = token
     },
-    clearToken (state) {
+    clearTokens (state) {
       state.userToken = false
+      state.appToken = false
       // state.token is userToken with older name, coming from persistent state
       // let's clear it as well, since it is being used as a fallback of state.userToken
       delete state.token
