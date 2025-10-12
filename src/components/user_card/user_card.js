@@ -197,7 +197,7 @@ export default {
       this.$store.dispatch('setCurrentMedia', attachment)
     },
     mentionUser () {
-      this.$store.dispatch('openPostStatusModal', { replyTo: true, repliedUser: this.user })
+      this.$store.dispatch('openPostStatusModal', { repliedUser: this.user })
     }
   }
 }
