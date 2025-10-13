@@ -106,6 +106,9 @@ const StatusContent = {
     renderMisskeyMarkdown () {
       return this.mergedConfig.renderMisskeyMarkdown
     },
+    hasResolvedQuote () {
+      return !!this.status.quote
+    },
     ...mapGetters(['mergedConfig']),
     ...mapState({
       currentUser: state => state.users.currentUser

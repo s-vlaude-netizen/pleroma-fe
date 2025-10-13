@@ -1,7 +1,7 @@
 <template>
   <div
     class="StatusContent"
-    :class="{ '-compact': compact, 'mfm-hover': renderMfmOnHover, 'mfm-disabled': !renderMisskeyMarkdown }"
+    :class="{ '-compact': compact, 'mfm-hover': renderMfmOnHover, 'mfm-disabled': !renderMisskeyMarkdown, 'quote-resolved': hasResolvedQuote }"
   >
     <slot name="header" />
     <StatusBody
@@ -78,9 +78,13 @@
   }
 }
 
-.quote-inline,
+.quote-resolved .quote-inline,
 .quote + .link-preview {
-  display: none;
+    display: none;
+}
+
+.quote-resolved .quote .quote-inline {
+    display: inline;
 }
 
 </style>
