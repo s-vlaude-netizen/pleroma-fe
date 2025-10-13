@@ -3,6 +3,7 @@ import { windowWidth, windowHeight } from '../services/window_utils/window_utils
 import oauthApi from '../services/new_api/oauth.js'
 import { compact, map, each, mergeWith, last, concat, uniq, isArray } from 'lodash'
 import { registerPushNotifications, unregisterPushNotifications } from '../services/push/push.js'
+import { getClientToken } from '../services/new_api/oauth.js'
 
 // TODO: Unify with mergeOrAdd in statuses.js
 export const mergeOrAdd = (arr, obj, item, key = 'id') => {
@@ -110,6 +111,17 @@ const unmuteDomain = (store, domain) => {
 const setNote = (store, { id, note }) => {
   return store.rootState.api.backendInteractor.setNote({ id, note })
     .then((relationship) => store.commit('updateUserRelationship', [relationship]))
+}
+
+const getAppSecret = async ({ store }) => {
+  const { rootState, commit } = store
+  const { oauth, instance } = rootState
+  return oauthApi.getOrCreateApp({ ...oauth, instance: instance.server, commit })
+    .then((app) => getClientToken({ ...app, instance: instance.server }))
+    .then((token) => {
+      commit('setAppToken', token.access_token)
+      commit('setBackendInteractor', backendInteractorService(store.getters.getToken()))
+    })
 }
 
 export const mutations = {
@@ -568,6 +580,8 @@ const users = {
       let rootState = store.rootState
 
       try {
+        // registration can only be done with an app token
+        await getAppSecret({ store })
         let data = await rootState.api.backendInteractor.register(
           { params: { ...userInfo } }
         )
@@ -603,18 +617,24 @@ const users = {
 
       return oauthApi.getOrCreateApp(data)
         .then((app) => {
-          const params = {
-            app,
-            instance: data.instance,
-            token: oauth.userToken
-          }
+          // Clear both OAuth token (used in every login session)
+          // and app token (only used by us during registration)
+          for (const token of [oauth.userToken, oauth.appToken]) {
+            if (!token) continue
 
-          return oauthApi.revokeToken(params)
+            const params = {
+              app,
+              instance: data.instance,
+              token: token
+            }
+
+            oauthApi.revokeToken(params)
+          }
         })
         .then(() => {
           store.commit('clearCurrentUser')
           store.dispatch('disconnectFromSocket')
-          store.commit('clearToken')
+          store.commit('clearTokens')
           store.dispatch('stopFetchingTimeline', 'friends')
           store.commit('setBackendInteractor', backendInteractorService(store.getters.getToken()))
           store.dispatch('stopFetchingNotifications')

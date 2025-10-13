@@ -19,7 +19,7 @@ const saveImmedeatelyActions = [
   'setOption',
   'setClientData',
   'setToken',
-  'clearToken',
+  'clearTokens',
   'emojiUsed',
 ]
 

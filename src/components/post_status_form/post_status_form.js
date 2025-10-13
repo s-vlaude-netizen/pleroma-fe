@@ -150,7 +150,7 @@ const PostStatusForm = {
     const preset = this.$route.query.message
     let statusText = preset || ''
 
-    if (this.replyTo || this.quoteId) {
+    if (this.replyTo || this.quoteId || this.repliedUser) {
       const currentUser = this.$store.state.users.currentUser
       statusText = buildMentionsString({ user: this.repliedUser, attentions: this.attentions }, currentUser)
     }
