@@ -52,7 +52,7 @@
         <scope-selector
           :user-default="userDefaultScope"
           :original-scope="statusScope"
-          :initial-scope="initialScope"
+          :initial-scope="retweetVisibility"
           :on-scope-change="changeVis"
         />
       </confirm-modal>

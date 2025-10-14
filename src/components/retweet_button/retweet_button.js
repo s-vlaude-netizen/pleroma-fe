@@ -13,10 +13,12 @@ const RetweetButton = {
     ScopeSelector
   },
   data () {
+    const maxScope = this.status.visibility
+    const defaultScope = this.$store.state.users.currentUser.default_scope
     return {
       animated: false,
       showingConfirmDialog: false,
-      retweetVisibility: this.$store.state.users.currentUser.default_scope
+      retweetVisibility: scopeUtils.negotiate(defaultScope, maxScope)
     }
   },
   methods: {
@@ -68,9 +70,6 @@ const RetweetButton = {
     statusScope () {
       return this.status.visibility
     },
-    initialScope () {
-      return scopeUtils.negotiate(this.userDefaultScope, this.status.visibility)
-    }
   }
 }
 
