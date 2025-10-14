@@ -30,7 +30,7 @@
           :src="currentMedia.url"
           :alt="currentMedia.description"
           :title="currentMedia.description"
-          @load="onImageLoaded"
+          :image-load-handler="onImageLoaded"
           noStopGifs="true"
         />
       </PinchZoom>
