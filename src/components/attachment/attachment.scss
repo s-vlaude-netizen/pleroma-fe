@@ -129,6 +129,8 @@
       max-height: 200px;
       overflow-y: auto;
       scrollbar-color: var(--border) #0000;
+      width: 100%;
+      box-sizing: border-box;
 
       .status-popover & {
         text-overflow: ellipsis;
