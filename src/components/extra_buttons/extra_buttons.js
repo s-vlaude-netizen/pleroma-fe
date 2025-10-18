@@ -91,7 +91,7 @@ const ExtraButtons = {
         .catch(err => this.$emit('onError', err.error.error))
     },
     copyLink () {
-      navigator.clipboard.writeText(this.statusLink)
+      navigator.clipboard.writeText(this.status.canonical_id)
         .then(() => this.$emit('onSuccess'))
         .catch(err => this.$emit('onError', err.error.error))
     },
@@ -186,13 +186,6 @@ const ExtraButtons = {
     },
     noTranslationTargetSet () {
       return this.$store.getters.mergedConfig.translationLanguage === undefined
-    },
-    statusLink () {
-      if (this.status.is_local) {
-        return `${this.$store.state.instance.server}${this.$router.resolve({ name: 'conversation', params: { id: this.status.id } }).href}`
-      } else {
-        return this.status.external_url
-      }
     },
     shouldConfirmDelete () {
       return this.$store.getters.mergedConfig.modalOnDelete

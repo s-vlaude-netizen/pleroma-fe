@@ -316,7 +316,10 @@ export const parseStatus = (data) => {
     }
 
     output.summary_raw_html = escape(data.spoiler_text)
+    // display URL
     output.external_url = data.url
+    // ActivityPub ID
+    output.canonical_id = data.uri
     output.poll = data.poll
     if (output.poll) {
       output.poll.options = (output.poll.options || []).map(field => ({
@@ -363,6 +366,7 @@ export const parseStatus = (data) => {
     output.summary = data.summary
     output.summary_html = data.summary_html
     output.external_url = data.external_url
+    output.canonical_id = data.external_url
     output.is_local = data.is_local
   }
 
