@@ -42,8 +42,14 @@ const mediaUpload = {
         .then((fileData) => {
           self.$emit('uploaded', fileData)
           self.decreaseUploadCount()
-        }, (error) => {  
-          self.$emit('upload-failed', 'default')
+        }, (error) => {
+          var msg = typeof error === "string" ? error : error.message
+          if (msg) {
+            self.$emit('upload-failed', 'message', [msg])
+          } else {
+            self.$emit('upload-failed', 'default')
+          }
+          console.warn(`Failed to upload media: ${error}`)
           self.decreaseUploadCount()
         })
     },
