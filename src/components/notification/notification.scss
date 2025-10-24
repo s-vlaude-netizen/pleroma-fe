@@ -101,8 +101,4 @@
     color: $fallback--cBlue;
     color: var(--cBlue, $fallback--cBlue);
   }
-
-  .attachment-wrapper {
-    min-height: unset;
-  }
 }

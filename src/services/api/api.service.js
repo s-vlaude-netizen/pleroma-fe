@@ -124,6 +124,21 @@ let fetch = (url, options) => {
   return oldfetch(fullUrl, options)
 }
 
+// TODO: integrate directly into above adapting callers as needed
+const getJsonIfSuccess = (response, url, options) => {
+  return new Promise((resolve, reject) => response.json()
+    .then((json) => {
+      if (!response.ok) {
+        return reject(new StatusCodeError(response.status, json, { url, options }, response))
+      }
+      return resolve(json)
+    })
+    .catch((error) => {
+      return reject(new StatusCodeError(response.status, error, { url, options }, response))
+    })
+  )
+}
+
 const promisedRequest = ({ method, url, params, payload, credentials, headers = {} }) => {
   const options = {
     method,
@@ -148,19 +163,7 @@ const promisedRequest = ({ method, url, params, payload, credentials, headers = 
     }
   }
   return fetch(url, options)
-    .then((response) => {
-      return new Promise((resolve, reject) => response.json()
-        .then((json) => {
-          if (!response.ok) {
-            return reject(new StatusCodeError(response.status, json, { url, options }, response))
-          }
-          return resolve(json)
-        })
-        .catch((error) => {
-          return reject(new StatusCodeError(response.status, error, { url, options }, response))
-        })
-      )
-    })
+    .then((response) => getJsonIfSuccess(response, url, options))
 }
 
 const updateNotificationSettings = ({ credentials, settings }) => {
@@ -988,7 +991,7 @@ const uploadMedia = ({ formData, credentials }) => {
     method: 'POST',
     headers: authHeaders(credentials)
   })
-    .then((data) => data.json())
+    .then((response) => getJsonIfSuccess(response, MASTODON_MEDIA_UPLOAD_URL, {}))
     .then((data) => parseAttachment(data))
 }
 
