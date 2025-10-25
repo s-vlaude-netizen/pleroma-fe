@@ -63,7 +63,7 @@ const ScopeSelector = {
       if (!this.originalScope)
         return true
       else
-        return scopeUtils.compare(scope, this.originalScope) <= 0
+        return scopeUtils.isSubScope(this.originalScope, scope)
     },
     changeVis (scope) {
       this.currentScope = scope
