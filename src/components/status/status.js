@@ -169,8 +169,8 @@ const Status = {
   },
   computed: {
     ...controlledOrUncontrolledGetters(['replying', 'quoting', 'mediaPlaying']),
-    muteWords () {
-      return this.mergedConfig.muteWords
+    muteWordRules () {
+      return this.$store.getters.parsedConfigVal('muteWords')
     },
     showReasonMutedThread () {
       return (
@@ -230,7 +230,7 @@ const Status = {
       return !!this.currentUser
     },
     muteWordHits () {
-      return muteWordHits(this.status, this.muteWords)
+      return muteWordHits(this.status, this.muteWordRules)
     },
     rtBotStatus () {
       return this.statusoid.user.bot
