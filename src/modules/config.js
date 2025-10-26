@@ -153,9 +153,19 @@ function updateLocalSettings(store, settingEntries, version = null) {
  * muteRule = { name: string, predicate: (string, string) => boolean }
  */
 const parseMuteWords = (rawList) => {
+  const regexStart = '/'
+  const regexEnd = '/'
+
   return rawList.map((word) => {
-       const muteWord = word.toLowerCase()
-       let predicate = (text, textLowCased) => (textLowCased || text?.toLowerCase())?.includes(muteWord)
+       let predicate
+       if (word.startsWith(regexStart) && word.endsWith(regexEnd)) {
+         // case-insenstitive by default, but regex modifiers can locally reenable case sensitivity
+         const regex = new RegExp(word.slice(regexStart.length, -regexEnd.length), 'i')
+         predicate = (text, _textLowCased) => regex.test(text)
+       } else {
+         const muteWord = word.toLowerCase()
+         predicate = (text, textLowCased) => (textLowCased || text?.toLowerCase())?.includes(muteWord)
+       }
        return { name: word, predicate: predicate }
     })
 }
