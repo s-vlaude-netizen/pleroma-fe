@@ -1,18 +1,22 @@
 import { filter } from 'lodash'
 
-export const muteWordHits = (status, muteWords) => {
-  const statusText = status.text.toLowerCase()
-  const statusSummary = status.summary.toLowerCase()
+export const muteWordHits = (status, muteRules) => {
+  const statusTextLC = status.text.toLowerCase()
+  const statusSummaryLC = status.summary.toLowerCase()
+  const altTextPairs = status.attachments.map((a) => [a.description, a.description?.toLowerCase()])
 
-  const hits = filter(muteWords, (muteWord) => {
-    muteWord = muteWord.toLowerCase()
+  const hits = []
 
-    return (
-      statusText.includes(muteWord) ||
-      statusSummary.includes(muteWord) ||
-      status.attachments.some((a) => a.description?.toLowerCase().includes(muteWord))
-    )
-  })
+  for (const rule of muteRules) {
+    const pred = rule.predicate
+
+    if (pred(status.text, statusTextLC) ||
+        pred(status.summary, statusSummaryLC) ||
+        altTextPairs.some(([t, tlc]) => pred(t, tlc))
+    ) {
+      hits.push(rule.name)
+    }
+  }
 
   return hits
 }

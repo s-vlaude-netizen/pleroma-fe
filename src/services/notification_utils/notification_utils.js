@@ -48,7 +48,7 @@ const sortById = (a, b) => {
 
 const isMutedNotification = (store, notification) => {
   if (!notification.status) return
-  return notification.status.muted || muteWordHits(notification.status, store.rootGetters.mergedConfig.muteWords).length > 0
+  return notification.status.muted || muteWordHits(notification.status, store.rootGetters.parsedConfigVal('muteWords')).length > 0
 }
 
 export const maybeShowNotification = (store, notification) => {

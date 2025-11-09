@@ -144,9 +144,38 @@ function updateLocalSettings(store, settingEntries, version = null) {
   store.commit('setOption', { name: 'profileVersion', value: version })
 }
 
+/**
+ * Parses the raw mute-word string into an array of mute rules
+ * containing the original filter defintion and a predicator function
+ * and optionally (for optimisation purposes when checking against many mute rules)
+ * the lower-cased version of the text as arguments.
+ *
+ * muteRule = { name: string, predicate: (string, string) => boolean }
+ */
+const parseMuteWords = (rawList) => {
+  const regexStart = '/'
+  const regexEnd = '/'
+
+  return rawList.map((word) => {
+       let predicate
+       if (word.startsWith(regexStart) && word.endsWith(regexEnd)) {
+         // case-insenstitive by default, but regex modifiers can locally reenable case sensitivity
+         const regex = new RegExp(word.slice(regexStart.length, -regexEnd.length), 'i')
+         predicate = (text, _textLowCased) => regex.test(text)
+       } else {
+         const muteWord = word.toLowerCase()
+         predicate = (text, textLowCased) => (textLowCased || text?.toLowerCase())?.includes(muteWord)
+       }
+       return { name: word, predicate: predicate }
+    })
+}
+
+const settingParsers = {
+  muteWords: parseMuteWords,
+}
 
 const config = {
-  state: { ...defaultState },
+  state: { ...defaultState, '__parsed_cache': {} },
   getters: {
     defaultConfig (state, getters, rootState, rootGetters) {
       const { instance } = rootState
@@ -161,14 +190,32 @@ const config = {
       const { defaultConfig } = rootGetters
       return {
         ...defaultConfig,
-        // Do not override with undefined
-        ...Object.fromEntries(Object.entries(state).filter(([k, v]) => v !== undefined))
+        // Do not override with undefined and exclude private caches
+        ...Object.fromEntries(Object.entries(state).filter(([k, v]) => v !== undefined && k !== '__parsed_cache'))
+      }
+    },
+	parsedConfigVal (state, getters, rootState, rootGetters) {
+      return (key) => {
+        let cached = state['__parsed_cache'][key]
+        if (cached !== undefined) return cached;
+
+        const parser = settingParsers[key]
+        if (!parser) return undefined;
+
+        // we can't use mergedConfig yet here
+        const rawVal = state[key] || rootState.instance?.[key] || defaultState[key];
+        const parsed = parser(rawVal);
+        state['__parsed_cache'][key] = parsed
+        return parsed
       }
     }
   },
   mutations: {
     setOption (state, { name, value }) {
       state[name] = value
+      if (settingParsers.hasOwnProperty(name)) {
+        state['__parsed_cache'][name] = undefined
+      }
     },
     setHighlight (state, { user, color, type }) {
       const data = this.state.config.highlight[user]
@@ -189,8 +236,9 @@ const config = {
         timeout: 5000
       }
       store.dispatch('pushGlobalNotice', notice)
+      let {'__parsed_cache': _, ...currentSettings} = store.state
       store.rootState.api.backendInteractor.saveSettingsProfile({
-        settings: store.state, profileName: store.state.profile, version: store.state.profileVersion
+        settings: currentSettings, profileName: store.state.profile, version: store.state.profileVersion
       }).then(() => {
         store.dispatch('removeGlobalNotice', notice)
         store.dispatch('pushGlobalNotice', {
