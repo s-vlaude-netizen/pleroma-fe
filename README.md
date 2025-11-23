@@ -24,7 +24,7 @@ Make sure you have [Node.js](https://nodejs.org/) installed. You can check `/.wo
 
 ``` bash
 # install dependencies
-corepack enable
+npm install -g corepack
 yarn
 
 # serve with hot reload at localhost:8080
