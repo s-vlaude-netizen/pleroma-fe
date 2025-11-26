@@ -119,13 +119,14 @@ const StillImage = {
         this.setLabel('WEBP')
         return
       }
-      // Beware the apng! use this if ye dare
-      // if (extension === 'png') {
-      //  this.isAnimated = true
-      //  this.setLabel('PNG')
-      //  return
-      // }
-      
+      // Beware: APNGs also sometimes use just a plain png extension!
+      // (but this would mislabel too many images as "animated")
+      if (extension === 'apng') {
+        this.isAnimated = true
+        this.setLabel('APNG')
+        return
+      }
+
       // Hail mary for extensionless
       if (extension.includes('/')) {
         // Don't mind the CORS error barrage
