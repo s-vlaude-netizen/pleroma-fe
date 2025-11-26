@@ -74,39 +74,51 @@ const StillImage = {
     },
     detectAnimationWithFetch (image) {
       // Browser Cache should ensure image doesn't get loaded twice if cache exists
-      fetch(image.src, {
+      return fetch(image.src, {
         referrerPolicy: 'same-origin'
       })
         .then(data => {
           // We don't need to read the whole file so only call it once
-          data.body.getReader().read()
+          return data.body.getReader().read()
             .then(reader => {
               // Ordered from least to most intensive
               if (this.isGIF(reader.value)) {
                 this.isAnimated = true
                 this.setLabel('GIF')
-                return
+                return true
               }
               if (this.isAnimatedWEBP(reader.value)) {
                 this.isAnimated = true
                 this.setLabel('WEBP')
-                return
+                return true
               }
               if (this.isAnimatedPNG(reader.value)) {
                 this.isAnimated = true
                 this.setLabel('APNG')
+                return true
               }
+              return false
             })
         })
         .catch(() => {
           // this.imageLoadError && this.imageLoadError()
+          return null
         })
     },
     detectWithMediaProxy (image) {
       this.detectAnimationWithFetch(image)
     },
-    detectWithoutMediaProxy (image) {
-      // We'll just assume that gifs and webp are animated
+    async detectWithoutMediaProxy (image) {
+      // If media is local, we can still fetch,
+      // otherwise CORS won’t allow it and we fall back to checking extensions
+      // (XXX: ideally we’d _only_ fetch if it’s an allowed domain;
+      //   i.e. local media or proxy, but we currently have no way of knowing)
+      const classifiedAsAnim = await this.detectAnimationWithFetch(image)
+      if (classifiedAsAnim != null) {
+        return
+      }
+
+      // Otherwise we'll just make a guess based on extension
       const extension = image.src.split('.').pop().toLowerCase()
 
       if (extension === 'gif') {
@@ -127,11 +139,7 @@ const StillImage = {
         return
       }
 
-      // Hail mary for extensionless
-      if (extension.includes('/')) {
-        // Don't mind the CORS error barrage
-        this.detectAnimationWithFetch(image)
-      }
+      // Hail mary for extensionless files we cannot fetch
     },
     setLabel (name) {
       this.imageTypeLabel = name;
