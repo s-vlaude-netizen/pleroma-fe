@@ -50,7 +50,6 @@ const MASTODON_FOLLOWERS_URL = id => `/api/v1/accounts/${id}/followers`
 const MASTODON_FOLLOW_REQUESTS_URL = '/api/v1/follow_requests'
 const MASTODON_APPROVE_USER_URL = id => `/api/v1/follow_requests/${id}/authorize`
 const MASTODON_DENY_USER_URL = id => `/api/v1/follow_requests/${id}/reject`
-const MASTODON_DIRECT_MESSAGES_TIMELINE_URL = '/api/v1/timelines/direct'
 const MASTODON_PUBLIC_TIMELINE = '/api/v1/timelines/public'
 const MASTODON_USER_HOME_TIMELINE_URL = '/api/v1/timelines/home'
 const AKKOMA_BUBBLE_TIMELINE_URL = '/api/v1/timelines/bubble'
@@ -710,7 +709,6 @@ const fetchTimeline = ({
     public: MASTODON_PUBLIC_TIMELINE,
     bubble: AKKOMA_BUBBLE_TIMELINE_URL,
     friends: MASTODON_USER_HOME_TIMELINE_URL,
-    dms: MASTODON_DIRECT_MESSAGES_TIMELINE_URL,
     notifications: MASTODON_USER_NOTIFICATIONS_URL,
     'publicAndExternal': MASTODON_PUBLIC_TIMELINE,
     user: MASTODON_USER_TIMELINE_URL,
