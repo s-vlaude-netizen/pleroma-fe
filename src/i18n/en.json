@@ -243,6 +243,14 @@
         "search": "Search users",
         "title": "List title"
     },
+    "dm_conv": {
+        "default_name": "Conversation {id}",
+        "last_active_date": "Last activity",
+        "last_active_member": "Last active",
+        "last_message_title": "Last message",
+        "page_header": "Direct Conversation",
+        "unread_msg": "has unread messages"
+    },
     "login": {
         "authentication_code": "Authentication code",
         "description": "Log in with OAuth",
@@ -306,6 +314,9 @@
         "bubble_timeline": "Bubble timeline",
         "bubble_timeline_description": "Posts from instances close to yours, as recommended by the admins",
         "chats": "Chats",
+        "dm_conv_list": "Direct Conversations",
+        "dm_conversation": "Direct Conversation",
+        "dm_conversations": "Direct Conversations",
         "dms": "Direct messages",
         "friend_requests": "Follow requests",
         "home_timeline": "Home timeline",

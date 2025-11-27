@@ -63,6 +63,7 @@ export const defaultState = () => ({
     tag: emptyTl(),
     bookmarks: emptyTl(),
     list: emptyTl(),
+    dmConv: emptyTl(),
     bubble: emptyTl(),
     replies: emptyTl()
   }

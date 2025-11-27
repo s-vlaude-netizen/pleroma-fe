@@ -28,6 +28,18 @@
         <li v-if="currentUser">
           <router-link
             class="menu-item"
+            :to="{ name: 'dms' }"
+          >
+            <FAIcon
+              fixed-width
+              class="fa-scale-110"
+              icon="envelope"
+            />{{ $t("nav.dm_conversations") }}
+          </router-link>
+        </li>
+        <li v-if="currentUser">
+          <router-link
+            class="menu-item"
             :to="{ name: 'lists' }"
           >
             <FAIcon

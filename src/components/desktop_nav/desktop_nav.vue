@@ -108,6 +108,18 @@
           <router-link
             v-if="currentUser"
             class="nav-icon"
+            :to="{ name: 'dms' }"
+          >
+            <FAIcon
+              fixed-width
+              class="fa-scale-110 fa-old-padding"
+              icon="envelope"
+              :title="$t('nav.dm_conversations')"
+            />
+          </router-link>
+          <router-link
+            v-if="currentUser"
+            class="nav-icon"
             :to="{ name: 'interactions', params: { username: currentUser.screen_name } }"
           >
             <FAIcon

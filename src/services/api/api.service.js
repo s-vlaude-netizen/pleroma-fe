@@ -1,5 +1,5 @@
 import { each, map, concat, last, get } from 'lodash'
-import { parseStatus, parseSource, parseUser, parseNotification, parseReport, parseAttachment, parseLinkHeaderPagination } from '../entity_normalizer/entity_normalizer.service.js'
+import { parseStatus, parseSource, parseUser, parseNotification, parseReport, parseAttachment, parseDMConversation, parseLinkHeaderPagination } from '../entity_normalizer/entity_normalizer.service.js'
 import { RegistrationError, StatusCodeError } from '../errors/errors'
 import { Url } from 'url'
 
@@ -53,6 +53,9 @@ const MASTODON_DENY_USER_URL = id => `/api/v1/follow_requests/${id}/reject`
 const MASTODON_PUBLIC_TIMELINE = '/api/v1/timelines/public'
 const MASTODON_USER_HOME_TIMELINE_URL = '/api/v1/timelines/home'
 const AKKOMA_BUBBLE_TIMELINE_URL = '/api/v1/timelines/bubble'
+const MASTODON_USER_CONVERSATIONS_URL = '/api/v1/conversations'
+const PLEROMA_CONVERSATION_DETAILS = id => `/api/v1/pleroma/conversations/${id}`
+const PLEROMA_CONVERSATION_TIMELINE = id => `/api/v1/pleroma/conversations/${id}/statuses`
 const MASTODON_STATUS_URL = id => `/api/v1/statuses/${id}`
 const MASTODON_STATUS_CONTEXT_URL = id => `/api/v1/statuses/${id}/context`
 const MASTODON_STATUS_SOURCE_URL = id => `/api/v1/statuses/${id}/source`
@@ -519,6 +522,39 @@ const fetchConversation = ({ id, credentials }) => {
     }))
 }
 
+const fetchDMConversationList = ({ credentials, pagination: savedPagination }) => {
+  // We always start fetching from most recent and move back in time
+  const queryParams = new URLSearchParams()
+  if (savedPagination?.maxId) {
+    queryParams.append('max_id', savedPagination.maxId)
+  }
+
+  let url = `${MASTODON_USER_CONVERSATIONS_URL}?${queryParams.toString()}`
+  let pagination = {}
+
+  return fetch(url, { headers: authHeaders(credentials) })
+    .then((response) => {
+      pagination = parseLinkHeaderPagination(response.headers.get('Link'), {
+        flakeId: true
+      })
+
+      return getJsonIfSuccess(response, url, {})
+    })
+    .then((data) => {
+      return {
+        pagination,
+        data: data.map(c => parseDMConversation(c))
+      }
+    })
+}
+
+const fetchDMConversationDetails = ({ id, credentials }) => {
+  let url = PLEROMA_CONVERSATION_DETAILS(id)
+  return fetch(url, { headers: authHeaders(credentials) })
+    .then((response) => getJsonIfSuccess(response, url, {}))
+    .then((data) => parseDMConversation(data))
+}
+
 const fetchStatus = ({ id, credentials }) => {
   let url = MASTODON_STATUS_URL(id)
   return fetch(url, { headers: authHeaders(credentials) })
@@ -701,6 +737,7 @@ const fetchTimeline = ({
   until = false,
   userId = false,
   listId = false,
+  conversationId = false,
   tag = false,
   withMuted = false,
   replyVisibility = 'all'
@@ -709,6 +746,7 @@ const fetchTimeline = ({
     public: MASTODON_PUBLIC_TIMELINE,
     bubble: AKKOMA_BUBBLE_TIMELINE_URL,
     friends: MASTODON_USER_HOME_TIMELINE_URL,
+    dmConv: PLEROMA_CONVERSATION_TIMELINE,
     notifications: MASTODON_USER_NOTIFICATIONS_URL,
     'publicAndExternal': MASTODON_PUBLIC_TIMELINE,
     user: MASTODON_USER_TIMELINE_URL,
@@ -730,6 +768,10 @@ const fetchTimeline = ({
 
   if (timeline === 'list') {
     url = url(listId)
+  }
+
+  if (timeline === 'dmConv') {
+    url = url(conversationId)
   }
 
   if (since) {
@@ -1753,6 +1795,8 @@ const apiService = {
   fetchTimeline,
   fetchPinnedStatuses,
   fetchConversation,
+  fetchDMConversationList,
+  fetchDMConversationDetails,
   fetchStatus,
   fetchStatusSource,
   fetchStatusHistory,

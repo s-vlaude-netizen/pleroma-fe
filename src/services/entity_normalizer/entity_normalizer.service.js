@@ -464,6 +464,12 @@ export const parseReport = (data) => {
   return report
 }
 
+export const parseDMConversation = (data) => {
+   data.accounts = data.accounts.map(u => parseUser(u))
+   data.last_status = parseStatus(data.last_status)
+   return data
+}
+
 const isNsfw = (status) => {
   const nsfwRegex = /#nsfw/i
   return (status.tags || []).includes('nsfw') || !!(status.text || '').match(nsfwRegex)

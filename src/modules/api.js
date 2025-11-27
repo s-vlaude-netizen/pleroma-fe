@@ -229,7 +229,7 @@ const api = {
     // Timelines
     startFetchingTimeline(
       store,
-      { timeline = "friends", tag = false, userId = false, listId = false },
+      { timeline = "friends", tag = false, userId = false, listId = false, conversationId = false },
     ) {
       if (store.state.fetchers[timeline]) return;
 
@@ -238,6 +238,7 @@ const api = {
         store,
         userId,
         listId,
+        conversationId,
         tag,
       });
       store.commit("addFetcher", { fetcherName: timeline, fetcher });

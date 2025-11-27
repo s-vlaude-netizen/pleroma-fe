@@ -1,6 +1,8 @@
 import PublicTimeline from 'components/public_timeline/public_timeline.vue'
 import PublicAndExternalTimeline from 'components/public_and_external_timeline/public_and_external_timeline.vue'
 import FriendsTimeline from 'components/friends_timeline/friends_timeline.vue'
+import DMConvTimeline from 'components/dm_conv_timeline/dm_conv_timeline.vue'
+import DMConvList from 'components/dm_conv_list/dm_conv_list.vue'
 import TagTimeline from 'components/tag_timeline/tag_timeline.vue'
 import BubbleTimeline from 'components/bubble_timeline/bubble_timeline.vue'
 import BookmarkTimeline from 'components/bookmark_timeline/bookmark_timeline.vue'
@@ -46,6 +48,8 @@ export default (store) => {
     { name: 'public-timeline', path: '/main/public', component: PublicTimeline },
     { name: 'bubble-timeline', path: '/main/bubble', component: BubbleTimeline },
     { name: 'friends', path: '/main/friends', component: FriendsTimeline, beforeEnter: validateAuthenticatedRoute },
+    { name: 'dms', path: '/main/conversations', component: DMConvList, beforeEnter: validateAuthenticatedRoute },
+    { name: 'dm_conversation', path: '/main/conversations/:id', component: DMConvTimeline, beforeEnter: validateAuthenticatedRoute },
     { name: 'tag-timeline', path: '/tag/:tag', component: TagTimeline },
     { name: 'bookmarks', path: '/bookmarks', component: BookmarkTimeline },
     { name: 'conversation', path: '/notice/:id', component: ConversationPage, meta: { dontScroll: true } },

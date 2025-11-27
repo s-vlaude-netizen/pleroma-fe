@@ -59,6 +59,18 @@
           v-if="currentUser"
           @click="toggleDrawer"
         >
+          <router-link :to="{ name: 'dms' }">
+            <FAIcon
+              fixed-width
+              class="fa-scale-110 fa-old-padding"
+              icon="envelope"
+            /> {{ $t("nav.dm_conversations") }}
+          </router-link>
+        </li>
+        <li
+          v-if="currentUser"
+          @click="toggleDrawer"
+        >
           <router-link :to="{ name: 'lists' }">
             <FAIcon
               fixed-width
