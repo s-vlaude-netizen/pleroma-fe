@@ -52,7 +52,6 @@ const StillImage = {
       this.isPixelArt ||= image.naturalHeight * image.naturalWidth <= 32 * 32;
       // Common size for oldweb badges.
       this.isPixelArt ||= image.naturalWidth == 88 && image.naturalHeight == 31;
-      console.log(image.src+" is "+image.naturalHeight+"x"+image.naturalWidth+" - "+(this.isPixelArt ? "pixel art" : "normal"))
     },
     detectAnimation (image) {
       const mediaProxyAvailable = this.$store.state.instance.mediaProxyAvailable
