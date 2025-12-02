@@ -28,6 +28,11 @@ const DMConvCard = {
     last_status_text() {
       return this.conversation.last_status?.content
     }
+  },
+  methods: {
+    markRead() {
+      this.$store.dispatch('markDMConversationAsRead', { id: this.conversation.id })
+    }
   }
 }
 

@@ -54,6 +54,8 @@ const MASTODON_PUBLIC_TIMELINE = '/api/v1/timelines/public'
 const MASTODON_USER_HOME_TIMELINE_URL = '/api/v1/timelines/home'
 const AKKOMA_BUBBLE_TIMELINE_URL = '/api/v1/timelines/bubble'
 const MASTODON_USER_CONVERSATIONS_URL = '/api/v1/conversations'
+const MASTODON_CONVERSATION_MARK_READ = id => `/api/v1/conversations/${id}/read`
+const PLEROMA_CONVERSATION_MARK_ALL_READ = '/api/v1/pleroma/conversations/read'
 const PLEROMA_CONVERSATION_DETAILS = id => `/api/v1/pleroma/conversations/${id}`
 const PLEROMA_CONVERSATION_TIMELINE = id => `/api/v1/pleroma/conversations/${id}/statuses`
 const MASTODON_STATUS_URL = id => `/api/v1/statuses/${id}`
@@ -553,6 +555,26 @@ const fetchDMConversationDetails = ({ id, credentials }) => {
   return fetch(url, { headers: authHeaders(credentials) })
     .then((response) => getJsonIfSuccess(response, url, {}))
     .then((data) => parseDMConversation(data))
+}
+
+const markDMConversationAsRead = ({ id, credentials }) => {
+  let url = MASTODON_CONVERSATION_MARK_READ(id)
+  return fetch(url, {
+      method: 'POST',
+      headers: authHeaders(credentials)
+    })
+    .then((response) => getJsonIfSuccess(response, url, {}))
+    .then((data) => parseDMConversation(data))
+}
+
+const markAllDMConversationsAsRead = ({ credentials }) => {
+  let url = PLEROMA_CONVERSATION_MARK_ALL_READ
+  return fetch(url, {
+      method: 'POST',
+      headers: authHeaders(credentials)
+    })
+    .then((response) => getJsonIfSuccess(response, url, {}))
+    .then((data) => data.map(c => parseDMConversation(c)))
 }
 
 const fetchStatus = ({ id, credentials }) => {
@@ -1797,6 +1819,8 @@ const apiService = {
   fetchConversation,
   fetchDMConversationList,
   fetchDMConversationDetails,
+  markDMConversationAsRead,
+  markAllDMConversationsAsRead,
   fetchStatus,
   fetchStatusSource,
   fetchStatusHistory,

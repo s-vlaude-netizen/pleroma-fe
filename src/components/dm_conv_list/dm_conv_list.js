@@ -22,6 +22,11 @@ const DMConvList = {
     conversations() {
       return this.$store.state.dmConversations.allDMConversations
     }
+  },
+  methods: {
+    markAllRead() {
+      this.$store.dispatch('markAllDMConversationsAsRead')
+    }
   }
 }
 

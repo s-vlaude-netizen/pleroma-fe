@@ -15,6 +15,16 @@
           >
             !
           </span>
+          <button
+            class="button-unstyled"
+            :title="$t('dm_conv.mark_single_read_tooltip')"
+            @click.stop.prevent="markRead()"
+          >
+            <FAIcon
+              icon="check"
+              class="fa-scale-110 fa-old-padding dm-conv-mark-read"
+            />
+          </button>
           &nbsp;
         </div>
         <h4>{{ $t('dm_conv.default_name', {id: this.conversation.id}) }}</h4>
