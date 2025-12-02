@@ -38,6 +38,9 @@ const mutations = {
         state.allDMConversations.push(conv)
     }
   },
+  deleteDMConversation(state, id) {
+    remove(state.allDMConversations, { id })
+  }
 }
 
 const actions = {
@@ -72,6 +75,11 @@ const actions = {
       .markAllDMConversationsAsRead()
       .then(data => commit('updateDMConversations', data))
   },
+  deleteDMConversation({ rootState, commit }, { id }) {
+    rootState.api.backendInteractor
+      .deleteDMConversation({ id })
+      .then(data => commit('deleteDMConversation', id))
+  }
 }
 
 const dmConversations = {

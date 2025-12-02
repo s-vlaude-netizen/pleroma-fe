@@ -32,7 +32,10 @@ const DMConvCard = {
   methods: {
     markRead() {
       this.$store.dispatch('markDMConversationAsRead', { id: this.conversation.id })
-    }
+    },
+    deleteConversation() {
+      this.$store.dispatch('deleteDMConversation', { id: this.conversation.id })
+	}
   }
 }
 

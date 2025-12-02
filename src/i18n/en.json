@@ -245,6 +245,7 @@
     },
     "dm_conv": {
         "default_name": "Conversation {id}",
+        "delete_tooltip": "remove conversation from list",
         "last_active_date": "Last activity",
         "last_active_member": "Last active",
         "last_message_title": "Last message",

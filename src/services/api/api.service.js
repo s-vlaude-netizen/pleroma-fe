@@ -54,6 +54,7 @@ const MASTODON_PUBLIC_TIMELINE = '/api/v1/timelines/public'
 const MASTODON_USER_HOME_TIMELINE_URL = '/api/v1/timelines/home'
 const AKKOMA_BUBBLE_TIMELINE_URL = '/api/v1/timelines/bubble'
 const MASTODON_USER_CONVERSATIONS_URL = '/api/v1/conversations'
+const MASTODON_CONVERSATION_DELETE = id => `/api/v1/conversations/${id}`
 const MASTODON_CONVERSATION_MARK_READ = id => `/api/v1/conversations/${id}/read`
 const PLEROMA_CONVERSATION_MARK_ALL_READ = '/api/v1/pleroma/conversations/read'
 const PLEROMA_CONVERSATION_DETAILS = id => `/api/v1/pleroma/conversations/${id}`
@@ -575,6 +576,15 @@ const markAllDMConversationsAsRead = ({ credentials }) => {
     })
     .then((response) => getJsonIfSuccess(response, url, {}))
     .then((data) => data.map(c => parseDMConversation(c)))
+}
+
+const deleteDMConversation = ({ id, credentials }) => {
+  let url = MASTODON_CONVERSATION_DELETE(id)
+  return fetch(url, {
+      method: 'DELETE',
+      headers: authHeaders(credentials)
+  })
+  .then((response) => getJsonIfSuccess(response, url, {}))
 }
 
 const fetchStatus = ({ id, credentials }) => {
@@ -1821,6 +1831,7 @@ const apiService = {
   fetchDMConversationDetails,
   markDMConversationAsRead,
   markAllDMConversationsAsRead,
+  deleteDMConversation,
   fetchStatus,
   fetchStatusSource,
   fetchStatusHistory,
