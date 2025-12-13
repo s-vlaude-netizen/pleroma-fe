@@ -9,7 +9,18 @@ const DMConvCard = {
     UserAvatar
   },
   props: {
-    conversation: Object
+    conversation: {
+      type: Object,
+      required: true
+    },
+    compact: {
+      type: Boolean,
+      default: true
+    },
+    showLastStatus: {
+      type: Boolean,
+      default: true
+    }
   },
   data () {
     return {

@@ -49,14 +49,17 @@
         <UserAvatar
           v-for="user in membersTruncated.users"
           :user="user"
-          :compact="true"
+          :compact="compact"
         />
         <div v-if="membersTruncated.truncated" class="ellipsis">
           ...
         </div>
       </div>
     </router-link>
-    <div class="last-message">
+    <div
+      class="last-message"
+      v-if="showLastStatus"
+    >
       <div class="last-message-title">
         {{ $t('dm_conv.last_message_title') }}:
       </div>
