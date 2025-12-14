@@ -245,6 +245,10 @@
     },
     "dm_conv": {
         "default_name": "Conversation {id}",
+        "delete_confirm": "Are you sure you want to remove the conversation {identifier}?",
+        "delete_confirm_accept_button": "Yes, remove",
+        "delete_confirm_cancel_button": "No, keep",
+        "delete_confirm_title": "Remove DM conversation",
         "delete_tooltip": "remove conversation from list",
         "last_active_date": "Last activity",
         "last_active_member": "Last active",
@@ -523,6 +527,7 @@
         "confirm_dialogs_approve_follow": "Accepting a follow request",
         "confirm_dialogs_block": "Blocking someone",
         "confirm_dialogs_delete": "Deleting a post",
+        "confirm_dialogs_delete_dm_conv": "Deleting a DM conversation",
         "confirm_dialogs_deny_follow": "Rejecting a follow request",
         "confirm_dialogs_mute": "Muting someone",
         "confirm_dialogs_repeat": "Repeating a post",

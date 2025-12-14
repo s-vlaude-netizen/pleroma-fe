@@ -66,6 +66,18 @@
         :is-preview="true"
       />
     </div>
+    <teleport to="#modal">
+      <confirm-modal
+        v-if="showingDeleteConfirmDialogue"
+        :title="$t('dm_conv.delete_confirm_title')"
+        :confirm-text="$t('dm_conv.delete_confirm_accept_button')"
+        :cancel-text="$t('dm_conv.delete_confirm_cancel_button')"
+        @accepted="doDeleteConversation"
+        @cancelled="hideDeleteConfirmModal"
+      >
+        {{ $t('dm_conv.delete_confirm', { identifier: this.conversation.id }) }}
+      </confirm-modal>
+    </teleport>
   </div>
 </template>
 

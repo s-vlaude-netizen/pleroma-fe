@@ -335,6 +335,11 @@
                 {{ $t('settings.confirm_dialogs_deny_follow') }}
               </BooleanSetting>
             </li>
+            <li>
+              <BooleanSetting path="modalOnDeleteDMConversation">
+                {{ $t('settings.confirm_dialogs_delete_dm_conv') }}
+              </BooleanSetting>
+            </li>
           </ul>
         </li>
       </ul>
