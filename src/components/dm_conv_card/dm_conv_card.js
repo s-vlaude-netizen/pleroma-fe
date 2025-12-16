@@ -22,6 +22,7 @@ const DMConvCard = {
       default: true
     }
   },
+  emits: ['deleted'],
   data () {
     return {
       showingDeleteConfirmDialogue: false
@@ -67,6 +68,7 @@ const DMConvCard = {
     doDeleteConversation() {
       this.$store.dispatch('deleteDMConversation', { id: this.conversation.id })
       this.hideDeleteConfirmModal()
+      this.$emit('deleted')
     }
   }
 }

@@ -52,6 +52,12 @@
         </button>
       </div>
     </div>
+    <div
+      v-if="$slots.extraHeading"
+      class="timeline-extra-heading"
+    >
+      <slot name="extraHeading"></slot>
+    </div>
     <div :class="classes.body">
       <div
         ref="timeline"

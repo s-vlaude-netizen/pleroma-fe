@@ -1,14 +1,23 @@
 <template>
-  <!--
-    TODO: add conv details in header via slots
-    https://vuejs.org/guide/components/slots.html#slots
-  -->
   <Timeline
     title="$t('dm_conv.page_header')"
     :timeline="timeline"
     :conversation-id="conversationId"
     timeline-name="dmConv"
-  />
+  >
+    <template
+      v-slot:extraHeading
+    >
+      <DMConvCard
+        v-if="conversation"
+        :conversation="conversation"
+        :compact="false"
+        :showLastStatus="false"
+        :linkToTimeline="false"
+        @deleted="forceLeave"
+      />
+    </template>
+  </Timeline>
 </template>
 
 <script src="./dm_conv_timeline.js"></script>

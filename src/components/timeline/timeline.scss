@@ -14,6 +14,13 @@
     z-index: 2;
   }
 
+  .timeline-extra-heading {
+    width: 100%;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    background-color: var(--panel, #182230);
+  }
+
   &.-nonpanel {
     .timeline-heading {
       text-align: center;
