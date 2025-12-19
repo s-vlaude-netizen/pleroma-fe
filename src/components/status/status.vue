@@ -125,6 +125,15 @@
               :icon="visibilityIcon(retweeterVisibility)"
             />
           </span>
+
+          {{ ' ' }}
+
+          <Timeago
+            class="timeago"
+            :time="statusoid.created_at"
+            :with-direction="!compact"
+            :auto-update="60"
+          />
         </div>
       </div>
 
