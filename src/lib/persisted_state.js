@@ -4,9 +4,20 @@ import { each, get, set, cloneDeep } from 'lodash'
 
 let loaded = false
 
+// use this to avoid cloning and persisitng private runtime state
+// (runtime state can be reconstructed and may include non-cloneable objects like functions)
+const clonePublicKeys = (state) => {
+  const clonedState = {}
+  for (const key in state) {
+    if (!key.startsWith('__'))
+      set(clonedState, key, cloneDeep(state[key]))
+  }
+  return clonedState
+}
+
 const defaultReducer = (state, paths) => (
-  paths.length === 0 ? state : paths.reduce((substate, path) => {
-    set(substate, path, get(state, path))
+  paths.length === 0 ? clonePublicKeys(state) : paths.reduce((substate, path) => {
+    set(substate, path, clonePublicKeys(get(state, path)))
     return substate
   }, {})
 )
@@ -70,7 +81,7 @@ export default function createPersistedState ({
       subscriber(store)((mutation, state) => {
         try {
           if (saveImmedeatelyActions.includes(mutation.type)) {
-            setState(key, reducer(cloneDeep(state), paths), storage)
+            setState(key, reducer(state, paths), storage)
               .then(success => {
                 if (typeof success !== 'undefined') {
                   if (mutation.type === 'setOption' || mutation.type === 'setCurrentUser') {
