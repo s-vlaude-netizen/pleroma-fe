@@ -150,7 +150,13 @@ const promisedRequest = ({ method, url, params, payload, credentials, headers = 
   }
   if (params) {
     url += '?' + Object.entries(params)
-      .map(([key, value]) => encodeURIComponent(key) + '=' + encodeURIComponent(value))
+      .map(([key, value]) => {
+        if (!Array.isArray(value)) {
+          return (encodeURIComponent(key) + '=' + encodeURIComponent(value))
+        } else {
+          return value.map((v) => encodeURIComponent(key) + '[]=' + encodeURIComponent(v)).join('&')
+        }
+      })
       .join('&')
   }
   if (payload) {
