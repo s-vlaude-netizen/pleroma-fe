@@ -62,6 +62,14 @@ const actions = {
         return data
       })
   },
+  setDMConversationDetails({ rootState, commit }, { id, ...params }) {
+    return rootState.api.backendInteractor
+      .setDMConversationDetails({ id, ...params })
+      .then(data => {
+        commit('updateDMConversation', data)
+        return data
+      })
+  },
   clearDMConversations({ commit }) {
     commit('clearDMConversations')
   },

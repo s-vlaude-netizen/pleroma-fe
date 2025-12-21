@@ -69,6 +69,18 @@
         :is-preview="true"
       />
     </div>
+    <div
+      v-if="showFullControls"
+      class="controls"
+    >
+      <button
+        class="btn button-default"
+        :title="$t('dm_conv.recipients_edit_mode_button_tooltip')"
+        @click.once="$router.push({ name: 'dm-conversation-recipients', params: { id: this.conversation.id }})"
+      >
+        {{ $t('dm_conv.recipients_edit_mode_button') }}
+      </button>
+    </div>
     <teleport to="#modal">
       <confirm-modal
         v-if="showingDeleteConfirmDialogue"
@@ -99,6 +111,10 @@
   .title-bar {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .controls {
+    text-align: center;
   }
 
   .members {

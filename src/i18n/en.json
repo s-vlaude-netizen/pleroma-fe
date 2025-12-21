@@ -256,6 +256,12 @@
         "mark_all_read_button": "Mark all as read",
         "mark_single_read_tooltip": "mark as read",
         "page_header": "Direct Conversation",
+        "recipients_edit_add_new_title": "Add new member:",
+        "recipients_edit_current_title": "Core members besides yourself:",
+        "recipients_edit_mode_button": "Edit core members",
+        "recipients_edit_mode_button_tooltip": "Edit core members",
+        "recipients_edit_title": "Core members of {conversation_name}",
+        "recipients_save": "Save changes to core members",
         "unread_msg": "has unread messages"
     },
     "login": {

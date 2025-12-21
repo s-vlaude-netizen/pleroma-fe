@@ -20,6 +20,10 @@ const DMConvCard = {
     showLastStatus: {
       type: Boolean,
       default: true
+    },
+    showFullControls: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['deleted'],

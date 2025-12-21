@@ -12,6 +12,7 @@
         v-if="conversation"
         :conversation="conversation"
         :compact="false"
+        :showFullControls="true"
         :showLastStatus="false"
         :linkToTimeline="false"
         @deleted="forceLeave"

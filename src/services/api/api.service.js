@@ -558,6 +558,18 @@ const fetchDMConversationDetails = ({ id, credentials }) => {
     .then((data) => parseDMConversation(data))
 }
 
+const setDMConversationDetails = ({id, credentials, ...params }) => {
+  let url = PLEROMA_CONVERSATION_DETAILS(id)
+  return promisedRequest({
+      url: url,
+      method: 'PATCH',
+      credentials,
+      // XXX: backend should start also accepting JSON request bodies as preferred by other endpoints
+      params: params
+    })
+    .then((data) => parseDMConversation(data))
+}
+
 const markDMConversationAsRead = ({ id, credentials }) => {
   let url = MASTODON_CONVERSATION_MARK_READ(id)
   return fetch(url, {
@@ -1829,6 +1841,7 @@ const apiService = {
   fetchConversation,
   fetchDMConversationList,
   fetchDMConversationDetails,
+  setDMConversationDetails,
   markDMConversationAsRead,
   markAllDMConversationsAsRead,
   deleteDMConversation,
