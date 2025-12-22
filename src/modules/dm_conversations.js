@@ -76,12 +76,18 @@ const actions = {
   markDMConversationAsRead({ rootState, commit }, { id }) {
     rootState.api.backendInteractor
       .markDMConversationAsRead({ id })
-      .then(data => commit('updateDMConversation', data))
+      .then(data => {
+        commit('updateDMConversation', data)
+        commit('decrementUnreadDMConversationsCount')
+      })
   },
   markAllDMConversationsAsRead({ rootState, commit }) {
     rootState.api.backendInteractor
       .markAllDMConversationsAsRead()
-      .then(data => commit('updateDMConversations', data))
+      .then(data => {
+        commit('updateDMConversations', data)
+        commit('clearUnreadDMConversationsCount')
+      })
   },
   deleteDMConversation({ rootState, commit }, { id }) {
     rootState.api.backendInteractor

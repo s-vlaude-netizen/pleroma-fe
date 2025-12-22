@@ -35,6 +35,12 @@
               class="fa-scale-110"
               icon="envelope"
             />{{ $t("nav.dm_conversations") }}
+            <span
+              v-if="unreadDMConversationsCount > 0"
+              class="badge badge-notification"
+            >
+              {{ unreadDMConversationsCount }}
+            </span>
           </router-link>
         </li>
         <li v-if="currentUser">

@@ -53,6 +53,9 @@ const NavPanel = {
       federating: state => state.instance.federating,
     }),
     ...mapGetters(['unreadAnnouncementCount']),
+    unreadDMConversationsCount () {
+      return this.$store.state.users.currentUser?.pleroma?.unread_conversation_count || 0
+    },
     followRequestCount () {
       return this.$store.state.users.currentUser.follow_requests_count
     }

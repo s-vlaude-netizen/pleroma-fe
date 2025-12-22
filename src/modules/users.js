@@ -293,6 +293,14 @@ export const mutations = {
     state.signUpPending = false
     state.signUpErrors = errors
   },
+  clearUnreadDMConversationsCount (store) {
+    if (store.currentUser.pleroma)
+      store.currentUser.pleroma.unread_conversation_count = 0
+  },
+  decrementUnreadDMConversationsCount (store) {
+    if (store.currentUser.pleroma?.unread_conversation_count)
+      store.currentUser.pleroma.unread_conversation_count--
+  },
   decrementFollowRequestsCount (store) {
     store.currentUser.follow_requests_count--
   },
