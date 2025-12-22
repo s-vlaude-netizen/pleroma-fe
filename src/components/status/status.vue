@@ -113,6 +113,27 @@
              />
              {{ $t('timeline.repeated') }}
           </div>
+
+          <span
+            v-if="retweeterVisibility"
+            class="visibility-icon"
+            :title="retweeterVisibilityLocalized"
+          >
+            <FAIcon
+              fixed-width
+              class="fa-scale-110"
+              :icon="visibilityIcon(retweeterVisibility)"
+            />
+          </span>
+
+          {{ ' ' }}
+
+          <Timeago
+            class="timeago"
+            :time="statusoid.created_at"
+            :with-direction="!compact"
+            :auto-update="60"
+          />
         </div>
       </div>
 
