@@ -155,6 +155,10 @@ export const mutations = {
     state.lastLoginName = user.screen_name
     state.currentUser = mergeWith(state.currentUser || {}, user, mergeArrayLength)
   },
+  updateCurrentUser (state, user) {
+    if (user.id !== state.currentUser?.id) return
+    state.currentUser = mergeWith(state.currentUser || {}, user, mergeArrayLength)
+  },
   clearCurrentUser (state) {
     state.currentUser = false
     state.lastLoginName = false
@@ -632,6 +636,7 @@ const users = {
           }
         })
         .then(() => {
+          store.dispatch('stopFetchingCurrentUserInfo')
           store.commit('clearCurrentUser')
           store.dispatch('disconnectFromSocket')
           store.commit('clearTokens')
@@ -703,6 +708,7 @@ const users = {
               store.dispatch('listSettingsProfiles')
               store.dispatch('startFetchingConfig')
               store.dispatch('startFetchingAnnouncements')
+              store.dispatch('startFetchingCurrentUserInfo', { id: user.id })
               if (user.role === 'admin' || user.role === 'moderator') {
                 store.dispatch('startFetchingReports')
               }
