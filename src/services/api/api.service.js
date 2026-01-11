@@ -1,5 +1,5 @@
 import { each, map, concat, last, get } from 'lodash'
-import { parseStatus, parseSource, parseUser, parseNotification, parseReport, parseAttachment, parseLinkHeaderPagination } from '../entity_normalizer/entity_normalizer.service.js'
+import { parseStatus, parseSource, parseUser, parseNotification, parseReport, parseAttachment, parseDMConversation, parseLinkHeaderPagination } from '../entity_normalizer/entity_normalizer.service.js'
 import { RegistrationError, StatusCodeError } from '../errors/errors'
 import { Url } from 'url'
 
@@ -50,10 +50,15 @@ const MASTODON_FOLLOWERS_URL = id => `/api/v1/accounts/${id}/followers`
 const MASTODON_FOLLOW_REQUESTS_URL = '/api/v1/follow_requests'
 const MASTODON_APPROVE_USER_URL = id => `/api/v1/follow_requests/${id}/authorize`
 const MASTODON_DENY_USER_URL = id => `/api/v1/follow_requests/${id}/reject`
-const MASTODON_DIRECT_MESSAGES_TIMELINE_URL = '/api/v1/timelines/direct'
 const MASTODON_PUBLIC_TIMELINE = '/api/v1/timelines/public'
 const MASTODON_USER_HOME_TIMELINE_URL = '/api/v1/timelines/home'
 const AKKOMA_BUBBLE_TIMELINE_URL = '/api/v1/timelines/bubble'
+const MASTODON_USER_CONVERSATIONS_URL = '/api/v1/conversations'
+const MASTODON_CONVERSATION_DELETE = id => `/api/v1/conversations/${id}`
+const MASTODON_CONVERSATION_MARK_READ = id => `/api/v1/conversations/${id}/read`
+const PLEROMA_CONVERSATION_MARK_ALL_READ = '/api/v1/pleroma/conversations/read'
+const PLEROMA_CONVERSATION_DETAILS = id => `/api/v1/pleroma/conversations/${id}`
+const PLEROMA_CONVERSATION_TIMELINE = id => `/api/v1/pleroma/conversations/${id}/statuses`
 const MASTODON_STATUS_URL = id => `/api/v1/statuses/${id}`
 const MASTODON_STATUS_CONTEXT_URL = id => `/api/v1/statuses/${id}/context`
 const MASTODON_STATUS_SOURCE_URL = id => `/api/v1/statuses/${id}/source`
@@ -150,7 +155,13 @@ const promisedRequest = ({ method, url, params, payload, credentials, headers = 
   }
   if (params) {
     url += '?' + Object.entries(params)
-      .map(([key, value]) => encodeURIComponent(key) + '=' + encodeURIComponent(value))
+      .map(([key, value]) => {
+        if (!Array.isArray(value)) {
+          return (encodeURIComponent(key) + '=' + encodeURIComponent(value))
+        } else {
+          return value.map((v) => encodeURIComponent(key) + '[]=' + encodeURIComponent(v)).join('&')
+        }
+      })
       .join('&')
   }
   if (payload) {
@@ -514,6 +525,80 @@ const fetchConversation = ({ id, credentials }) => {
     }))
 }
 
+const fetchDMConversationList = ({ credentials, pagination: savedPagination }) => {
+  // We always start fetching from most recent and move back in time
+  const queryParams = new URLSearchParams()
+  if (savedPagination?.maxId) {
+    queryParams.append('max_id', savedPagination.maxId)
+  }
+
+  let url = `${MASTODON_USER_CONVERSATIONS_URL}?${queryParams.toString()}`
+  let pagination = {}
+
+  return fetch(url, { headers: authHeaders(credentials) })
+    .then((response) => {
+      pagination = parseLinkHeaderPagination(response.headers.get('Link'), {
+        flakeId: true
+      })
+
+      return getJsonIfSuccess(response, url, {})
+    })
+    .then((data) => {
+      return {
+        pagination,
+        data: data.map(c => parseDMConversation(c))
+      }
+    })
+}
+
+const fetchDMConversationDetails = ({ id, credentials }) => {
+  let url = PLEROMA_CONVERSATION_DETAILS(id)
+  return fetch(url, { headers: authHeaders(credentials) })
+    .then((response) => getJsonIfSuccess(response, url, {}))
+    .then((data) => parseDMConversation(data))
+}
+
+const setDMConversationDetails = ({id, credentials, ...params }) => {
+  let url = PLEROMA_CONVERSATION_DETAILS(id)
+  return promisedRequest({
+      url: url,
+      method: 'PATCH',
+      credentials,
+      // XXX: backend should start also accepting JSON request bodies as preferred by other endpoints
+      params: params
+    })
+    .then((data) => parseDMConversation(data))
+}
+
+const markDMConversationAsRead = ({ id, credentials }) => {
+  let url = MASTODON_CONVERSATION_MARK_READ(id)
+  return fetch(url, {
+      method: 'POST',
+      headers: authHeaders(credentials)
+    })
+    .then((response) => getJsonIfSuccess(response, url, {}))
+    .then((data) => parseDMConversation(data))
+}
+
+const markAllDMConversationsAsRead = ({ credentials }) => {
+  let url = PLEROMA_CONVERSATION_MARK_ALL_READ
+  return fetch(url, {
+      method: 'POST',
+      headers: authHeaders(credentials)
+    })
+    .then((response) => getJsonIfSuccess(response, url, {}))
+    .then((data) => data.map(c => parseDMConversation(c)))
+}
+
+const deleteDMConversation = ({ id, credentials }) => {
+  let url = MASTODON_CONVERSATION_DELETE(id)
+  return fetch(url, {
+      method: 'DELETE',
+      headers: authHeaders(credentials)
+  })
+  .then((response) => getJsonIfSuccess(response, url, {}))
+}
+
 const fetchStatus = ({ id, credentials }) => {
   let url = MASTODON_STATUS_URL(id)
   return fetch(url, { headers: authHeaders(credentials) })
@@ -696,6 +781,7 @@ const fetchTimeline = ({
   until = false,
   userId = false,
   listId = false,
+  conversationId = false,
   tag = false,
   withMuted = false,
   replyVisibility = 'all'
@@ -704,7 +790,7 @@ const fetchTimeline = ({
     public: MASTODON_PUBLIC_TIMELINE,
     bubble: AKKOMA_BUBBLE_TIMELINE_URL,
     friends: MASTODON_USER_HOME_TIMELINE_URL,
-    dms: MASTODON_DIRECT_MESSAGES_TIMELINE_URL,
+    dmConv: PLEROMA_CONVERSATION_TIMELINE,
     notifications: MASTODON_USER_NOTIFICATIONS_URL,
     'publicAndExternal': MASTODON_PUBLIC_TIMELINE,
     user: MASTODON_USER_TIMELINE_URL,
@@ -726,6 +812,10 @@ const fetchTimeline = ({
 
   if (timeline === 'list') {
     url = url(listId)
+  }
+
+  if (timeline === 'dmConv') {
+    url = url(conversationId)
   }
 
   if (since) {
@@ -1749,6 +1839,12 @@ const apiService = {
   fetchTimeline,
   fetchPinnedStatuses,
   fetchConversation,
+  fetchDMConversationList,
+  fetchDMConversationDetails,
+  setDMConversationDetails,
+  markDMConversationAsRead,
+  markAllDMConversationsAsRead,
+  deleteDMConversation,
   fetchStatus,
   fetchStatusSource,
   fetchStatusHistory,

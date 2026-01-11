@@ -47,6 +47,7 @@ const defaultState = {
   modalOnLogout: true,
   modalOnApproveFollow: false,
   modalOnDenyFollow: false,
+  modalOnDeleteDMConversation: true,
   loginMethod: 'password',
   logo: '/static/logo.svg',
   logoMargin: '.2em',

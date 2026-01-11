@@ -1,12 +1,14 @@
 import PublicTimeline from 'components/public_timeline/public_timeline.vue'
 import PublicAndExternalTimeline from 'components/public_and_external_timeline/public_and_external_timeline.vue'
 import FriendsTimeline from 'components/friends_timeline/friends_timeline.vue'
+import DMConvTimeline from 'components/dm_conv_timeline/dm_conv_timeline.vue'
+import DMConvList from 'components/dm_conv_list/dm_conv_list.vue'
+import DMConvRecipients from 'components/dm_conv_recipients/dm_conv_recipients.vue'
 import TagTimeline from 'components/tag_timeline/tag_timeline.vue'
 import BubbleTimeline from 'components/bubble_timeline/bubble_timeline.vue'
 import BookmarkTimeline from 'components/bookmark_timeline/bookmark_timeline.vue'
 import ConversationPage from 'components/conversation-page/conversation-page.vue'
 import Interactions from 'components/interactions/interactions.vue'
-import DMs from 'components/dm_timeline/dm_timeline.vue'
 import UserProfile from 'components/user_profile/user_profile.vue'
 import Search from 'components/search/search.vue'
 import Registration from 'components/registration/registration.vue'
@@ -47,6 +49,9 @@ export default (store) => {
     { name: 'public-timeline', path: '/main/public', component: PublicTimeline },
     { name: 'bubble-timeline', path: '/main/bubble', component: BubbleTimeline },
     { name: 'friends', path: '/main/friends', component: FriendsTimeline, beforeEnter: validateAuthenticatedRoute },
+    { name: 'dms', path: '/main/conversations', component: DMConvList, beforeEnter: validateAuthenticatedRoute },
+    { name: 'dm_conversation', path: '/main/conversations/:id', component: DMConvTimeline, beforeEnter: validateAuthenticatedRoute },
+    { name: 'dm-conversation-recipients', path: '/main/conversations/:id/recipients', component: DMConvRecipients },
     { name: 'tag-timeline', path: '/tag/:tag', component: TagTimeline },
     { name: 'bookmarks', path: '/bookmarks', component: BookmarkTimeline },
     { name: 'conversation', path: '/notice/:id', component: ConversationPage, meta: { dontScroll: true } },
@@ -62,7 +67,6 @@ export default (store) => {
     },
     { name: 'external-user-profile', path: '/users/:id', component: UserProfile, meta: { dontScroll: true } },
     { name: 'interactions', path: '/users/:username/interactions', component: Interactions, beforeEnter: validateAuthenticatedRoute },
-    { name: 'dms', path: '/users/:username/dms', component: DMs, beforeEnter: validateAuthenticatedRoute },
     { name: 'registration', path: '/registration', component: Registration },
     { name: 'registration-request-sent', path: '/registration-request-sent', component: RegistrationRequestSent },
     { name: 'awaiting-email-confirmation', path: '/awaiting-email-confirmation', component: AwaitingEmailConfirmation },

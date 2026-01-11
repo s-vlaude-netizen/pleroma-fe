@@ -13,7 +13,7 @@ export const timelineNames = () => {
   return {
     'friends': 'nav.home_timeline',
     'bookmarks': 'nav.bookmarks',
-    'dms': 'nav.dms',
+    'dm_conversation': 'nav.dm_conversation',
     'public-timeline': 'nav.public_tl',
     'public-external-timeline': 'nav.twkn',
     'bubble-timeline': 'nav.bubble_timeline'

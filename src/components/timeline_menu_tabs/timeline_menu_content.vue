@@ -80,22 +80,6 @@
         >{{ $t("nav.bookmarks") }}</span>
       </router-link>
     </li>
-    <li v-if="currentUser">
-      <router-link
-        class="menu-item"
-        :to="{ name: 'dms', params: { username: currentUser.screen_name } }"
-      >
-        <FAIcon
-          fixed-width
-          class="fa-scale-110 fa-old-padding "
-          icon="envelope"
-        />
-        <span
-          :title="$t('nav.dms')"
-          :aria-label="$t('nav.dms')"
-        >{{ $t("nav.dms") }}</span>
-      </router-link>
-    </li>
   </ul>
 </template>
 

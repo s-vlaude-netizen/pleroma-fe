@@ -229,7 +229,7 @@ const api = {
     // Timelines
     startFetchingTimeline(
       store,
-      { timeline = "friends", tag = false, userId = false, listId = false },
+      { timeline = "friends", tag = false, userId = false, listId = false, conversationId = false },
     ) {
       if (store.state.fetchers[timeline]) return;
 
@@ -238,6 +238,7 @@ const api = {
         store,
         userId,
         listId,
+        conversationId,
         tag,
       });
       store.commit("addFetcher", { fetcherName: timeline, fetcher });
@@ -345,6 +346,20 @@ const api = {
       const fetcher = store.state.fetchers.reports;
       if (!fetcher) return;
       store.commit("removeFetcher", { fetcherName: "reports", fetcher });
+    },
+
+    // info of current user; e.g. count of pending follow requests
+    startFetchingCurrentUserInfo(store, { id }) {
+      if (store.state.fetchers["current_user"]) return;
+      const fetcher = store.state.backendInteractor.startFetchingCurrentUserInfo({
+        store, id
+      });
+      store.commit("addFetcher", { fetcherName: "current_user", fetcher });
+    },
+    stopFetchingCurrentUserInfo(store) {
+      const fetcher = store.state.fetchers.current_user;
+      if (!fetcher) return;
+      store.commit("removeFetcher", { fetcherName: "current_user", fetcher });
     },
 
     getSupportedTranslationlanguages(store) {

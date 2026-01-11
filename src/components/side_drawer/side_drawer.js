@@ -43,10 +43,6 @@ const SideDrawer = {
   }),
   created () {
     this.closeGesture = GestureService.swipeGesture(GestureService.DIRECTION_LEFT, this.toggleDrawer)
-
-    if (this.currentUser && this.currentUser.locked) {
-      this.$store.dispatch('startFetchingFollowRequests')
-    }
   },
   components: { UserCard },
   computed: {
@@ -58,6 +54,9 @@ const SideDrawer = {
     },
     unseenNotificationsCount () {
       return this.unseenNotifications.length
+    },
+    unreadDMConversationsCount () {
+      return this.$store.state.users.currentUser?.pleroma?.unread_conversation_count || 0
     },
     suggestionsEnabled () {
       return this.$store.state.instance.suggestionsEnabled

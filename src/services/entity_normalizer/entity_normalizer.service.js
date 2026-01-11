@@ -93,16 +93,20 @@ export const parseUser = (data) => {
     output.accepts_direct_messages_from = data.accepts_direct_messages_from
     output.follow_requests_count = data.follow_requests_count
     if (data.akkoma) {
+      output.akkoma = {}
       output.instance = data.akkoma.instance
       output.status_ttl_days = data.akkoma.status_ttl_days
       output.permit_followback = data.akkoma.permit_followback
     }
 
     if (data.pleroma) {
+      output.pleroma = {}
       const relationship = data.pleroma.relationship
 
       output.background_image = data.pleroma.background_image
       output.favicon = data.pleroma.favicon
+
+      output.pleroma.unread_conversation_count = data.pleroma.unread_conversation_count
 
       if (relationship) {
         output.relationship = relationship
@@ -462,6 +466,12 @@ export const parseReport = (data) => {
   report.id = data.id
 
   return report
+}
+
+export const parseDMConversation = (data) => {
+   data.accounts = data.accounts.map(u => parseUser(u))
+   data.last_status = parseStatus(data.last_status)
+   return data
 }
 
 const isNsfw = (status) => {

@@ -3,13 +3,14 @@ import { camelCase } from 'lodash'
 import apiService from '../api/api.service.js'
 import { promiseInterval } from '../promise_interval/promise_interval.js'
 
-const update = ({ store, statuses, timeline, showImmediately, userId, listId, pagination }) => {
+const update = ({ store, statuses, timeline, showImmediately, userId, listId, conversationId, pagination }) => {
   const ccTimeline = camelCase(timeline)
 
   store.dispatch('addNewStatuses', {
     timeline: ccTimeline,
     userId,
     listId,
+    conversationId,
     statuses,
     showImmediately,
     pagination
@@ -24,6 +25,7 @@ const fetchAndUpdate = ({
   showImmediately = false,
   userId = false,
   listId = false,
+  conversationId = false,
   tag = false,
   until,
   since
@@ -47,6 +49,7 @@ const fetchAndUpdate = ({
 
   args['userId'] = userId
   args['listId'] = listId
+  args['conversationId'] = conversationId
   args['tag'] = tag
   args['withMuted'] = !hideMutedPosts
   if (loggedIn && ['friends', 'public', 'publicAndExternal', 'bubble'].includes(timeline)) {
@@ -65,7 +68,7 @@ const fetchAndUpdate = ({
       if (!older && statuses.length >= 20 && !timelineData.loading && numStatusesBeforeFetch > 0) {
         store.dispatch('queueFlush', { timeline: timeline, id: timelineData.maxId })
       }
-      update({ store, statuses, timeline, showImmediately, userId, listId, pagination })
+      update({ store, statuses, timeline, showImmediately, userId, listId, conversationId, pagination })
       return { statuses, pagination }
     })
     .catch((error) => {
@@ -78,15 +81,16 @@ const fetchAndUpdate = ({
     })
 }
 
-const startFetching = ({ timeline = 'friends', credentials, store, userId = false, listId = false, tag = false }) => {
+const startFetching = ({ timeline = 'friends', credentials, store, userId = false, listId = false, conversationId = false, tag = false }) => {
   const rootState = store.rootState || store.state
   const timelineData = rootState.statuses.timelines[camelCase(timeline)]
   const showImmediately = timelineData.visibleStatuses.length === 0
   timelineData.userId = userId
   timelineData.listId = listId
-  fetchAndUpdate({ timeline, credentials, store, showImmediately, userId, listId, tag })
+  timelineData.conversationId = conversationId
+  fetchAndUpdate({ timeline, credentials, store, showImmediately, userId, listId, conversationId, tag })
   const boundFetchAndUpdate = () =>
-    fetchAndUpdate({ timeline, credentials, store, userId, listId, tag })
+    fetchAndUpdate({ timeline, credentials, store, userId, listId, conversationId, tag })
   return promiseInterval(boundFetchAndUpdate, 20000)
 }
 const timelineFetcher = {

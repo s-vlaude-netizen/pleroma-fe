@@ -61,9 +61,9 @@ export const defaultState = () => ({
     publicAndExternal: emptyTl(),
     friends: emptyTl(),
     tag: emptyTl(),
-    dms: emptyTl(),
     bookmarks: emptyTl(),
     list: emptyTl(),
+    dmConv: emptyTl(),
     bubble: emptyTl(),
     replies: emptyTl()
   }
@@ -204,14 +204,6 @@ const addNewStatuses = (state, { statuses, showImmediately = false, timeline, us
 
           sortTimeline(mentions)
         }
-      }
-      if (status.visibility === 'direct') {
-        const dms = state.timelines.dms
-
-        mergeOrAdd(dms.statuses, dms.statusesObject, status)
-        dms.newStatusCount += 1
-
-        sortTimeline(dms)
       }
     }
 
