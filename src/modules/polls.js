@@ -1,5 +1,7 @@
 import { merge } from 'lodash'
 
+const POLL_UPDATE_FREQUENCY = 150_000;
+
 const polls = {
   state: {
     // Contains key = id, value = number of trackers for this poll
@@ -44,13 +46,13 @@ const polls = {
           if (rootState.polls.trackedPolls[pollId]) {
             dispatch('updateTrackedPoll', pollId)
           }
-        }, 30 * 1000)
+        }, POLL_UPDATE_FREQUENCY)
         commit('mergeOrAddPoll', poll)
       })
     },
     trackPoll ({ rootState, commit, dispatch }, pollId) {
       if (!rootState.polls.trackedPolls[pollId]) {
-        setTimeout(() => dispatch('updateTrackedPoll', pollId), 30 * 1000)
+        setTimeout(() => dispatch('updateTrackedPoll', pollId), POLL_UPDATE_FREQUENCY)
       }
       commit('trackPoll', pollId)
     },
