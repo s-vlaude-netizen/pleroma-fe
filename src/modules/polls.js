@@ -14,6 +14,9 @@ const polls = {
       // Make expired-state change trigger re-renders properly
       poll.expired = Date.now() > Date.parse(poll.expires_at)
       if (existingPoll) {
+        if (poll.expired) {
+          state.trackedPolls[poll.id] = 0
+        }
         state.pollsObject[poll.id] = merge(existingPoll, poll)
       } else {
         state.pollsObject[poll.id] = poll
@@ -51,6 +54,9 @@ const polls = {
       })
     },
     trackPoll ({ rootState, commit, dispatch }, pollId) {
+      if (rootState.polls.pollsObject[pollId]?.expired)
+        return;
+
       if (!rootState.polls.trackedPolls[pollId]) {
         setTimeout(() => dispatch('updateTrackedPoll', pollId), POLL_UPDATE_FREQUENCY)
       }
