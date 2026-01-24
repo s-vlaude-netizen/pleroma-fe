@@ -1,5 +1,7 @@
 import { merge } from 'lodash'
 
+const POLL_UPDATE_FREQUENCY = 150_000;
+
 const polls = {
   state: {
     // Contains key = id, value = number of trackers for this poll
@@ -12,6 +14,9 @@ const polls = {
       // Make expired-state change trigger re-renders properly
       poll.expired = Date.now() > Date.parse(poll.expires_at)
       if (existingPoll) {
+        if (poll.expired) {
+          state.trackedPolls[poll.id] = 0
+        }
         state.pollsObject[poll.id] = merge(existingPoll, poll)
       } else {
         state.pollsObject[poll.id] = poll
@@ -44,13 +49,16 @@ const polls = {
           if (rootState.polls.trackedPolls[pollId]) {
             dispatch('updateTrackedPoll', pollId)
           }
-        }, 30 * 1000)
+        }, POLL_UPDATE_FREQUENCY)
         commit('mergeOrAddPoll', poll)
       })
     },
     trackPoll ({ rootState, commit, dispatch }, pollId) {
+      if (rootState.polls.pollsObject[pollId]?.expired)
+        return;
+
       if (!rootState.polls.trackedPolls[pollId]) {
-        setTimeout(() => dispatch('updateTrackedPoll', pollId), 30 * 1000)
+        setTimeout(() => dispatch('updateTrackedPoll', pollId), POLL_UPDATE_FREQUENCY)
       }
       commit('trackPoll', pollId)
     },
