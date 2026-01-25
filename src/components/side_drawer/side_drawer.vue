@@ -85,6 +85,18 @@
             /> {{ $t("nav.lists") }}
           </router-link>
         </li>
+        <li
+          v-if="currentUser"
+          @click="toggleDrawer"
+        >
+          <router-link :to="{ name: 'bookmarks' }">
+            <FAIcon
+              fixed-width
+              class="fa-scale-110 fa-old-padding"
+              icon="bookmark"
+            /> {{ $t("nav.bookmarks") }}
+          </router-link>
+        </li>
       </ul>
       <ul v-if="currentUser">
         <li @click="toggleDrawer">
