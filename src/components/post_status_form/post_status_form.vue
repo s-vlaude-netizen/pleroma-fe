@@ -195,8 +195,8 @@
           :class="{ 'visibility-tray-edit': isEdit }"
         >
           <scope-selector
-            ref="scopeselector"
             v-if="!disableVisibilitySelector"
+            ref="scopeselector"
             :user-default="userDefaultScope"
             :original-scope="copyMessageScope"
             :initial-scope="newStatus.visibility"
@@ -204,10 +204,11 @@
           />
 
           <div
-            class="format-selector-container">
+            class="format-selector-container"
+          >
             <div
               class="format-selector"
-              >
+            >
               <Select
                 id="post-language"
                 v-model="newStatus.language"

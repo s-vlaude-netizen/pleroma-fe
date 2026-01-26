@@ -56,7 +56,7 @@
       v-if="$slots.extraHeading"
       class="timeline-extra-heading"
     >
-      <slot name="extraHeading"></slot>
+      <slot name="extraHeading" />
     </div>
     <div :class="classes.body">
       <div

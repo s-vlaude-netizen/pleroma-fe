@@ -11,7 +11,7 @@
     <div class="panel-heading -flexible-height">
       <div
         class="user-info"
-        :class="{ '-compact': this.compactUserInfo }"
+        :class="{ '-compact': compactUserInfo }"
       >
         <div class="container">
           <a
@@ -54,7 +54,10 @@
             >
               @{{ user.screen_name_ui }}
             </router-link>
-            <span class="user-roles" v-if="!hideBio && (user.deactivated || !!visibleRole || user.bot)">
+            <span
+              v-if="!hideBio && (user.deactivated || !!visibleRole || user.bot)"
+              class="user-roles"
+            >
               <span
                 v-if="user.deactivated"
                 class="alert user-role"
@@ -74,7 +77,10 @@
                 {{ $t('user_card.bot') }}
               </span>
             </span>
-            <span class="user-locked" v-if="user.locked">
+            <span
+              v-if="user.locked"
+              class="user-locked"
+            >
               <FAIcon
                 class="lock-icon"
                 icon="lock"
@@ -114,44 +120,44 @@
           </div>
           <div class="user-buttons">
             <button
-                v-if="!isOtherUser && user.is_local"
-                class="button-unstyled edit-profile-button"
-                @click.stop="openProfileTab"
-              >
-                <FAIcon
-                  fixed-width
-                  class="icon"
-                  icon="edit"
-                  :title="$t('user_card.edit_profile')"
-                />
-              </button>
-              <a
-                v-if="isOtherUser && !user.is_local"
-                :href="user.statusnet_profile_url"
-                target="_blank"
-                class="button-unstyled external-link-button"
-              >
-                <FAIcon
-                  class="icon"
-                  icon="external-link-alt"
-                />
-              </a>
-              <a
-                v-if="isOtherUser"
-                :href="user.statusnet_profile_url + '.rss'"
-                target="_blank"
-                class="button-unstyled external-link-button"
-              >
-                <FAIcon
-                  class="icon"
-                  icon="rss"
-                />
-              </a>
-              <AccountActions
-                v-if="isOtherUser && loggedIn"
-                :user="user"
-                :relationship="relationship"
+              v-if="!isOtherUser && user.is_local"
+              class="button-unstyled edit-profile-button"
+              @click.stop="openProfileTab"
+            >
+              <FAIcon
+                fixed-width
+                class="icon"
+                icon="edit"
+                :title="$t('user_card.edit_profile')"
               />
+            </button>
+            <a
+              v-if="isOtherUser && !user.is_local"
+              :href="user.statusnet_profile_url"
+              target="_blank"
+              class="button-unstyled external-link-button"
+            >
+              <FAIcon
+                class="icon"
+                icon="external-link-alt"
+              />
+            </a>
+            <a
+              v-if="isOtherUser"
+              :href="user.statusnet_profile_url + '.rss'"
+              target="_blank"
+              class="button-unstyled external-link-button"
+            >
+              <FAIcon
+                class="icon"
+                icon="rss"
+              />
+            </a>
+            <AccountActions
+              v-if="isOtherUser && loggedIn"
+              :user="user"
+              :relationship="relationship"
+            />
           </div>
         </div>
         <div class="user-meta">
@@ -303,7 +309,7 @@
         :html="user.description_html"
         :emoji="user.emoji"
         :handle-links="true"
-        :style='{"text-align": this.$store.getters.mergedConfig.centerAlignBio ? "center" : "start"}'
+        :style='{"text-align": $store.getters.mergedConfig.centerAlignBio ? "center" : "start"}'
       />
     </div>
     <teleport to="#modal">

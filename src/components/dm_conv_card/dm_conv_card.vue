@@ -6,8 +6,9 @@
       <div class="heading">
         <div class="title-bar">
           <div class="title-bar-left">
-            <div class="unread"
+            <div
               v-if="conversation.unread"
+              class="unread"
             >
               <span
                 class="badge badge-notification"
@@ -29,7 +30,7 @@
               </button>
               &nbsp;
             </div>
-            <h4>{{ $t('dm_conv.default_name', {id: this.conversation.id}) }}</h4>
+            <h4>{{ $t('dm_conv.default_name', {id: conversation.id}) }}</h4>
           </div>
           <div class="title-bar-right">
             <button
@@ -48,17 +49,21 @@
       <div class="members">
         <UserAvatar
           v-for="user in membersTruncated.users"
+          :key="user.id"
           :user="user"
           :compact="compact"
         />
-        <div v-if="membersTruncated.truncated" class="ellipsis">
+        <div
+          v-if="membersTruncated.truncated"
+          class="ellipsis"
+        >
           ...
         </div>
       </div>
     </router-link>
     <div
-      class="last-message"
       v-if="showLastStatus"
+      class="last-message"
     >
       <div class="last-message-title">
         {{ $t('dm_conv.last_message_title') }}:
@@ -76,7 +81,7 @@
       <button
         class="btn button-default"
         :title="$t('dm_conv.recipients_edit_mode_button_tooltip')"
-        @click.once="$router.push({ name: 'dm-conversation-recipients', params: { id: this.conversation.id }})"
+        @click.once="$router.push({ name: 'dm-conversation-recipients', params: { id: conversation.id }})"
       >
         {{ $t('dm_conv.recipients_edit_mode_button') }}
       </button>
@@ -90,7 +95,7 @@
         @accepted="doDeleteConversation"
         @cancelled="hideDeleteConfirmModal"
       >
-        {{ $t('dm_conv.delete_confirm', { identifier: this.conversation.id }) }}
+        {{ $t('dm_conv.delete_confirm', { identifier: conversation.id }) }}
       </confirm-modal>
     </teleport>
   </div>

@@ -31,7 +31,7 @@
           :alt="currentMedia.description"
           :title="currentMedia.description"
           :image-load-handler="onImageLoaded"
-          noStopGifs="true"
+          no-stop-gifs="true"
         />
       </PinchZoom>
     </SwipeClick>

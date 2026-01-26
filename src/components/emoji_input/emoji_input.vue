@@ -51,7 +51,7 @@
             <StillImage
               v-if="suggestion.img"
               :src="suggestion.img"
-              noStopGifs="true"
+              no-stop-gifs="true"
             />
             <span v-else>{{ suggestion.replacement }}</span>
           </span>

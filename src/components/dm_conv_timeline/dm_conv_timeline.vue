@@ -6,15 +6,15 @@
     timeline-name="dmConv"
   >
     <template
-      v-slot:extraHeading
+      #extraHeading
     >
       <DMConvCard
         v-if="conversation"
         :conversation="conversation"
         :compact="false"
-        :showFullControls="true"
-        :showLastStatus="false"
-        :linkToTimeline="false"
+        :show-full-controls="true"
+        :show-last-status="false"
+        :link-to-timeline="false"
         @deleted="forceLeave"
       />
     </template>

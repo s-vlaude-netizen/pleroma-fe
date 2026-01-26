@@ -37,7 +37,7 @@
           <StillImage
             v-else
             :src="item.emoji.imageUrl"
-            noStopGifs="true"
+            no-stop-gifs="true"
           />
         </span>
       </template>

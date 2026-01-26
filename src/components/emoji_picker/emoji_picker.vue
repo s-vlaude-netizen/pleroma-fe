@@ -21,7 +21,7 @@
           <StillImage
             v-else
             :src="group.first.imageUrl"
-            noStopGifs="true"
+            no-stop-gifs="true"
           />
         </span>
         <span

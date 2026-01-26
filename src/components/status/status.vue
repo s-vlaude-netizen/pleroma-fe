@@ -99,19 +99,21 @@
             <router-link
               v-else
               :to="retweeterProfileLink"
-            >{{ retweeter }}</router-link>
+            >
+              {{ retweeter }}
+            </router-link>
           </div>
           {{ ' ' }}
 
           <div
             class="repeat-tooltip"
           >
-             <FAIcon
-               icon="retweet"
-               class="repeat-icon"
-               :title="$t('tool_tip.repeat')"
-             />
-             {{ $t('timeline.repeated') }}
+            <FAIcon
+              icon="retweet"
+              class="repeat-icon"
+              :title="$t('tool_tip.repeat')"
+            />
+            {{ $t('timeline.repeated') }}
           </div>
 
           <span
