@@ -7,8 +7,16 @@ const QuoteButton = {
   name: 'QuoteButton',
   props: ['status', 'quoting', 'visibility'],
   computed: {
-    loggedIn () {
-      return !!this.$store.state.users.currentUser
+    showButton () {
+      const currentUserId = this.$store.state.users.currentUser?.id
+
+      if (!currentUserId)
+        return false
+
+      if (['public', 'unlisted', 'local'].includes(this.visibility))
+        return true
+
+      return (this.visibility === 'private' && currentUserId == this.status.user.id)
     }
   }
 }
