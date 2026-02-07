@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="(visibility === 'public' || visibility === 'unlisted') && loggedIn"
+    v-if="showButton"
     class="QuoteButton"
   >
     <button
