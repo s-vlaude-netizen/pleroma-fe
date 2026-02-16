@@ -22,7 +22,7 @@ export const getAttrs = tag => {
     .replace(new RegExp('^' + getTagName(tag)), '')
     .replace(/\/?$/, '')
     .trim()
-  const attrs = Array.from(innertag.matchAll(/([a-z]+[a-z0-9-]*)(?:=("[^"]+?"|'[^']+?'))?/gi))
+  const attrs = Array.from(innertag.matchAll(/([a-z]+[a-z0-9-]*)(?:=((?:"(?:\\.|[^"\\])*")|(?:'(?:\\.|[^'\\])*')))?/gi))
     .map(([trash, key, value]) => [key, value])
     .map(([k, v]) => {
       if (!v) return [k, true]
