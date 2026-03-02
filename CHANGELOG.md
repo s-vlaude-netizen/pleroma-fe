@@ -3,12 +3,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## Unreleased (3.18)
+### REMOVED
+- dropped obsolete and buggy dm timeline
+
 ### Added
+- UI for conversations API, replacing the DM timeline.
+  Here each thread (conversation) has it’s own timeline and read markers instead of mixing everything together.
+- Boosts now show when and with which visibility they were boosted
+- bookmarks are now accessible via the narrow/mobile UI
+
+### Fixed
+- fixed saving fallback cop yof settings to local browser storage
+- improve image animation detection further
+- fix status content parsing for mention and hashtag detection; this could lock the UI until reload
+
+## Between 2022.09 (3.2.0) and 2025.12 (3.17.0)
+A whole lot of stuff, but we forgot to update the changelog besides the one entry below, oopsi
+
 - Implemented remote interaction with statuses
 
-
-## 2022.09 - 2022-09-10
+## 2022.09 (3.2.0) - 2022-09-10
 ### Added
 - Automatic post translations. Must be configured on the backend in order to work.
 - Post editing, including a log of previous edits.
