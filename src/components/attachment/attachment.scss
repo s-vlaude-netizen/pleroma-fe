@@ -26,6 +26,12 @@
     }
   }
 
+  &.-nsfw-placeholder {
+    .attachment-wrapper {
+      align-content: unset;
+    }
+  }
+
   .description-container {
     flex: 0 1 0;
     display: flex;

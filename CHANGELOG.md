@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - fixed saving fallback cop yof settings to local browser storage
 - improve image animation detection further
 - fix status content parsing for mention and hashtag detection; this could lock the UI until reload
+- fix display of nsfw attachment overlays on webkit
 
 ## Between 2022.09 (3.2.0) and 2025.12 (3.17.0)
 A whole lot of stuff, but we forgot to update the changelog besides the one entry below, oopsi
