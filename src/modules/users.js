@@ -31,12 +31,13 @@ const mergeArrayLength = (oldValue, newValue) => {
   }
 }
 
-const getNotificationPermission = () => {
+const getNotificationPermission = async () => {
   const Notification = window.Notification
+  const hasServiceWorker = 'serviceWorker' in navigator
 
-  if (!Notification) return Promise.resolve(null)
-  if (Notification.permission === 'default') return Notification.requestPermission()
-  return Promise.resolve(Notification.permission)
+  if (!Notification || !hasServiceWorker) return null
+  if (Notification.permission === 'default') return await Notification.requestPermission()
+  return Notification.permission
 }
 
 const blockUser = (store, id) => {
