@@ -8,22 +8,33 @@ export const defaultState = {
 export const mutations = {
   setLists (state, value) {
     state.allLists = value
+
+    // Stub out fields for newly fetched lists
+    for (const list of state.allLists) {
+      if (!list.accountIds) list.accountIds = []
+    }
   },
   setList (state, { id, title }) {
     if (!state.allListsObject[id]) {
       state.allListsObject[id] = {}
     }
-    state.allListsObject[id].title = title
 
-    if (!find(state.allLists, { id })) {
-      state.allLists.push({ id, title })
+    const list = state.allListsObject[id]
+    list.title = title
+    // newly created list
+    if (!list.accountIds) list.accountIds = []
+
+    const listEntry = find(state.allLists, { id })
+    if (!listEntry) {
+      state.allLists.push({ id, ...list })
     } else {
-      find(state.allLists, { id }).title = title
+      Object.assign(listEntry, list)
     }
   },
   setListAccounts (state, { id, accountIds }) {
+    // XXX: this shouldn’t happen in the first place...
     if (!state.allListsObject[id]) {
-      state.allListsObject[id] = {}
+      state.allListsObject[id] = { title: "" }
     }
     state.allListsObject[id].accountIds = accountIds
   },

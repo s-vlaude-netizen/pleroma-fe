@@ -14,30 +14,43 @@ describe('The lists module', () => {
 
     it('adds a new list with a title, updating the title for existing lists', () => {
       const state = cloneDeep(defaultState)
-      const list = { id: '1', title: 'testList' }
-      const modList = { id: '1', title: 'anotherTestTitle' }
 
-      mutations.setList(state, list)
-      expect(state.allListsObject[list.id]).to.eql({ title: list.title })
-      expect(state.allLists).to.have.length(1)
-      expect(state.allLists[0]).to.eql(list)
+      // new list
+      const listInit = { id: '1', title: 'testList' }
+      const listResultObj = { title: 'testList', accountIds: [] }
+      const listResultItem = { id: '1', ...listResultObj }
 
-      mutations.setList(state, modList)
-      expect(state.allListsObject[modList.id]).to.eql({ title: modList.title })
+      mutations.setList(state, listInit)
+      expect(state.allListsObject[listInit.id]).to.eql(listResultObj)
       expect(state.allLists).to.have.length(1)
-      expect(state.allLists[0]).to.eql(modList)
+      expect(state.allLists[0]).to.eql(listResultItem)
+
+      // update
+      const modParams = { id: '1', title: 'anotherTestTitle' }
+      const modResultObj = { title: 'anotherTestTitle', accountIds: [] }
+      const modResultItem = { id: '1', ...modResultObj }
+
+      mutations.setList(state, modParams)
+      expect(state.allListsObject[modParams.id]).to.eql(modResultObj)
+      expect(state.allLists).to.have.length(1)
+      expect(state.allLists[0]).to.eql(modResultItem)
     })
 
     it('adds a new list with an array of IDs, updating the IDs for existing lists', () => {
       const state = cloneDeep(defaultState)
+
+      // new list
       const list = { id: '1', accountIds: ['1', '2', '3'] }
-      const modList = { id: '1', accountIds: ['3', '4', '5'] }
-
       mutations.setListAccounts(state, list)
-      expect(state.allListsObject[list.id]).to.eql({ accountIds: list.accountIds })
+      expect(state.allListsObject[list.id]).to.eql({ accountIds: list.accountIds, title: "" })
 
-      mutations.setListAccounts(state, modList)
-      expect(state.allListsObject[modList.id]).to.eql({ accountIds: modList.accountIds })
+      // update, preserving title
+      const title = "FunList"
+      mutations.setList(state, { id: list.id, title })
+
+      const modParams = { id: list.id, accountIds: ['3', '4', '5'] }
+      mutations.setListAccounts(state, modParams)
+      expect(state.allListsObject[modParams.id]).to.eql({ accountIds: modParams.accountIds, title })
     })
 
     it('deletes a list', () => {
