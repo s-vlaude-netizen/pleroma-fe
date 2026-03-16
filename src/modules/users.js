@@ -33,9 +33,8 @@ const mergeArrayLength = (oldValue, newValue) => {
 
 const getNotificationPermission = async () => {
   const Notification = window.Notification
-  const hasServiceWorker = 'serviceWorker' in navigator
 
-  if (!Notification || !hasServiceWorker) return null
+  if (!Notification) return null
   if (Notification.permission === 'default') return await Notification.requestPermission()
   return Notification.permission
 }
