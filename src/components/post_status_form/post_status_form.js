@@ -555,7 +555,7 @@ const PostStatusForm = {
       this.uploadingFiles = false
     },
     type (fileInfo) {
-      return fileTypeService.fileType(fileInfo.mimetype)
+      return fileTypeService.fileType(fileInfo)
     },
     paste (e) {
       this.autoPreview()

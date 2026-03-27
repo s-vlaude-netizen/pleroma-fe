@@ -81,7 +81,7 @@ const StatusContent = {
       return (this.mightHideBecauseTall && this.showingTall) || (this.mightHideBecauseSubject && this.expandingSubject)
     },
     attachmentTypes () {
-      return this.status.attachments.map(file => fileType.fileType(file.mimetype))
+      return this.status.attachments.map(file => fileType.fileType(file))
     },
     translationLanguages () {
       return (this.$store.state.instance.supportedTranslationLanguages.source || []).map(lang => ({ key: lang.code, value: lang.code, label: lang.name }))

@@ -1,7 +1,7 @@
-// TODO this func might as well take the entire file and use its mimetype
-// or the entire service could be just mimetype service that only operates
-// on mimetypes and not files. Currently the naming is confusing.
-const fileType = mimetype => {
+const fileType = mediaAttachment => {
+  // *oma extension; full MIME type of the file if known
+  const mimetype = mediaAttachment.mimetype
+
   if (mimetype.match(/flash/)) {
     return 'flash'
   }
@@ -22,15 +22,16 @@ const fileType = mimetype => {
     return 'audio'
   }
 
-  return 'unknown'
-}
+  // if inconclusive, try generic type from vanilla Mastodon
+  if (mediaAttachment.type === 'gifv') {
+    return 'video'
+  }
 
-const fileMatchesSomeType = (types, file) =>
-  types.some(type => fileType(file.mimetype) === type)
+  return (mediaAttachment.type || 'unknown')
+}
 
 const fileTypeService = {
   fileType,
-  fileMatchesSomeType
 }
 
 export default fileTypeService

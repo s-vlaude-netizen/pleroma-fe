@@ -243,8 +243,10 @@ export const parseAttachment = (data) => {
     output.mimetype = data.pleroma ? data.pleroma.mime_type : data.type
     output.meta = data.meta
     output.id = data.id
+    output.type = data.type
   } else {
     output.mimetype = data.mimetype
+    output.type = 'unknown'
     // output.meta = ??? missing
   }
 

@@ -67,7 +67,7 @@ const MediaModal = {
   },
   methods: {
     getType (media) {
-      return fileTypeService.fileType(media.mimetype)
+      return fileTypeService.fileType(media)
     },
     hide () {
       // HACK: Closing immediately via a touch will cause the click

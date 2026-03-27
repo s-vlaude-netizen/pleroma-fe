@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - fix error on list creation preventing initial accounts from being actually added
 - fix notifications on mobile
+- fix attachment display for remotes not federating any MIME type indicators if they still indicate a generic type.
+    This applies to e.g. bridgy
 
 ## 2026.03 (3.18.0) - 2026-03-14
 ### REMOVED

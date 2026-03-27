@@ -22,7 +22,7 @@ const mediaViewer = {
   actions: {
     setMedia ({ commit }, attachments) {
       const media = attachments.filter(attachment => {
-        const type = fileTypeService.fileType(attachment.mimetype)
+        const type = fileTypeService.fileType(attachment)
         return supportedTypes.has(type)
       })
       commit('setMedia', media)
