@@ -22,13 +22,17 @@ const ListNew = {
   data () {
     return {
       title: '',
+      exclusive: false,
       userIds: [],
       selectedUserIds: []
     }
   },
   created () {
     this.$store.dispatch('fetchList', { id: this.id })
-      .then(() => { this.title = this.findListTitle(this.id) })
+      .then((list) => {
+        this.title = list.title
+        this.exclusive = !!list.exclusive
+      })
     this.$store.dispatch('fetchListAccounts', { id: this.id })
       .then(() => {
         this.selectedUserIds = this.findListAccounts(this.id)
@@ -76,7 +80,7 @@ const ListNew = {
       this.userIds = results
     },
     updateList () {
-      this.$store.dispatch('setList', { id: this.id, title: this.title })
+      this.$store.dispatch('setList', { id: this.id, title: this.title, exclusive: this.exclusive })
       this.$store.dispatch('setListAccounts', { id: this.id, accountIds: this.selectedUserIds })
 
       this.$router.push({ name: 'list-timeline', params: { id: this.id } })

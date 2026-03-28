@@ -22,6 +22,7 @@ const ListNew = {
   data () {
     return {
       title: '',
+      exclusive: false,
       userIds: [],
       selectedUserIds: []
     }
@@ -67,7 +68,7 @@ const ListNew = {
     createList () {
       // the API has two different endpoints for "creating a list with a name"
       // and "updating the accounts on the list".
-      this.$store.dispatch('createList', { title: this.title })
+      this.$store.dispatch('createList', { title: this.title, exclusive: this.exclusive })
         .then((list) => {
           this.$store.dispatch('setListAccounts', { id: list.id, accountIds: this.selectedUserIds })
           this.$router.push({ name: 'list-timeline', params: { id: list.id } })

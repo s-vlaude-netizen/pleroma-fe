@@ -21,6 +21,17 @@
         :placeholder="$t('lists.title')"
       >
     </div>
+    <div class="input-wrap">
+      <input
+        type="checkbox"
+        id="list-exclusive-input"
+        ref="exclusive"
+        v-model="exclusive"
+      >
+      <label for="list-exclusive-input">
+        {{ $t('lists.exclusive_description') }}
+      </label>
+    </div>
     <div class="member-list">
       <div
         v-for="user in selectedUsers"

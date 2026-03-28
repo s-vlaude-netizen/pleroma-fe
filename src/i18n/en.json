@@ -236,6 +236,7 @@
     "lists": {
         "create": "Create",
         "delete": "Delete list",
+        "exclusive_description": "Remove users on list from home timeline",
         "following_only": "Limit to Following",
         "lists": "Lists",
         "new": "New List",

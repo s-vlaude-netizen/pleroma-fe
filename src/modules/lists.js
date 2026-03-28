@@ -14,13 +14,14 @@ export const mutations = {
       if (!list.accountIds) list.accountIds = []
     }
   },
-  setList (state, { id, title }) {
+  setList (state, { id, title, exclusive }) {
     if (!state.allListsObject[id]) {
       state.allListsObject[id] = {}
     }
 
     const list = state.allListsObject[id]
     list.title = title
+    list.exclusive = exclusive
     // newly created list
     if (!list.accountIds) list.accountIds = []
 
@@ -34,7 +35,7 @@ export const mutations = {
   setListAccounts (state, { id, accountIds }) {
     // XXX: this shouldn’t happen in the first place...
     if (!state.allListsObject[id]) {
-      state.allListsObject[id] = { title: "" }
+      state.allListsObject[id] = { title: "", exclusive: false }
     }
     state.allListsObject[id].accountIds = accountIds
   },
@@ -48,24 +49,27 @@ const actions = {
   setLists ({ commit }, value) {
     commit('setLists', value)
   },
-  createList ({ rootState, commit }, { title }) {
-    return rootState.api.backendInteractor.createList({ title })
+  createList ({ rootState, commit }, { title, exclusive }) {
+    return rootState.api.backendInteractor.createList({ title, exclusive })
       .then((list) => {
-        commit('setList', { id: list.id, title })
+        commit('setList', list)
         return list
       })
   },
   fetchList ({ rootState, commit }, { id }) {
     return rootState.api.backendInteractor.getList({ id })
-      .then((list) => commit('setList', { id: list.id, title: list.title }))
+      .then((list) => {
+        commit('setList', list)
+        return list
+      })
   },
   fetchListAccounts ({ rootState, commit }, { id }) {
     return rootState.api.backendInteractor.getListAccounts({ id })
       .then((accountIds) => commit('setListAccounts', { id, accountIds }))
   },
-  setList ({ rootState, commit }, { id, title }) {
-    rootState.api.backendInteractor.updateList({ id, title })
-    commit('setList', { id, title })
+  setList ({ rootState, commit }, { id, title, exclusive }) {
+    rootState.api.backendInteractor.updateList({ id, title, exclusive })
+    .then((list) => commit('setList', list))
   },
   setListAccounts ({ rootState, commit }, { id, accountIds }) {
     const saved = rootState.lists.allListsObject[id].accountIds

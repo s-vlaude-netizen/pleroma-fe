@@ -426,7 +426,7 @@ const fetchLists = ({ credentials }) => {
     .then((data) => data.json())
 }
 
-const createList = ({ title, credentials }) => {
+const createList = ({ title, exclusive, credentials }) => {
   const url = MASTODON_LISTS_URL
   const headers = authHeaders(credentials)
   headers['Content-Type'] = 'application/json'
@@ -434,7 +434,7 @@ const createList = ({ title, credentials }) => {
   return fetch(url, {
     method: 'POST',
     headers: headers,
-    body: JSON.stringify({ title })
+    body: JSON.stringify({ title, exclusive })
   }).then((data) => data.json())
 }
 
@@ -444,7 +444,7 @@ const getList = ({ id, credentials }) => {
     .then((data) => data.json())
 }
 
-const updateList = ({ id, title, credentials }) => {
+const updateList = ({ id, title, exclusive, credentials }) => {
   const url = MASTODON_LIST_URL(id)
   const headers = authHeaders(credentials)
   headers['Content-Type'] = 'application/json'
@@ -452,8 +452,8 @@ const updateList = ({ id, title, credentials }) => {
   return fetch(url, {
     method: 'PUT',
     headers: headers,
-    body: JSON.stringify({ title })
-  })
+    body: JSON.stringify({ title, exclusive })
+  }).then((data) => data.json())
 }
 
 const getListAccounts = ({ id, credentials }) => {
