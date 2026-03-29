@@ -36,6 +36,12 @@ const interfaceMod = {
         state.settings.currentSaveStateNotice = { error: true, errorData: error }
       }
     },
+    setSettingsError(state, { errorData }) {
+        state.settings.currentSaveStateNotice = { error: true, errorData: errorData }
+    },
+    clearSettingsError(state) {
+        state.settings.currentSaveStateNotice = { error: false, data: "manual reset" }
+    },
     setNotificationPermission (state, permission) {
       state.notificationPermission = permission
     },
@@ -112,6 +118,12 @@ const interfaceMod = {
     },
     settingsSaved ({ commit, dispatch }, { success, error }) {
       commit('settingsSaved', { success, error })
+    },
+    setSettingsError ({ commit }, { errorData }) {
+      commit('setSettingsError', { errorData })
+    },
+    clearSettingsError ({ commit }) {
+      commit('clearSettingsError')
     },
     setNotificationPermission ({ commit }, permission) {
       commit('setNotificationPermission', permission)

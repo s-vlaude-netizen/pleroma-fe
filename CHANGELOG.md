@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - lists UI can now read and set the "exclusive" parameter, allowing members to be removed from the home timeline
 - user profiles now have a small gallery for profile media
-- alt text of user profile media is now exposed
+- alt text of user profile media is now exposed and can be edited in profile settings
 
 ### Fixed
 - fix error on list creation preventing initial accounts from being actually added
