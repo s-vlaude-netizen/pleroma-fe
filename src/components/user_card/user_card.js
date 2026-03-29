@@ -12,6 +12,7 @@ import { mapGetters } from 'vuex'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faBell,
+  faImages,
   faRss,
   faSearchPlus,
   faExternalLinkAlt,
@@ -21,6 +22,7 @@ import {
 library.add(
   faRss,
   faBell,
+  faImages,
   faSearchPlus,
   faExternalLinkAlt,
   faEdit
@@ -28,7 +30,7 @@ library.add(
 
 export default {
   props: [
-    'userId', 'switcher', 'selected', 'hideBio', 'rounded', 'bordered', 'allowZoomingAvatar'
+    'userId', 'switcher', 'selected', 'hideBio', 'rounded', 'bordered', 'allowZoomingAvatar', 'showMediaButton'
   ],
   data () {
     return {
@@ -122,6 +124,10 @@ export default {
         && (this.$store.state.interface.layoutType !== 'mobile')
         && this.switcher
     },
+    hasProfileMedia() {
+      const user = this.user
+      return (user && (user.profile_image_url_original || user.cover_photo || user.background_image))
+    },
     ...mapGetters(['mergedConfig'])
   },
   components: {
@@ -191,10 +197,50 @@ export default {
     zoomAvatar () {
       const attachment = {
         url: this.user.profile_image_url_original,
+        description: this.user.avatar_description,
         mimetype: 'image'
       }
       this.$store.dispatch('setMedia', [attachment])
       this.$store.dispatch('setCurrentMedia', attachment)
+    },
+    makeMediaObject(link, altText) {
+      // Pseudo media attachment object with just the fields relevant for gallery display
+      return {
+        type: "image",
+        mimetype: "image/something",
+        url: link,
+        // proper media attachments omit field if no alt, but Mastodon decided in
+        // user responses to return empty string for "no alt". Normalise this here
+        description: altText || undefined
+      }
+    },
+    showProfileMedia () {
+      const user = this.user
+      const media = []
+      let startMedia = undefined
+
+      if (user.profile_image_url_original) {
+        const avatar = this.makeMediaObject(user.profile_image_url_original, user.avatar_description)
+        media.push(avatar)
+        if (!startMedia) startMedia = avatar
+      }
+
+      if (user.cover_photo) {
+        const header = this.makeMediaObject(user.cover_photo, user.header_description)
+        media.push(header)
+        if (!startMedia) startMedia = header
+      }
+
+      if (user.background_image) {
+        const background = this.makeMediaObject(user.background_image, user.pleroma?.background_image_description)
+        media.push(background)
+        if (!startMedia) startMedia = background
+      }
+
+      if (startMedia) {
+        this.$store.dispatch('setMedia', media)
+        this.$store.dispatch('setCurrentMedia', startMedia)
+      }
     },
     mentionUser () {
       this.$store.dispatch('openPostStatusModal', { repliedUser: this.user })

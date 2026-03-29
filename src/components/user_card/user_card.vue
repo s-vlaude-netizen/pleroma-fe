@@ -218,6 +218,23 @@
               </option>
             </Select>
           </div>
+          <div
+            class="user-profile-media-button"
+            v-if="showMediaButton"
+          >
+            <button
+              class="btn button-default"
+              :title="$i18n.t('user_card.show_profile_media')"
+              :aria-label="$i18n.t('user_card.show_profile_media')"
+              :disabled="!hasProfileMedia"
+              @click="showProfileMedia"
+            >
+              <FAIcon
+                icon="images"
+                class="fa-scale-110 fa-old-padding"
+              />
+            </button>
+          </div>
         </div>
         <div
           v-if="loggedIn && isOtherUser"

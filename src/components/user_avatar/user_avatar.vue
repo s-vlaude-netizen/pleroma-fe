@@ -6,7 +6,7 @@
     <StillImage
       v-if="user"
       class="avatar"
-      :alt="user.screen_name_ui"
+      :alt="user.avatar_description || user.screen_name_ui"
       :title="user.screen_name_ui"
       :src="imgSrc(user.profile_image_url_original)"
       :image-load-error="imageLoadError"

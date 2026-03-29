@@ -6,6 +6,7 @@ const StillImage = {
     'imageLoadError',
     'imageLoadHandler',
     'alt',
+    'title',
     'height',
     'width',
     'noStopGifs'
@@ -26,6 +27,16 @@ const StillImage = {
   computed: {
     animated () {
       return this.stopGifs && this.isAnimated
+    },
+    titleText () {
+      return this.title || this.alt
+    },
+    ariaLabel () {
+      // if the title (a UI hint) differs from the alt text (describing image content),
+      // we wat to add an aria-label to pass along the UI hint to screen readers
+      if (this.title && this.alt != this.title)
+        return this.title
+      return undefined
     },
     style () {
       const appendPx = (str) => /\d$/.test(str) ? str + 'px' : str

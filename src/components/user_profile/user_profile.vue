@@ -9,6 +9,7 @@
         :switcher="true"
         :selected="timeline.viewing"
         :allow-zooming-avatar="true"
+        :show-media-button="true"
         rounded="top"
       />
       <div

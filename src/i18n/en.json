@@ -1209,6 +1209,7 @@
         "replies": "With Replies",
         "report": "Report",
         "requested_by": "Has requested to follow you",
+        "show_profile_media": "Show profile images and their alt text",
         "show_repeats": "Show repeats",
         "statuses": "Posts",
         "subscribe": "Subscribe",
