@@ -83,9 +83,11 @@ export const parseUser = (data) => {
     // Utilize avatar_static for gif avatars?
     output.profile_image_url = data.avatar
     output.profile_image_url_original = data.avatar
+    output.avatar_description = data.avatar_description
 
     // Same, utilize header_static?
     output.cover_photo = data.header
+    output.header_description = data.header_description
 
     output.friends_count = data.following_count
 
@@ -104,6 +106,8 @@ export const parseUser = (data) => {
       const relationship = data.pleroma.relationship
 
       output.background_image = data.pleroma.background_image
+      output.pleroma.background_image_description = data.pleroma.background_image_description
+
       output.favicon = data.pleroma.favicon
 
       output.pleroma.unread_conversation_count = data.pleroma.unread_conversation_count

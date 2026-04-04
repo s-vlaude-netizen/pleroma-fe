@@ -35,6 +35,10 @@ const ProfileTab = {
       newLocked: this.$store.state.users.currentUser.locked,
       newPermitFollowback: this.$store.state.users.currentUser.permit_followback,
       newFields: this.$store.state.users.currentUser.fields.map(field => ({ name: field.name, value: field.value })),
+      avatar_description: this.$store.state.users.currentUser.avatar_description || '',
+      header_description: this.$store.state.users.currentUser.header_description || '',
+      pleroma_background_image_description:
+        this.$store.state.users.currentUser.pleroma?.background_image_description || '',
       showRole: this.$store.state.users.currentUser.show_role,
       role: this.$store.state.users.currentUser.role,
       bot: this.$store.state.users.currentUser.bot,
@@ -130,15 +134,16 @@ const ProfileTab = {
         note: this.newBio,
         locked: this.newLocked,
         // Backend notation.
-         
         display_name: this.newName,
         fields_attributes: this.newFields.filter(el => el != null),
         bot: this.bot,
         show_role: this.showRole,
         status_ttl_days: this.expirePosts ? this.newPostTTLDays : -1,
         permit_followback: this.permit_followback,
+        avatar_description: this.avatar_description,
+        header_description: this.header_description,
+        pleroma_background_image_description: this.pleroma_background_image_description,
         accepts_direct_messages_from: this.userAcceptsDirectMessagesFrom
-         
       }
 
       if (this.emailLanguage) {
@@ -152,6 +157,17 @@ const ProfileTab = {
           merge(this.newFields, user.fields)
           this.$store.commit('addNewUsers', [user])
           this.$store.commit('setCurrentUser', user)
+          this.$store.dispatch('clearSettingsError')
+        })
+        .catch((error) => {
+          const msg = typeof error === "string" ? error : error.message
+          console.error(`Failed to update profile settings: ${error}`)
+          this.$store.dispatch('setSettingsError', {errorData: msg})
+          this.$store.dispatch('pushGlobalNotice', {
+            messageKey: 'settings.saving_err_details',
+            messageArgs: [msg],
+            level: 'error'
+          })
         })
     },
     changeVis (visibility) {
@@ -173,6 +189,7 @@ const ProfileTab = {
       if (file.size > this.$store.state.instance[slot + 'limit']) {
         const filesize = fileSizeFormatService.fileSizeFormat(file.size)
         const allowedsize = fileSizeFormatService.fileSizeFormat(this.$store.state.instance[slot + 'limit'])
+
         this.$store.dispatch('pushGlobalNotice', {
           messageKey: 'upload.error.message',
           messageArgs: [
@@ -218,10 +235,13 @@ const ProfileTab = {
       const that = this
       return new Promise((resolve, reject) => {
         function updateAvatar (avatar, avatarName) {
-          that.$store.state.api.backendInteractor.updateProfileImages({ avatar, avatarName })
+          that.$store.state.api.backendInteractor.updateProfileImages({
+              avatar, avatarName, avatar_description: this.avatar_description
+            })
             .then((user) => {
               that.$store.commit('addNewUsers', [user])
               that.$store.commit('setCurrentUser', user)
+              this.$store.dispatch('clearSettingsError')
               resolve()
             })
             .catch((error) => {
@@ -241,10 +261,13 @@ const ProfileTab = {
       if (!this.bannerPreview && banner !== '') { return }
 
       this.bannerUploading = true
-      this.$store.state.api.backendInteractor.updateProfileImages({ banner })
+      this.$store.state.api.backendInteractor.updateProfileImages({
+          banner, header_description: this.header_description
+        })
         .then((user) => {
           this.$store.commit('addNewUsers', [user])
           this.$store.commit('setCurrentUser', user)
+          this.$store.dispatch('clearSettingsError')
           this.bannerPreview = null
         })
         .catch(this.displayUploadError)
@@ -254,16 +277,21 @@ const ProfileTab = {
       if (!this.backgroundPreview && background !== '') { return }
 
       this.backgroundUploading = true
-      this.$store.state.api.backendInteractor.updateProfileImages({ background })
+      this.$store.state.api.backendInteractor.updateProfileImages({
+          background,
+          pleroma_background_image_description: this.pleroma_background_image_description
+        })
         .then((data) => {
           this.$store.commit('addNewUsers', [data])
           this.$store.commit('setCurrentUser', data)
+          this.$store.dispatch('clearSettingsError')
           this.backgroundPreview = null
         })
         .catch(this.displayUploadError)
         .finally(() => { this.backgroundUploading = false })
     },
     displayUploadError (error) {
+      this.$store.dispatch('setSettingsError', {errorData: error})
       this.$store.dispatch('pushGlobalNotice', {
         messageKey: 'upload.error.message',
         messageArgs: [error.message],

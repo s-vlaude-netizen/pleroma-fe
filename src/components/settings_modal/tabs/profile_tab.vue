@@ -120,6 +120,21 @@
           :set-language="val => emailLanguage = val"
         />
       </p>
+      <h3>{{ $t('settings.media_alt_avatar') }}</h3>
+      <textarea
+        v-model="avatar_description"
+        class="media-alt resize-height"
+      />
+      <h3>{{ $t('settings.media_alt_banner') }}</h3>
+      <textarea
+        v-model="header_description"
+        class="media-alt resize-height"
+      />
+      <h3>{{ $t('settings.media_alt_background') }}</h3>
+      <textarea
+        v-model="pleroma_background_image_description"
+        class="media-alt resize-height"
+      />
       <button
         :disabled="newName && newName.length === 0"
         class="btn button-default"

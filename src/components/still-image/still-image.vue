@@ -4,6 +4,7 @@
     class="still-image"
     :class="{ animated: animated, pixelart: isPixelArt }"
     :style="style"
+    :aria-label="ariaLabel"
   >
     <div
       v-if="animated && imageTypeLabel"
@@ -20,7 +21,7 @@
       ref="src"
       :key="src"
       :alt="alt"
-      :title="alt"
+      :title="titleText"
       :src="src"
       :referrerpolicy="referrerpolicy"
       @load="onLoad"
