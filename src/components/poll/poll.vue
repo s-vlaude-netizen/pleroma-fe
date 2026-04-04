@@ -53,6 +53,24 @@
         </label>
       </div>
     </div>
+    <div class="poll-hint">
+      <div
+        v-if="poll.akkoma?.anonymous === true"
+        class="alert success"
+      >
+        <FAIcon icon="check-circle" />
+        &nbsp;
+        {{ $t('polls.indicate_anonymous') }}
+      </div>
+      <div
+        v-else-if="poll.akkoma?.anonymous === false"
+        class="alert warning"
+      >
+        <FAIcon icon="triangle-exclamation" />
+        &nbsp;
+        {{ $t('polls.indicate_disclosure') }}
+      </div>
+    </div>
     <div class="footer faint">
       <button
         v-if="!showResults"
@@ -143,6 +161,9 @@
   .footer {
     display: flex;
     align-items: center;
+  }
+  .poll-hint {
+    margin: 0.25em 0;
   }
   &.loading * {
     cursor: progress;

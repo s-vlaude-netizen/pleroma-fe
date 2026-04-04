@@ -312,6 +312,8 @@ export const parseStatus = (data) => {
 
     if (data.akkoma) {
       const { akkoma } = data
+      output.akkoma = akkoma
+
       if (akkoma && akkoma.source) {
         output.media_type = akkoma.source.mediaType
       }

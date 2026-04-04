@@ -1,6 +1,10 @@
 import Timeago from 'components/timeago/timeago.vue'
 import RichContent from 'components/rich_content/rich_content.jsx'
 import { forEach, map } from 'lodash'
+import {
+  faCircleCheck,
+  faTriangleExclamation
+} from '@fortawesome/free-solid-svg-icons'
 
 export default {
   name: 'Poll',
