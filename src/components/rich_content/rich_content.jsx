@@ -81,7 +81,6 @@ export default {
     const writtenMentions = [] // All mentions that appear in post body
     const invisibleMentions = [] // All mentions that go beyond the limiter (see MentionsLine)
     // to collapse too many mentions in a row
-    const writtenTags = [] // All tags that appear in post body
     // unique index for vue "tag" property
     let mentionIndex = 0
     let tagsIndex = 0
@@ -95,7 +94,6 @@ export default {
 
     const renderHashtag = (attrs, children) => {
       const { index, ...linkData } = getLinkData(attrs, children, tagsIndex++)
-      writtenTags.push(linkData)
       const { url, tag, content } = linkData
       return <HashtagLink url={url} tag={tag} content={content}/>
     }
@@ -251,7 +249,6 @@ export default {
 
     const event = {
       writtenMentions,
-      writtenTags,
       invisibleMentions
     }
 
