@@ -193,10 +193,24 @@ export default {
             if (attrs['class'] && attrs['class'].includes('mention')) {
               // Handling mentions here
               return renderMention(attrs, children)
-            } else {
-              currentMentions = null
-              break
             }
+
+            currentMentions = null
+
+            if (
+              (attrs['class'] && attrs['class'].includes('hashtag')) || // Pleroma style
+                (attrs['rel'] === 'tag') // Mastodon style
+            ) {
+              return renderHashtag(attrs, children)
+            } else {
+              attrs.target = '_blank'
+              const newChildren = children.map(processItem)
+
+              return <a {...attrs}>
+                { newChildren }
+              </a>
+            }
+
           case 'span':
             if (this.handleLinks && attrs?.['class']?.includes?.('h-card')) {
               return ['', children.map(processItem), '']
@@ -227,61 +241,12 @@ export default {
       }
     }
 
-    // Processor for back direction (for finding "last" stuff, just easier this way)
-    const processItemReverse = (item, index, array, what) => {
-      // Handle text nodes - just add emoji
-      if (typeof item === 'string') {
-        const emptyText = item.trim() === ''
-        if (emptyText) return item
-        return unescape(item)
-      } else if (Array.isArray(item)) {
-        // Handle tag nodes
-        const [opener, children] = item
-        const Tag = opener === '' ? '' : getTagName(opener)
-        switch (Tag) {
-          case 'a': // replace mentions with MentionLink
-            if (!this.handleLinks) break
-            const attrs = getAttrs(opener)
-            // should only be this
-            if (
-              (attrs['class'] && attrs['class'].includes('hashtag')) || // Pleroma style
-                (attrs['rel'] === 'tag') // Mastodon style
-            ) {
-              return renderHashtag(attrs, children)
-            } else {
-              attrs.target = '_blank'
-              const newChildren = [...children].reverse().map(processItemReverse).reverse()
-
-              return <a {...attrs}>
-                { newChildren }
-              </a>
-            }
-          case '':
-            return [...children].reverse().map(processItemReverse).reverse()
-        }
-
-        // Render tag as is
-        if (children !== undefined) {
-          const newChildren = Array.isArray(children)
-            ? [...children].reverse().map(processItemReverse).reverse()
-            : children
-          return <Tag {...getAttrs(opener)}>
-            { newChildren }
-          </Tag>
-        } else {
-          return <Tag/>
-        }
-      }
-      return item
-    }
-
-    const pass1 = convertHtmlToTree(html).map(processItem)
-    const pass2 = [...pass1].reverse().map(processItemReverse).reverse()
+    const parsed = convertHtmlToTree(html).map(processItem)
     // DO NOT USE SLOTS they cause a re-render feedback loop here.
     // slots updated -> rerender -> emit -> update up the tree -> rerender -> ...
     // at least until vue3?
     const result = <span class="RichContent">
-      { pass2 }
+      { parsed }
     </span>
 
     const event = {
