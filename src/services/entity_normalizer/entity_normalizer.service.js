@@ -1,6 +1,7 @@
 import escape from 'escape-html'
 import parseLinkHeader from 'parse-link-header'
 import { isStatusNotification } from '../notification_utils/notification_utils.js'
+import { toPlainText } from 'src/services/html_converter/parser.service.js'
 import punycode from 'punycode.js'
 
 /** NOTICE! **
@@ -74,8 +75,8 @@ export const parseUser = (data) => {
     })
     output.fields_text = data.fields.map(field => {
       return {
-        name: unescape(field.name.replace(/<[^>]*>/g, '')),
-        value: unescape(field.value.replace(/<[^>]*>/g, '')),
+        name: toPlainText(field.name),
+        value: toPlainText(field.value),
         verified_at: field.verified_at
       }
     })

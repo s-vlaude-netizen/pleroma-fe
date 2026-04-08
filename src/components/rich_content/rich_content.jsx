@@ -1,4 +1,5 @@
 import { unescape, flattenDeep } from 'lodash'
+import { toPlainText } from 'src/services/html_converter/parser.service.js'
 import { getTagName, processTextForEmoji, getAttrs } from 'src/services/html_converter/utility.service.js'
 import { convertHtmlToTree } from 'src/services/html_converter/html_tree_converter.service.js'
 import { convertHtmlToLines } from 'src/services/html_converter/html_line_converter.service.js'
@@ -346,7 +347,7 @@ export const preProcessPerLine = (html, greentext) => {
         // Only if line begins with '>' or '<'
         (string.includes('&gt;') || string.includes('&lt;'))
     ) {
-      const cleanedString = string.replace(/<[^>]+?>/gi, '') // remove all tags
+      const cleanedString = toPlainText(string) // remove all tags
         .replace(/@\w+/gi, '') // remove mentions (even failed ones)
         .trim()
       if (cleanedString.startsWith('&gt;')) {

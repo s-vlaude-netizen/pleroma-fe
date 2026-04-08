@@ -1,5 +1,6 @@
 import fileType from 'src/services/file_type/file_type.service'
 import RichContent from 'src/components/rich_content/rich_content.jsx'
+import { toPlainText } from 'src/services/html_converter/parser.service.js'
 import { mapGetters } from 'vuex'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -108,7 +109,7 @@ const StatusContent = {
         .filter(mention => !mention.notifying)
         .forEach(mention => {
           const { content, url } = mention
-          const cleanedString = content.replace(/<[^>]+?>/gi, '') // remove all tags
+          const cleanedString = toPlainText(content) // remove all tags
           if (!cleanedString.startsWith('@')) return
           const handle = cleanedString.slice(1)
           const host = url.replace(/^https?:\/\//, '').replace(/\/.+?$/, '')
