@@ -78,7 +78,6 @@ export default {
     // This is used to recover spacing removed when parsing mentions
     let lastSpacing = ''
 
-    const lastTags = [] // Tags that appear at the end of post body
     const writtenMentions = [] // All mentions that appear in post body
     const invisibleMentions = [] // All mentions that go beyond the limiter (see MentionsLine)
     // to collapse too many mentions in a row
@@ -94,12 +93,9 @@ export default {
       />
     }
 
-    const renderHashtag = (attrs, children, encounteredTextReverse) => {
+    const renderHashtag = (attrs, children) => {
       const { index, ...linkData } = getLinkData(attrs, children, tagsIndex++)
       writtenTags.push(linkData)
-      if (!encounteredTextReverse) {
-        lastTags.push(linkData)
-      }
       const { url, tag, content } = linkData
       return <HashtagLink url={url} tag={tag} content={content}/>
     }
@@ -232,13 +228,11 @@ export default {
     }
 
     // Processor for back direction (for finding "last" stuff, just easier this way)
-    let encounteredTextReverse = false
     const processItemReverse = (item, index, array, what) => {
       // Handle text nodes - just add emoji
       if (typeof item === 'string') {
         const emptyText = item.trim() === ''
         if (emptyText) return item
-        if (!encounteredTextReverse) encounteredTextReverse = true
         return unescape(item)
       } else if (Array.isArray(item)) {
         // Handle tag nodes
@@ -253,7 +247,7 @@ export default {
               (attrs['class'] && attrs['class'].includes('hashtag')) || // Pleroma style
                 (attrs['rel'] === 'tag') // Mastodon style
             ) {
-              return renderHashtag(attrs, children, encounteredTextReverse)
+              return renderHashtag(attrs, children)
             } else {
               attrs.target = '_blank'
               const newChildren = [...children].reverse().map(processItemReverse).reverse()
@@ -291,7 +285,6 @@ export default {
     </span>
 
     const event = {
-      lastTags,
       writtenMentions,
       writtenTags,
       invisibleMentions
