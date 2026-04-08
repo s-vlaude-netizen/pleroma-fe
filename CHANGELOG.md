@@ -16,6 +16,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - fix attachment display for remotes not federating any MIME type indicators if they still indicate a generic type.
     This applies to e.g. bridgy
 
+### Changed
+- reworked rich content (anything with custom emoji or not pure plaintext) parsing;
+    there _should_ be no visible changes except fixing obviously broken edgecases
+    and perhaps more reliable green- and cyantext styling
+
 ## 2026.03 (3.18.0) - 2026-03-14
 ### REMOVED
 - dropped obsolete and buggy dm timeline
