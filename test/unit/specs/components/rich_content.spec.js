@@ -70,7 +70,7 @@ describe('RichContent', () => {
         html: html_ok
       }
     })
-    const html_nok1 = '<span class="mfm-spin" data-mfm-speed="<">brrr</span>'
+    const html_nok1 = '<span class="mfm-spin" data-mfm-speed="2s; width: 999%">brrr</span>'
     const wrapper_nok1 = shallowMount(RichContent, {
       global,
       props: {
@@ -81,7 +81,7 @@ describe('RichContent', () => {
         html: html_nok1
       }
     })
-    const html_nok2 = '<span class="mfm-spin" data-mfm-speed="\\">brrr</span>'
+    const html_nok2 = '<span class="mfm-spin" data-mfm-speed="2s&quot; id=\'5\'">brrr</span>'
     const wrapper_nok2 = shallowMount(RichContent, {
       global,
       props: {
