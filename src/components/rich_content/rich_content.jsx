@@ -57,17 +57,17 @@ class RichContentParser {
   }
 
   parse() {
-    let htree = fromString(this.vueState.html)
+    let hbody = fromString(this.vueState.html)
 
     // Green/cyantexting requires detecting linebreaks and acting on larger blocks
     // It’s easier to do this first in a separate pass before the regular per-element modifications.
     // This does no JSX templating either and just modifies the vanilla DOM in-place.
     if (this.vueState.greentext && !this.vueState.mfm) {
-      this.#styleGreentext(htree.body)
+      this.#styleGreentext(hbody)
     }
 
     const jsxChilds = []
-    for (const n of htree.body.childNodes) {
+    for (const n of hbody.childNodes) {
       jsxChilds.push(...this.#processNode(n))
     }
 
@@ -304,8 +304,8 @@ class RichContentParser {
   #processSpan(node) {
     // mentions can be wrapped in 'h-card' spans, unpack them and process here
     // to avoid breaking the mention chain or adding spurious padding
-    if (this.handleLinks && node.classList.contains('h-card')) {
-      return [...node.childNodes].map(this.#processNode)
+    if (this.vueState.handleLinks && node.classList.contains('h-card')) {
+      return [...node.childNodes].map(n => this.#processNode(n))
     }
 
     this.#applyMfmStyle(node)
