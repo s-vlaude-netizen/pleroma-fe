@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     and perhaps more reliable green- and cyantext styling
 - the frontend now also applies its own HTML sanitisation instead of relying solely on the backend’s sanitisation;
     this shouldn't cause any visible changes but further hardens against potential future bugs
+- various minor visual styling enhancements
 
 ## 2026.03 (3.18.0) - 2026-03-14
 ### REMOVED
