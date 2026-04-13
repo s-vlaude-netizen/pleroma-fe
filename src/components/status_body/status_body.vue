@@ -46,7 +46,7 @@
           class="media-body-wrapper"
         >
           <RichContent
-            :class="{ '-single-line': singleLine }"
+            :class="{ '-single-line': singleLine, 'mfm': (status.media_type === 'text/x.misskeymarkdown') }"
             class="text media-body"
             :html="status.raw_html"
             :emoji="status.emojis"
