@@ -499,9 +499,67 @@ describe('RichContent', () => {
       '</span>',
       '<!--v-if-->', // v-if placeholder, mentionsline's extra mentions and stuff
       '</span>',
-      ' ',
       '</span>',
+      ' ',
       'Testing'
+    ].join('')
+
+    const wrapper = mount(RichContent, {
+      global,
+      props: {
+        attentions,
+        handleLinks: true,
+        greentext: true,
+        emoji: [],
+        html
+      }
+    })
+
+    expect(wrapper.html().replace(/\n/g, '')).to.eql(compwrap(expected))
+  })
+
+  it.skip('does not add back whitespace twice or too late', () => {
+    // This test is skipped due to what appears to be a bug in Vue’s test-utils
+    // refer to https://akkoma.dev/AkkomaGang/akkoma-fe/pulls/503 for details
+    // (if upgrading Vue/test-utils ideally check if the test now works and enable if if it does)
+    const html_mention = [
+      '<span class="h-card">',
+      '<a class="u-url mention" href="https://example.org/users/user" rel="ugc">',
+      '@<span>user</span>',
+      '</a>',
+      '</span>'
+    ].join('')
+
+    const html = [
+      '<p>',
+      html_mention,
+      ' ',
+      html_mention,
+      '   ',
+      '</p>',
+      '<blockquote><p>aa<br/>bb</p></blockquote>'
+    ].join('')
+
+    const expected_mentionlink = [
+      '<span class="MentionLink mention-link">',
+      '<!-- eslint-disable vue/no-v-html -->',
+      '<a href="https://example.org/users/user" class="original" target="_blank">',
+      '@<span>user</span>',
+      '</a>',
+      '<!-- eslint-enable vue/no-v-html --><!--v-if-->',
+      '</span>'
+    ].join('')
+
+    const expected = [
+      '<p>',
+      '<span class="MentionsLine">',
+      expected_mentionlink,
+      expected_mentionlink,
+      '<!--v-if-->',
+      '</span>',
+      '</p>',
+      '   ',
+      '<blockquote><p>aa<br>bb</p></blockquote>'
     ].join('')
 
     const wrapper = mount(RichContent, {

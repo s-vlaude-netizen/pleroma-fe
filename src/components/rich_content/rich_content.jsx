@@ -208,6 +208,11 @@ class RichContentParser {
     />
   }
 
+  #breakMentionChain() {
+    this.#currentMentions = []
+    this.#lastSpacing = ''
+  }
+
   #maybePushTextNode(acc, text, start, end) {
     if (end > start && start >= 0) {
       acc.push(text.slice(start, end))
@@ -250,26 +255,28 @@ class RichContentParser {
   }
 
   #processTextNode(textNode) {
-    const text = textNode.textContent;
+    let text = textNode.textContent;
     const isEmpty = text.trim() === ''
 
     if (isEmpty) {
       // No idea why the old code did that; in-source linebreaks have no special meaning in HTML.
       // Maybe a quirk of the cursed old NIH parser, but doesn't make any sense to me now.
-      //if (text.includes('\n')) this.#currentMentions = [];
+      //if (text.includes('\n')) this.#breakMentionChain();
 
-      // don't include spaces between consecutive mentions.
-      // we'll include them in MentionsLine.
-      // However, do preserve _trailing_ whitespace, in case the original source
-      // placed the spacing between mentions and following elements within the mention context.
-      if (this.#currentMentions.length > 0 && textNode.parentNode?.lastChild !== textNode) {
+      // Don't include spaces between consecutive mentions. Since Mentions are inserted into
+      // the preceeding MentionLine element, we’ll end up with superfluous whitespace otherwise.
+      if (this.#currentMentions.length > 0) {
         this.#lastSpacing = text
         textNode.textContent = ''
       }
       return [textNode.textContent]
     }
 
-    this.#currentMentions = []
+    if (this.#lastSpacing && !text.match(/^\s/)) {
+      text = this.#lastSpacing + text
+    }
+
+    this.#breakMentionChain()
 
     return this.#processTextForEmoji(text)
   }
@@ -319,7 +326,7 @@ class RichContentParser {
     }
 
     // mention chain no longer consecutive
-    this.#currentMentions = []
+    this.#breakMentionChain()
 
     // Hashtags
     if (
@@ -352,10 +359,11 @@ class RichContentParser {
 
     switch (Tag) {
       case 'BR':
-        this.#currentMentions = []
+        this.#breakMentionChain()
         return [<br />]
 
       case 'IMG':
+        this.#breakMentionChain()
         return [mentionsLinePadding, this.#renderImage(node)]
 
       case 'A':
@@ -369,6 +377,8 @@ class RichContentParser {
         if (styledSpanElements !== null) return styledSpanElements;
         break
     }
+
+    this.#breakMentionChain()
 
     const pchilds = [...node.childNodes].map(n => this.#processNode(n))
     const attrs = this.#nodeAttributeMap(node)

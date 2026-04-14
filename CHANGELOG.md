@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - fix notifications on mobile
 - fix attachment display for remotes not federating any MIME type indicators if they still indicate a generic type.
     This applies to e.g. bridgy
+- fixed some spacing issues after mentions
 
 ### Changed
 - reworked rich content (anything with custom emoji or not pure plaintext) parsing;
