@@ -70,7 +70,7 @@ describe('RichContent', () => {
         html: html_ok
       }
     })
-    const html_nok1 = '<span class="mfm-spin" data-mfm-speed="<">brrr</span>'
+    const html_nok1 = '<span class="mfm-spin" data-mfm-speed="2s; width: 999%">brrr</span>'
     const wrapper_nok1 = shallowMount(RichContent, {
       global,
       props: {
@@ -81,7 +81,7 @@ describe('RichContent', () => {
         html: html_nok1
       }
     })
-    const html_nok2 = '<span class="mfm-spin" data-mfm-speed="\\">brrr</span>'
+    const html_nok2 = '<span class="mfm-spin" data-mfm-speed="2s&quot; id=\'5\'">brrr</span>'
     const wrapper_nok2 = shallowMount(RichContent, {
       global,
       props: {
@@ -214,11 +214,11 @@ describe('RichContent', () => {
     const html = [
       '&gt;preordering videogames',
       '&gt;any year'
-    ].join('\n')
+    ].join('<br>')
     const expected = [
       '<span class="greentext">&gt;preordering videogames</span>',
       '<span class="greentext">&gt;any year</span>'
-    ].join('\n')
+    ].join('<br>')
 
     const wrapper = shallowMount(RichContent, {
       global,
@@ -298,13 +298,13 @@ describe('RichContent', () => {
       makeMention('lol'),
       '&gt;quote',
       '&gt;quote'
-    ].join('\n')
+    ].join('<br>')
     const expected = [
       '<span class="greentext">&gt;quote</span>',
       mentionsLine(1),
       '<span class="greentext">&gt;quote</span>',
       '<span class="greentext">&gt;quote</span>'
-    ].join('\n')
+    ].join('<br>')
 
     const wrapper = shallowMount(RichContent, {
       global,
@@ -317,7 +317,7 @@ describe('RichContent', () => {
       }
     })
 
-    expect(wrapper.html()).to.eql(compwrap(expected))
+    expect(wrapper.html().replace(/\n/g, '')).to.eql(compwrap(expected))
   })
 
   it('One buggy example', () => {

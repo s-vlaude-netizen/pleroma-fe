@@ -1,7 +1,4 @@
-import { unescape, flattenDeep } from 'lodash'
-import { getTagName, processTextForEmoji, getAttrs } from 'src/services/html_converter/utility.service.js'
-import { convertHtmlToTree } from 'src/services/html_converter/html_tree_converter.service.js'
-import { convertHtmlToLines } from 'src/services/html_converter/html_line_converter.service.js'
+import { fromString } from 'src/services/html_converter/parser.service.js'
 import StillImage from 'src/components/still-image/still-image.vue'
 import MentionsLine, { MENTIONS_LIMIT } from 'src/components/mentions_line/mentions_line.vue'
 import HashtagLink from 'src/components/hashtag_link/hashtag_link.vue'
@@ -17,15 +14,382 @@ import './rich_content.scss'
  *   to a <MentionsLine> containing single <MentionLink>.
  * - Replaces emoji shortcodes with <StillImage>'d images.
  *
- * There are two problems with this component's architecture:
- * 1. Parsing HTML and rendering are inseparable. Attempts to separate the two
- *    proven to be a massive overcomplication due to amount of things done here.
+ * Note:
+ * 1. Vue properties MUST NOT be touched during rendering!
+ *    But the parser also needs to keep track of mutable state across functions,
+ *    thus we split the actual rendering out to a one-time use class object.
  * 2. We need to output both render and some extra data, which seems to be imp-
  *    possible in vue. Current solution is to emit 'parseReady' event when parsing
  *    is done within render() function.
+ * 3. We are inserting _dynamic_ Vue component elements into the body (e.g. the show more of mentions line).
+ *    For the dynamic part to work, the whole tree must be a JSX Vue/React-style VNode thingy.
+ *    Thus, rather than just doing minor mods to the parsed vanialla HTMLElements + adding in a couple new,
+ *    we must recreate the element tree in JSX template style.
+ *    Child elements can be apssed via an array with text nodes just being simple strings.
+ *    Use <Tag ...>...</Tag> where `Tag` is a variable holding a plain HTML node name
+ *    to wrap vanilla elements into the Vue/React garments.
  *
  * Apart from that one small hiccup with emit in render this _should_ be vue3-ready
  */
+class RichContentParser {
+
+  // All mentions that appear in post body
+  writtenMentions = [];
+
+  // All mentions beyond the limiter (see MentionsLine), collapsed from default view
+  invisibleMentions = [];
+
+  // unique index for vue "tag" property
+  #mentionIndex = 0;
+
+  // buffer for just the current sequence of consectuive mentions
+  #currentMentions = [];
+
+  // This is used to recover spacing removed when parsing mentions
+  #lastSpacing = '';
+
+  // Reference to the embedded Vue object to read its settings.
+  // READ-ONLY: NEVER EVER TOUCH DATA INSIDE RENDER!
+  vueState;
+
+  constructor(vueState) {
+    this.vueState = vueState
+  }
+
+  parse() {
+    let hbody = fromString(this.vueState.html)
+
+    // Green/cyantexting requires detecting linebreaks and acting on larger blocks
+    // It’s easier to do this first in a separate pass before the regular per-element modifications.
+    // This does no JSX templating either and just modifies the vanilla DOM in-place.
+    if (this.vueState.greentext && !this.vueState.mfm) {
+      this.#styleGreentext(hbody)
+    }
+
+    const jsxChilds = []
+    for (const n of hbody.childNodes) {
+      jsxChilds.push(...this.#processNode(n))
+    }
+
+    // DO NOT USE SLOTS they cause a re-render feedback loop here.
+    // slots updated -> rerender -> emit -> update up the tree -> rerender -> ...
+    // at least until vue3?
+    const result = <span class="RichContent">
+      { jsxChilds }
+    </span>
+
+    return result;
+  }
+
+  static #isSimpleShallow(node) {
+    // avoid meddling with code blocks, pre-styled blockquote elements etc
+    return (
+      node.nodeType === Node.TEXT_NODE ||
+      ["BR", "P", "DIV", "SPAN", "A"].includes(node.nodeName)
+    )
+  }
+
+  static #isSimple(node) {
+    return (
+      RichContentParser.#isSimpleShallow(node) &&
+      [...node.childNodes].every(RichContentParser.#isSimple)
+    )
+  }
+
+  #maybeStyleLine(parent, lineElements) {
+    if (lineElements.length == 0) return;
+    if (!lineElements.every(RichContentParser.#isSimple)) return;
+
+    const cleanText = lineElements
+      .map(e => e.innerText ?? e.textContent ?? '')
+      .join('')
+      .replace(/@\w+/gi, '')
+      .trim()
+
+    const styleChar = cleanText.charAt(0)
+    const style = ({'>': 'greentext', '<': 'cyantext'})[styleChar]
+    if (!style) return;
+
+    const styledLine = document.createElement('span')
+    styledLine.classList.add(style)
+
+    parent.insertBefore(styledLine, lineElements[0])
+    for (var e of lineElements) {
+      e = parent.removeChild(e)
+      styledLine.appendChild(e)
+    }
+  }
+
+  #styleGreentext(lineParent, allowDescent = true) {
+    // Greentexting is only aplied on "simple" source types.
+    // Thus it’s sufficient to consider only <p> and <br /> for line breaking here.
+    // The former fortunately cannot be nested anyway and
+    // we furthermore assume all linebreaks appear either at the top-level
+    // or within the first level of a top-level <p> element. Linerbeaks nested within
+    // another tag couldn’t be styled without breaking the enclosing tag anyway.
+
+    if (lineParent.childNodes.length == 0) return;
+
+    // copy array to avoid weirdness when removing elements from top-level later
+    const nodes = [...lineParent.childNodes]
+    const currentLine = []
+
+    for (const n of nodes) {
+      if (n.nodeName === 'P' && allowDescent) {
+        this.#maybeStyleLine(lineParent, currentLine)
+        this.#styleGreentext(n, false)
+        currentLine.splice(0)
+      } else if (n.nodeName === 'BR') {
+        this.#maybeStyleLine(lineParent, currentLine)
+        currentLine.splice(0)
+      } else {
+        currentLine.push(n)
+      }
+    }
+
+    this.#maybeStyleLine(lineParent, currentLine)
+  }
+
+  #getLinkData(link, index = 0) {
+    return {
+      index,
+      url: link.attributes['href']?.value,
+      tag: link.attributes['data-tag']?.value,
+      content: link.innerHTML,
+      textContent: link.innerText ?? ''
+    }
+  }
+
+  #nodeAttributeMap(node) {
+    // node.attributes is a funny "NamedNodeMap", not a regular object.
+    // Need to covnert it first, else it ends up with numeric names and object values, confusing JSX
+    const attrs = { }
+    for (const a of node.attributes)
+      attrs[a.name] = a.value
+    return attrs
+  }
+
+  #renderImage(node) {
+    return <StillImage
+      { ...this.#nodeAttributeMap(node) }
+      class="img"
+    />
+  }
+
+  #renderHashtag(node) {
+    const { url, tag, content } = this.#getLinkData(node)
+    return <HashtagLink url={url} tag={tag} content={content}/>
+  }
+
+  #renderMention(node) {
+    const linkData = this.#getLinkData(node, this.#mentionIndex++)
+    linkData.notifying = this.vueState.attentions.some(a => a.statusnet_profile_url === linkData.url)
+
+    this.writtenMentions.push(linkData)
+    this.#currentMentions.push(linkData)
+
+    if (this.#currentMentions.length > MENTIONS_LIMIT) {
+      this.invisibleMentions.push(linkData)
+    }
+
+    if (this.#currentMentions.length === 1) {
+      return <MentionsLine mentions={ this.#currentMentions } />
+    } else {
+      return ''
+    }
+  }
+
+  #renderEmoji(url, shortcode) {
+    return <StillImage
+      class="emoji img"
+      src={url}
+      title={`:${shortcode}:`}
+      alt={`:${shortcode}:`}
+    />
+  }
+
+  #maybePushTextNode(acc, text, start, end) {
+    if (end > start && start >= 0) {
+      acc.push(text.slice(start, end))
+    }
+  }
+
+  #processTextForEmoji(text) {
+    const elements = []
+    let plainStart = 0
+    let plainEnd = text.indexOf(':')
+
+    while (plainEnd >= 0) {
+      const emojiEnd = text.indexOf(':', plainEnd + 1)
+      if (emojiEnd <= 0) break;
+
+      const emojiName = text.slice(plainEnd + 1, emojiEnd)
+      const emoji = emojiName && this.vueState.emoji.find(e => e.shortcode == emojiName)
+
+      // found another ":", but name didn’t match an emoji;
+      // restart with this next ":" as the opener
+      if (!emoji) {
+        plainEnd = emojiEnd
+        continue
+      }
+
+      // found matching emoji; insert and continue after last ":"
+      this.#maybePushTextNode(elements, text, plainStart, plainEnd)
+      elements.push(this.#renderEmoji(emoji.url, emoji.shortcode))
+      plainStart = emojiEnd + 1
+      plainEnd = text.indexOf(':', emojiEnd + 1)
+    }
+
+    plainEnd = text.length
+    if (plainStart == 0) {
+      return [text]
+    }
+
+    this.#maybePushTextNode(elements, text, plainStart, plainEnd)
+    return elements
+  }
+
+  #processTextNode(textNode) {
+    const text = textNode.textContent;
+    const isEmpty = text.trim() === ''
+
+    if (isEmpty) {
+      // No idea why the old code did that; in-source linebreaks have no special meaning in HTML.
+      // Maybe a quirk of the cursed old NIH parser, but doesn't make any sense to me now.
+      //if (text.includes('\n')) this.#currentMentions = [];
+
+      // don't include spaces between consecutive mentions.
+      // we'll include them in MentionsLine.
+      // However, do preserve _trailing_ whitespace, in case the original source
+      // placed the spacing between mentions and following elements within the mention context.
+      if (this.#currentMentions.length > 0 && textNode.parentNode?.lastChild !== textNode) {
+        this.#lastSpacing = text
+        textNode.textContent = ''
+      }
+      return [textNode.textContent]
+    }
+
+    this.#currentMentions = []
+
+    return this.#processTextForEmoji(text)
+  }
+
+  #applyMfmStyle(node) {
+    // CSS selectors and styling rules can check whether data-* attributes exist and are true
+    // but are otherwise unable to extract the precise value. To make MFM parameters available to our style sheet
+    // we turn e.g. `{'data-mfm-some': '1deg', 'data-mfm-thing': '5s'}` to "--mfm-some: 1deg;--mfm-thing: 5s;"
+    //
+    // Since we use ECMAScripts Element.style.setProperty it already ought to be impossible to insert extra style
+    // properties via malicious MFM values (it already automatically rejects or escapes values as appropriate).
+    // However, to be extra safe and given all valid parameters should match this anyway,
+    // we restrict values to only letters, numbers, dot and minus signs.
+    // There is a special case for the `color` value, since it is provided without `#`,
+    // but CSS requires this prefix in the `style` property
+
+    // no pre-existing style should ever be present anyway, but let’s make sure
+    node.removeAttribute('style')
+    for (const a of node.attributes) {
+      const key = a.name
+      const val = a.value
+
+      if (!(key.startsWith('data-mfm-') && val !== true && /^[a-zA-Z0-9.\-]*$/.test(val)))
+        continue
+
+      const cssName = '--mfm-' + key.substr(9)
+      const cssVal = key === 'data-mfm-color' ? ('#' + val) : val
+      node.style.setProperty(cssName, cssVal)
+    }
+  }
+
+  #processSpan(node) {
+    // mentions can be wrapped in 'h-card' spans, unpack them and process here
+    // to avoid breaking the mention chain or adding spurious padding
+    if (this.vueState.handleLinks && node.classList.contains('h-card')) {
+      return [...node.childNodes].map(n => this.#processNode(n))
+    }
+
+    this.#applyMfmStyle(node)
+    return null
+  }
+
+  #processLink(node) {
+    // Mentions
+    if (node.classList.contains('mention')) {
+      return this.#renderMention(node)
+    }
+
+    // mention chain no longer consecutive
+    this.#currentMentions = []
+
+    // Hashtags
+    if (
+      (node.classList.contains('hashtag')) ||   // Pleroma style
+      (node.attributes['rel']?.value === 'tag') // Mastodon style
+    ) {
+      return this.#renderHashtag(node)
+    }
+
+    // some other link
+    node.setAttribute('target', '_blank')
+    return null
+  }
+
+  #spacingPrefix(node) {
+    const firstChild = node.childNodes.length > 0 ? node.childNodes[0] : null
+
+    const eligibleForSpace =
+      // Padding is only needed if we just finished parsing mentions
+      this.#currentMentions.length > 0 &&
+      // Don't add padding if content is string and has padding already
+      !(firstChild?.nodeType == Node.TEXT_NODE && firstChild.textContent.match(/^\s/))
+
+    return eligibleForSpace ? this.#lastSpacing : ''
+  }
+
+  #processElementNode(node) {
+    const Tag = node.nodeName
+    const mentionsLinePadding = this.#spacingPrefix(node)
+
+    switch (Tag) {
+      case 'BR':
+        this.#currentMentions = []
+        return [<br />]
+
+      case 'IMG':
+        return [mentionsLinePadding, this.#renderImage(node)]
+
+      case 'A':
+        if (!this.vueState.handleLinks) break
+        const styledLink = this.#processLink(node)
+        if (styledLink !== null) return [styledLink]
+        break
+
+      case 'SPAN':
+        const styledSpanElements = this.#processSpan(node)
+        if (styledSpanElements !== null) return styledSpanElements;
+        break
+    }
+
+    const pchilds = [...node.childNodes].map(n => this.#processNode(n))
+    const attrs = this.#nodeAttributeMap(node)
+    return [mentionsLinePadding, <Tag {...attrs}>{ pchilds }</Tag>]
+  }
+
+  #processNode(node) {
+    if(node.nodeType === Node.TEXT_NODE) {
+      return this.#processTextNode(node)
+    } else if (node.nodeType == Node.ELEMENT_NODE) {
+      return this.#processElementNode(node)
+    } else if (node.nodeType == Node.COMMENT_NODE) {
+      // ignore
+    } else {
+      // since we start with childs of <body> a parent node should be guaranteed
+      console.warn(`RichContentParser: Encountered unexpected node type (${node.nodeType}); dropping: ${node.outerHTML ?? node.textContent}`)
+    }
+    return []
+  }
+}
+
 export default {
   name: 'RichContent',
   components: {
@@ -66,234 +430,13 @@ export default {
       default: false
     }
   },
-  // NEVER EVER TOUCH DATA INSIDE RENDER
   render () {
-    // Don't greentext MFM
-    const greentext = this.mfm ? false : this.greentext
-
-    // Pre-process HTML
-    const { newHtml: html } = preProcessPerLine(this.html, greentext)
-    let currentMentions = null // Current chain of mentions, we group all mentions together
-    // This is used to recover spacing removed when parsing mentions
-    let lastSpacing = ''
-
-    const lastTags = [] // Tags that appear at the end of post body
-    const writtenMentions = [] // All mentions that appear in post body
-    const invisibleMentions = [] // All mentions that go beyond the limiter (see MentionsLine)
-    // to collapse too many mentions in a row
-    const writtenTags = [] // All tags that appear in post body
-    // unique index for vue "tag" property
-    let mentionIndex = 0
-    let tagsIndex = 0
-
-    const renderImage = (tag) => {
-      return <StillImage
-        {...getAttrs(tag)}
-        class="img"
-      />
-    }
-
-    const renderHashtag = (attrs, children, encounteredTextReverse) => {
-      const { index, ...linkData } = getLinkData(attrs, children, tagsIndex++)
-      writtenTags.push(linkData)
-      if (!encounteredTextReverse) {
-        lastTags.push(linkData)
-      }
-      const { url, tag, content } = linkData
-      return <HashtagLink url={url} tag={tag} content={content}/>
-    }
-
-    const renderMention = (attrs, children) => {
-      const linkData = getLinkData(attrs, children, mentionIndex++)
-      linkData.notifying = this.attentions.some(a => a.statusnet_profile_url === linkData.url)
-      writtenMentions.push(linkData)
-      if (currentMentions === null) {
-        currentMentions = []
-      }
-      currentMentions.push(linkData)
-      if (currentMentions.length > MENTIONS_LIMIT) {
-        invisibleMentions.push(linkData)
-      }
-      if (currentMentions.length === 1) {
-        return <MentionsLine mentions={ currentMentions } />
-      } else {
-        return ''
-      }
-    }
-
-    const mfmStyleFromDataAttributes = (attributes) => {
-      // CSS selectors can check if a data-* attribute is true, but can't use other values, so we want to add them to the style attribute
-      // Here we turn e.g. `{'data-mfm-some': '1deg', 'data-mfm-thing': '5s'}` to "--mfm-some: 1deg;--mfm-thing: 5s;"
-      // Note that we only add the value to `style` when they contain only letters, numbers, dot, or minus signs
-      // At the moment of writing, this should be enough for legitimate purposes and reduces the chance of injection by using special characters
-      // There is a special case for the `color` value, who is provided without `#`, but requires this in the `style` attribute
-      return Object.keys(attributes).filter(
-        (key) => key.startsWith('data-mfm-') && attributes[key] !== true && /^[a-zA-Z0-9.\-]*$/.test(attributes[key])
-      ).map(
-        (key) => '--mfm-' + key.substr(9) + (key === 'data-mfm-color' ? ': #' : ': ') + attributes[key] + ';'
-      ).reduce((a,v) => a+v, '')
-    }
-
-    // Processor to use with html_tree_converter
-    const processItem = (item, index, array, what) => {
-      // Handle text nodes - just add emoji
-      if (typeof item === 'string') {
-        const emptyText = item.trim() === ''
-        if (item.includes('\n')) {
-          currentMentions = null
-        }
-        if (emptyText) {
-          // don't include spaces when processing mentions - we'll include them
-          // in MentionsLine
-          lastSpacing = item
-          // Don't remove last space in a container (fixes poast mentions)
-          return (index !== array.length - 1) && (currentMentions !== null) ? item.trim() : item
-        }
-
-        currentMentions = null
-        if (item.includes(':')) {
-          item = ['', processTextForEmoji(
-            item,
-            this.emoji,
-            ({ shortcode, url }) => {
-              return <StillImage
-                class="emoji img"
-                src={url}
-                title={`:${shortcode}:`}
-                alt={`:${shortcode}:`}
-              />
-            }
-          )]
-        }
-        return item
-      }
-
-      // Handle tag nodes
-      if (Array.isArray(item)) {
-        const [opener, children, closer] = item
-        const Tag = getTagName(opener)
-        const attrs = getAttrs(opener)
-        const previouslyMentions = currentMentions !== null
-        /* During grouping of mentions we trim all the empty text elements
-         * This padding is added to recover last space removed in case
-         * we have a tag right next to mentions
-         */
-        const mentionsLinePadding =
-              // Padding is only needed if we just finished parsing mentions
-              previouslyMentions &&
-              // Don't add padding if content is string and has padding already
-              !(children && typeof children[0] === 'string' && children[0].match(/^\s/))
-                ? lastSpacing
-                : ''
-        switch (Tag) {
-          case 'br':
-            currentMentions = null
-            break
-          case 'img': // replace images with StillImage
-            return ['', [mentionsLinePadding, renderImage(opener)], '']
-          case 'a': // replace mentions with MentionLink
-            if (!this.handleLinks) break
-            if (attrs['class'] && attrs['class'].includes('mention')) {
-              // Handling mentions here
-              return renderMention(attrs, children)
-            } else {
-              currentMentions = null
-              break
-            }
-          case 'span':
-            if (this.handleLinks && attrs?.['class']?.includes?.('h-card')) {
-              return ['', children.map(processItem), '']
-            }
-
-            let mfm_style = mfmStyleFromDataAttributes(attrs)
-            if (mfm_style !== '') {
-              return [
-                opener.slice(0,-1) + ' style="' + mfm_style + '">',
-                children.map(processItem),
-                closer
-              ]
-            }
-        }
-
-        if (children !== undefined) {
-          return [
-            '',
-            [
-              mentionsLinePadding,
-              [opener, children.map(processItem), closer]
-            ],
-            ''
-          ]
-        } else {
-          return ['', [mentionsLinePadding, item], '']
-        }
-      }
-    }
-
-    // Processor for back direction (for finding "last" stuff, just easier this way)
-    let encounteredTextReverse = false
-    const processItemReverse = (item, index, array, what) => {
-      // Handle text nodes - just add emoji
-      if (typeof item === 'string') {
-        const emptyText = item.trim() === ''
-        if (emptyText) return item
-        if (!encounteredTextReverse) encounteredTextReverse = true
-        return unescape(item)
-      } else if (Array.isArray(item)) {
-        // Handle tag nodes
-        const [opener, children] = item
-        const Tag = opener === '' ? '' : getTagName(opener)
-        switch (Tag) {
-          case 'a': // replace mentions with MentionLink
-            if (!this.handleLinks) break
-            const attrs = getAttrs(opener)
-            // should only be this
-            if (
-              (attrs['class'] && attrs['class'].includes('hashtag')) || // Pleroma style
-                (attrs['rel'] === 'tag') // Mastodon style
-            ) {
-              return renderHashtag(attrs, children, encounteredTextReverse)
-            } else {
-              attrs.target = '_blank'
-              const newChildren = [...children].reverse().map(processItemReverse).reverse()
-
-              return <a {...attrs}>
-                { newChildren }
-              </a>
-            }
-          case '':
-            return [...children].reverse().map(processItemReverse).reverse()
-        }
-
-        // Render tag as is
-        if (children !== undefined) {
-          const newChildren = Array.isArray(children)
-            ? [...children].reverse().map(processItemReverse).reverse()
-            : children
-          return <Tag {...getAttrs(opener)}>
-            { newChildren }
-          </Tag>
-        } else {
-          return <Tag/>
-        }
-      }
-      return item
-    }
-
-    const pass1 = convertHtmlToTree(html).map(processItem)
-    const pass2 = [...pass1].reverse().map(processItemReverse).reverse()
-    // DO NOT USE SLOTS they cause a re-render feedback loop here.
-    // slots updated -> rerender -> emit -> update up the tree -> rerender -> ...
-    // at least until vue3?
-    const result = <span class="RichContent">
-      { pass2 }
-    </span>
+    const parser = new RichContentParser(this);
+    const result = parser.parse()
 
     const event = {
-      lastTags,
-      writtenMentions,
-      writtenTags,
-      invisibleMentions
+      writtenMentions: parser.writtenMentions,
+      invisibleMentions: parser.invisibleMentions
     }
 
     // DO NOT MOVE TO UPDATE. BAD IDEA.
@@ -301,63 +444,4 @@ export default {
 
     return result
   }
-}
-
-const getLinkData = (attrs, children, index) => {
-  const stripTags = (item) => {
-    if (typeof item === 'string') {
-      return item
-    } else {
-      return item[1].map(stripTags).join('')
-    }
-  }
-  const textContent = children.map(stripTags).join('')
-  return {
-    index,
-    url: attrs.href,
-    tag: attrs['data-tag'],
-    content: flattenDeep(children).join(''),
-    textContent
-  }
-}
-
-/** Pre-processing HTML
- *
- * Currently this does one thing:
- * - add green/cyantexting
- *
- * @param {String} html - raw HTML to process
- * @param {Boolean} greentext - whether to enable greentexting or not
- */
-export const preProcessPerLine = (html, greentext) => {
-  const greentextHandle = new Set(['p', 'div'])
-
-  const lines = convertHtmlToLines(html)
-  const newHtml = lines.reverse().map((item, index, array) => {
-    if (!item.text) return item
-    const string = item.text
-
-    // Greentext stuff
-    if (
-      // Only if greentext is engaged
-      greentext &&
-        // Only handle p's and divs. Don't want to affect blockquotes, code etc
-        item.level.every(l => greentextHandle.has(l)) &&
-        // Only if line begins with '>' or '<'
-        (string.includes('&gt;') || string.includes('&lt;'))
-    ) {
-      const cleanedString = string.replace(/<[^>]+?>/gi, '') // remove all tags
-        .replace(/@\w+/gi, '') // remove mentions (even failed ones)
-        .trim()
-      if (cleanedString.startsWith('&gt;')) {
-        return `<span class='greentext'>${string}</span>`
-      } else if (cleanedString.startsWith('&lt;')) {
-        return `<span class='cyantext'>${string}</span>`
-      }
-    }
-
-    return string
-  }).reverse().join('')
-
-  return { newHtml }
 }

@@ -82,9 +82,6 @@ const StatusContent = {
       if (!this.status.nsfw) {
         return false
       }
-      if (this.status.summary && this.localCollapseSubjectDefault) {
-        return false
-      }
       return true
     },
     attachmentSize () {
