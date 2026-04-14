@@ -3,6 +3,14 @@
  */
 
 .StatusContent:not(.mfm-disabled) {
+  /*
+   * Exactly match *key's size for better compatibility.
+   * Using an em-based value here is also needed to make scaling work.
+   */
+  .mfm .emoji {
+    --emoji-size: 2em;
+  }
+
   /* The following are the non-animated MFM */
   .mfm-center {
     display: block;

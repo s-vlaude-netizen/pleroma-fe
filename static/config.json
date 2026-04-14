@@ -2,6 +2,7 @@
   "alwaysShowSubjectInput": true,
   "background": "/static/aurora_borealis.jpg",
   "collapseMessageWithSubject": false,
+  "conversationDisplay": "tree",
   "greentext": false,
   "hideFilteredStatuses": false,
   "hideMutedPosts": false,

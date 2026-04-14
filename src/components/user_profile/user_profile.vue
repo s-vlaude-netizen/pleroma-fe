@@ -256,7 +256,6 @@
       .user-profile-field-name, .user-profile-field-value {
         line-height: 1.3;
         text-overflow: ellipsis;
-        white-space: nowrap;
         overflow: hidden;
         padding: 0.5em 1.5em;
         box-sizing: border-box;

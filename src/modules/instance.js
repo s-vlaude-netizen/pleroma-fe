@@ -70,7 +70,7 @@ const defaultState = {
   sensitiveIfSubject: true,
   renderMisskeyMarkdown: true,
   renderMfmOnHover: false,
-  conversationDisplay: 'linear',
+  conversationDisplay: 'tree',
   conversationTreeAdvanced: false,
   conversationOtherRepliesButton: 'below',
   conversationTreeFadeAncestors: false,

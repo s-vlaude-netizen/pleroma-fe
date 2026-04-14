@@ -14,7 +14,10 @@
     margin-bottom: 0;
   }
 
-  pre {
+  /* Overrides pre-wrap rule for .StatusBody .text */
+  &.text pre {
+    border: 1px solid var(--border);
+    white-space: pre;
     overflow: auto;
   }
 
@@ -24,6 +27,7 @@
   var,
   pre {
     font-family: var(--postCodeFont, monospace);
+    background: var(--input);
   }
 
   p {

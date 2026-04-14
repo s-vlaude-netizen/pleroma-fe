@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - fix attachment display for remotes not federating any MIME type indicators if they still indicate a generic type.
     This applies to e.g. bridgy
 - fixed some spacing issues after mentions
+- MFM statuses now use the same emoji base size as *keys for better compatability
 
 ### Changed
 - reworked rich content (anything with custom emoji or not pure plaintext) parsing;
@@ -23,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     and perhaps more reliable green- and cyantext styling
 - the frontend now also applies its own HTML sanitisation instead of relying solely on the backend’s sanitisation;
     this shouldn't cause any visible changes but further hardens against potential future bugs
+- various minor visual styling enhancements
 
 ## 2026.03 (3.18.0) - 2026-03-14
 ### REMOVED
