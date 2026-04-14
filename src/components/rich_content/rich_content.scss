@@ -1,7 +1,17 @@
+@import './../../_variables.scss';
+
 .RichContent {
   blockquote {
-    margin: 0.2em 0 0.2em 2em;
-    font-style: italic;
+    margin: 0 0 1em 0.2em;
+    padding: 0 0 0 1em;
+    border-width: 0 0 0 0.3em;
+    border-style: solid;
+    color: $fallback--faint;
+    color: var(--faint, $fallback--faint);
+  }
+
+  blockquote:last-child {
+    margin-bottom: 0;
   }
 
   pre {
