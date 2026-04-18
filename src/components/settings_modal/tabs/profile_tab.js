@@ -236,12 +236,12 @@ const ProfileTab = {
       return new Promise((resolve, reject) => {
         function updateAvatar (avatar, avatarName) {
           that.$store.state.api.backendInteractor.updateProfileImages({
-              avatar, avatarName, avatar_description: this.avatar_description
+              avatar, avatarName, avatar_description: that.avatar_description
             })
             .then((user) => {
               that.$store.commit('addNewUsers', [user])
               that.$store.commit('setCurrentUser', user)
-              this.$store.dispatch('clearSettingsError')
+              that.$store.dispatch('clearSettingsError')
               resolve()
             })
             .catch((error) => {
