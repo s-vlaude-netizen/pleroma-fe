@@ -86,18 +86,19 @@ export const suggestUsers = ({ dispatch, state }) => {
   }
 
   return async input => {
-    const noPrefix = input.toLowerCase().substr(1)
-    if (previousQuery === noPrefix) return suggestions
+    if (previousQuery === input) return suggestions
 
     suggestions = []
-    previousQuery = noPrefix
+    previousQuery = input
     // if there are more than two @, it’s not a valid nick
-    if (noPrefix.match(/@/g)?.length > 1) {
+    if (input.match(/@/g)?.length > 2) {
       return []
     }
 
     // fetch new matching users into our cache
-    await debounceUserSearch(noPrefix)
+    await debounceUserSearch(input)
+
+    const noPrefix = input.toLowerCase().substr(1)
 
     const newSuggestions = state.users.users.filter(
       user =>
