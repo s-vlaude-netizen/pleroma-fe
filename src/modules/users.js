@@ -579,8 +579,8 @@ const users = {
     incrementFollowRequestsCount (store) {
       store.commit('incrementFollowRequestsCount')
     },
-    searchUsers ({ rootState, commit }, { query }) {
-      return rootState.api.backendInteractor.searchUsers({ query })
+    searchUsers ({ rootState, commit }, { query, resolve }) {
+      return rootState.api.backendInteractor.searchUsers({ query, resolve })
         .then((users) => {
           commit('addNewUsers', users)
           return users
