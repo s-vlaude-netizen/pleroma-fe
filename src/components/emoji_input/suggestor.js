@@ -91,13 +91,13 @@ export const suggestUsers = ({ dispatch, state }) => {
 
     suggestions = []
     previousQuery = noPrefix
-    // Fetch more and wait, don't fetch if there's the 2nd @ because
-    // the backend user search can't deal with it.
-    // Reference semantics make it so that we get the updated data after
-    // the await.
-    if (!noPrefix.includes('@')) {
-      await debounceUserSearch(noPrefix)
+    // if there are more than two @, it’s not a valid nick
+    if (noPrefix.match(/@/g)?.length > 1) {
+      return []
     }
+
+    // fetch new matching users into our cache
+    await debounceUserSearch(noPrefix)
 
     const newSuggestions = state.users.users.filter(
       user =>
