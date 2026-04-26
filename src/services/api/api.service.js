@@ -1465,12 +1465,12 @@ const reportUser = ({ credentials, userId, statusIds, comment, forward }) => {
   })
 }
 
-const searchUsers = ({ credentials, query }) => {
+const searchUsers = ({ credentials, query, resolve }) => {
   return promisedRequest({
     url: MASTODON_USER_SEARCH_URL,
     params: {
       q: query,
-      resolve: true
+      resolve: resolve == undefined ? true : resolve
     },
     credentials
   })

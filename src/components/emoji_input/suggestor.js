@@ -71,7 +71,7 @@ export const suggestUsers = ({ dispatch, state }) => {
   let timeout = null
   let cancelUserSearch = null
 
-  const userSearch = (query) => dispatch('searchUsers', { query })
+  const userSearch = (query) => dispatch('searchUsers', { query, resolve: false })
   const debounceUserSearch = (query) => {
     cancelUserSearch && cancelUserSearch()
     return new Promise((resolve, reject) => {
@@ -86,18 +86,19 @@ export const suggestUsers = ({ dispatch, state }) => {
   }
 
   return async input => {
-    const noPrefix = input.toLowerCase().substr(1)
-    if (previousQuery === noPrefix) return suggestions
+    if (previousQuery === input) return suggestions
 
     suggestions = []
-    previousQuery = noPrefix
-    // Fetch more and wait, don't fetch if there's the 2nd @ because
-    // the backend user search can't deal with it.
-    // Reference semantics make it so that we get the updated data after
-    // the await.
-    if (!noPrefix.includes('@')) {
-      await debounceUserSearch(noPrefix)
+    previousQuery = input
+    // if there are more than two @, it’s not a valid nick
+    if (input.match(/@/g)?.length > 2) {
+      return []
     }
+
+    // fetch new matching users into our cache
+    await debounceUserSearch(input)
+
+    const noPrefix = input.toLowerCase().substr(1)
 
     const newSuggestions = state.users.users.filter(
       user =>
