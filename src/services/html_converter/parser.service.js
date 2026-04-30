@@ -4,8 +4,27 @@ import DOMPurify from 'dompurify';
 const sanitiserDefaults = {
   // no CSS shenanigans; only our own stylesheets and MFM
   FORBID_ATTR: ['style'],
-  FORBID_TAGS: ['style']
+  FORBID_TAGS: ['style'],
+  // allow non-XML MathML annotations
+  // (by default the enclosing element is stripped but the text content kept messing up rendering)
+  // (see: https://github.com/cure53/DOMPurify/issues/673#issuecomment-1107860622)
+  ADD_TAGS: ['semantics', 'annotation']
 }
+
+
+// And manually remove annotations (fully) if type is not safe
+const safeEncodings = ["text/plain", "application/x-tex"]
+
+DOMPurify.addHook('uponSanitizeElement', (node, data) => {
+  if (data.tagName == 'annotation' && !safeEncodings.includes(node.getAttribute('encoding'))) {
+    const parent = node.parentNode
+    if (parent) {
+      parent.removeChild(node)
+    } else {
+      node.innerHTML= ''
+    }
+  }
+})
 
 /**
  * Parse an input string into an inert HTML document.
