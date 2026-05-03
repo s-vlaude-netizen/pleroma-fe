@@ -7,7 +7,7 @@
    * Exactly match *key's size for better compatibility.
    * Using an em-based value here is also needed to make scaling work.
    */
-  .mfm .emoji {
+  .mfm-status .emoji {
     --emoji-size: 2em;
   }
 
