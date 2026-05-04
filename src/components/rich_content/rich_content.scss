@@ -18,7 +18,8 @@
   &.text pre {
     border: 1px solid var(--border);
     white-space: pre;
-    overflow: auto;
+    overflow: scroll;
+    padding: 0.2em 0.5em;
   }
 
   code,
