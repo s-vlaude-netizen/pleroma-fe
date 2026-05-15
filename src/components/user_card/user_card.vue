@@ -4,10 +4,18 @@
     :class="classes"
   >
     <div
-      :class="{ 'hide-bio': hideBio }"
-      :style="style"
       class="background-image"
-    />
+      :class="{ 'hide-bio': hideBio }"
+    >
+      <div
+        class="image-tint"
+      />
+      <img
+        class="image-banner"
+        width="100%"
+        :src="user.cover_photo"
+      />
+    </div>
     <div class="panel-heading -flexible-height">
       <div
         class="user-info"

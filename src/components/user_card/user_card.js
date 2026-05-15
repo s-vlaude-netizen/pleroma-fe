@@ -56,14 +56,6 @@ export default {
         'user-card-bordered': this.bordered === true // set border for all sides
       }]
     },
-    style () {
-      return {
-        backgroundImage: [
-          `linear-gradient(to bottom, var(--profileTint), var(--profileTint))`,
-          `url(${this.user.cover_photo})`
-        ].join(', ')
-      }
-    },
     isOtherUser () {
       return this.user.id !== this.$store.state.users.currentUser.id
     },
