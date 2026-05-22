@@ -56,9 +56,22 @@
     }
   }
 
+  .mfm-border {
+    display: inline-block;
+    border-width: var(--mfm-width, 1px);
+    border-radius: var(--mfm-radius, 0px);
+    border-style: var(--mfm-style, solid);
+    border-color: var(--mfm-color, var(--border, #222));
+  }
+
   .mfm-center {
     display: block;
     text-align: center;
+  }
+
+  .mfm-crop {
+    display: inline-block;
+    clip-path: inset(var(--mfm-top, 0%) var(--mfm-right, 0%) var(--mfm-bottom, 0%) var(--mfm-left, 0%));
   }
 
   .mfm-fg {
@@ -119,6 +132,12 @@
     transform: scale(var(--mfm-x, 1), var(--mfm-y, 1));
   }
 
+  .mfm-unixtime {
+    display: inline-block;
+    border: solid 1.5px var(--border, #222);
+    vertical-align: middle;
+  }
+
   .mfm-x2 {
     --mfm-zoom-size: 200%;
   }
@@ -140,32 +159,41 @@
   &:not(.mfm-hover:not(:hover)) {
     .mfm-bounce {
       display: inline-block;
-      animation: mfm-bounce var(--mfm-speed, 0.75s) linear infinite;
+      animation: mfm-bounce var(--mfm-speed, 0.75s) linear var(--mfm-delay, 0s) var(--mfm-loop, infinite);
       transform-origin: center bottom;
+    }
+
+    .mfm-fade {
+      display: inline-block;
+      animation: mfm-fade var(--mfm-speed, 1.5s) linear var(--mfm-delay, 0s) var(--mfm-loop, infinite) alternate;
+    }
+
+    .mfm-fade[data-mfm-out] {
+      animation-direction: alternate-reverse;
     }
 
     .mfm-jelly {
       display: inline-block;
-      animation: mfm-rubberBand var(--mfm-speed, 1s) linear infinite both;
+      animation: mfm-rubberBand var(--mfm-speed, 1s) linear var(--mfm-delay, 0s) var(--mfm-loop, infinite) both;
     }
 
     .mfm-jump {
       display: inline-block;
-      animation: mfm-jump var(--mfm-speed, 0.75s) linear infinite;
+      animation: mfm-jump var(--mfm-speed, 0.75s) linear var(--mfm-delay, 0s) var(--mfm-loop, infinite);
     }
 
     .mfm-rainbow {
-      animation: mfm-rainbow var(--mfm-speed, 1s) linear infinite;
+      animation: mfm-rainbow var(--mfm-speed, 1s) linear var(--mfm-delay, 0s) var(--mfm-loop, infinite);
     }
 
     .mfm-shake {
       display: inline-block;
-      animation: mfm-shake var(--mfm-speed, 0.5s) ease infinite;
+      animation: mfm-shake var(--mfm-speed, 0.5s) var(--mfm-delay, 0s) ease var(--mfm-loop, infinite);
     }
 
     .mfm-spin {
       display: inline-block;
-      animation: mfm-spin var(--mfm-speed, 1.5s) linear infinite;
+      animation: mfm-spin var(--mfm-speed, 1.5s) linear var(--mfm-delay, 0s) var(--mfm-loop, infinite);
     }
 
     /*
@@ -190,14 +218,14 @@
 
     .mfm-tada {
       display: inline-block;
-      animation: mfm-tada var(--mfm-speed, 1s) linear infinite both;
+      animation: mfm-tada var(--mfm-speed, 1s) linear var(--mfm-delay, 0s) var(--mfm-loop, infinite) both;
 
       --mfm-zoom-size: 150%;
     }
 
     .mfm-twitch {
       display: inline-block;
-      animation: mfm-twitch var(--mfm-speed, 0.5s) ease infinite;
+      animation: mfm-twitch var(--mfm-speed, 0.5s) var(--mfm-delay, 0s) ease var(--mfm-loop, infinite);
     }
   }
 
@@ -209,6 +237,11 @@
     50% { transform: translateY(0) scale(1, 1); }
     75% { transform: translateY(0) scale(1.5, 0.75); }
     100% { transform: translateY(0) scale(1, 1); }
+  }
+
+  @keyframes mfm-fade {
+    0% { opacity: 0;}
+    100% { opacity: 1;}
   }
 
   @keyframes mfm-jump {

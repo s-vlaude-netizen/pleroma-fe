@@ -295,6 +295,19 @@ class RichContentParser {
 
     // no pre-existing style should ever be present anyway, but let’s make sure
     node.removeAttribute('style')
+
+    // First handle special MFM directives which require more than just variables
+    if (node.classList.contains('mfm-unixtime')) {
+      const utime_str = node.getAttribute('data-mfm-unixtime')
+      const utime = parseInt(utime_str)
+      if (!isNaN(utime) && utime == utime_str) {
+        const date = new Date(utime * 1000)
+        node.innerText = date.toString()
+        return
+      }
+    }
+
+    // Then or otherwise, forward all variables
     for (const a of node.attributes) {
       const key = a.name
       const val = a.value
@@ -303,7 +316,18 @@ class RichContentParser {
         continue
 
       const cssName = '--mfm-' + key.substr(9)
-      const cssVal = key === 'data-mfm-color' ? ('#' + val) : val
+      let cssVal = val
+      if (val) {
+        if (key === 'data-mfm-color')
+          cssVal = '#' + val
+        else if (
+            ['data-mfm-top', 'data-mfm-right',  'data-mfm-bottom',  'data-mfm-left'].includes(key)
+        )
+          cssVal = val + '%'
+        else if (['data-mfm-width', 'data-mfm-radius'].includes(key))
+          cssVal = val + 'px'
+      }
+
       node.style.setProperty(cssName, cssVal)
     }
   }
