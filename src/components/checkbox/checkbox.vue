@@ -69,6 +69,8 @@ export default {
   }
 
   &.disabled {
+    cursor: not-allowed;
+
     .checkbox-indicator::before,
     .label {
       opacity: .5;
