@@ -1,5 +1,6 @@
 import FollowCard from '../follow_card/follow_card.vue'
 import Conversation from '../conversation/conversation.vue'
+import SearchForm from '../search_form/search_form.vue'
 import Status from '../status/status.vue'
 import TabSwitcher from 'src/components/tab_switcher/tab_switcher.jsx'
 import map from 'lodash/map'
@@ -18,17 +19,21 @@ const Search = {
   components: {
     FollowCard,
     Conversation,
+    SearchForm,
     Status,
     TabSwitcher
   },
   props: [
-    'query'
+    'query',
+    'type',
+    'resolve',
+    'account_id',
+    'following'
   ],
   data () {
     return {
       loaded: false,
       loading: false,
-      searchTerm: this.query || '',
       userIds: [],
       statuses: [],
       hashtags: [],
@@ -48,18 +53,18 @@ const Search = {
     }
   },
   mounted () {
+    // Forward and normalise/parse boolean query parameters
+    this.$refs.searchForm.initFromQueryParams(this.$route.query)
     this.search(this.query)
   },
   watch: {
-    query (newValue) {
-      this.searchTerm = newValue
-      this.search(newValue)
+    '$route.query': function (newVal) {
+      this.search(newVal.query)
     }
   },
   methods: {
     newQuery (query) {
       this.$router.push({ name: 'search', query: { query } })
-      this.$refs.searchInput.focus()
     },
     search (query) {
       if (!query) {
@@ -71,9 +76,15 @@ const Search = {
       this.userIds = []
       this.statuses = []
       this.hashtags = []
-      this.$refs.searchInput.blur()
 
-      this.$store.dispatch('search', { q: query, resolve: true })
+      // Use parameters from form where appropriate to get parsing/normalisation of e.g. bools
+      this.$store.dispatch('search', {
+        q: query,
+        type: this.type,
+        resolve: this.$refs.searchForm.resolve,
+        account_id: this.account_id,
+        following: this.$refs.searchForm.following
+      })
         .then(data => {
           this.loading = false
           this.userIds = map(data.accounts, 'id')
@@ -91,7 +102,9 @@ const Search = {
       this.currenResultTab = key
     },
     getActiveTab () {
-      if (this.visibleStatuses.length > 0) {
+      if (this.type) {
+        return (this.type === 'accounts' ? 'people' : this.type)
+      } else if (this.visibleStatuses.length > 0) {
         return 'statuses'
       } else if (this.users.length > 0) {
         return 'people'

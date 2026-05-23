@@ -758,8 +758,8 @@ const statuses = {
       rootState.api.backendInteractor.fetchRebloggedByUsers({ id })
         .then(rebloggedByUsers => commit('addRepeats', { id, rebloggedByUsers, currentUser: rootState.users.currentUser }))
     },
-    search (store, { q, resolve, limit, offset, following, type }) {
-      return store.rootState.api.backendInteractor.search2({ q, resolve, limit, offset, following, type })
+    search (store, { q, resolve, limit, offset, following, type, account_id }) {
+      return store.rootState.api.backendInteractor.search2({ q, resolve, limit, offset, following, type, account_id })
         .then((data) => {
           store.commit('addNewUsers', data.accounts)
           store.commit('addNewStatuses', { statuses: data.statuses })

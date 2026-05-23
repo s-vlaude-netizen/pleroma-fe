@@ -5,6 +5,7 @@ const defaultState = {
   modModalState: 'hidden',
   modModalLoaded: false,
   modModalTargetTab: null,
+  searchModalOpen: false,
   settings: {
     currentSaveStateNotice: null,
     noticeClearTimeout: null,
@@ -74,6 +75,12 @@ const interfaceMod = {
     },
     closeModModal (state) {
       state.modModalState = 'hidden'
+    },
+    openSearchModal (state) {
+      state.searchModalOpen = true
+    },
+    closeSearchModal (state) {
+      state.searchModalOpen = false
     },
     togglePeekModModal (state) {
       switch (state.modModalState) {
@@ -149,6 +156,12 @@ const interfaceMod = {
     },
     openModModal ({ commit }) {
       commit('openModModal')
+    },
+    openSearchModal ({ commit }) {
+      commit('openSearchModal')
+    },
+    closeSearchModal ({ commit }) {
+      commit('closeSearchModal')
     },
     togglePeekModModal ({ commit }) {
       commit('togglePeekModModal')

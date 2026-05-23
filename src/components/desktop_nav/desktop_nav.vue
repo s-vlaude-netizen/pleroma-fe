@@ -96,11 +96,19 @@
         >
       </router-link>
       <div class="item right actions">
-        <search-bar
+        <button
           v-if="currentUser || !privateMode"
-          @toggled="onSearchBarToggled"
-          @click.stop
-        />
+          class="button-unstyled nav-icon"
+          :title="$t('nav.search')"
+          type="button"
+          @click.stop="openSearchModal"
+        >
+          <FAIcon
+            fixed-width
+            class="fa-scale-110 fa-old-padding"
+            icon="search"
+          />
+        </button>
         <div
           v-if="(currentUser || !privateMode) && showNavShortcuts"
           class="nav-items right"

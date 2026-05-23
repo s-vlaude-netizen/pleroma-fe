@@ -6,6 +6,7 @@ import WhoToFollowPanel from './components/who_to_follow_panel/who_to_follow_pan
 import SettingsModal from './components/settings_modal/settings_modal.vue'
 import MediaModal from './components/media_modal/media_modal.vue'
 import ModModal from './components/mod_modal/mod_modal.vue'
+import SearchFormModal from './components/search_form_modal/search_form_modal.vue'
 import SideDrawer from './components/side_drawer/side_drawer.vue'
 import MobilePostStatusButton from './components/mobile_post_status_button/mobile_post_status_button.vue'
 import MobileNav from './components/mobile_nav/mobile_nav.vue'
@@ -35,6 +36,7 @@ export default {
     DesktopNav,
     SettingsModal,
     ModModal,
+    SearchFormModal,
     UserReportingModal,
     PostStatusModal,
     EditStatusModal,

@@ -472,6 +472,18 @@
         "searching_for": "Searching for"
     },
     "search": {
+        "form": {
+            "author_limit_label": "Limit post author",
+            "author_limit_placeholder": "nick or id",
+            "error_user_not_found": "Could not find user for nick or id: {nick}",
+            "following_limit_label": "Only followed users",
+            "resolve_setting_label": "Fetch new remote resource",
+            "type_accounts": "users",
+            "type_all": "any",
+            "type_filter_label": "Type",
+            "type_hashtags": "hashtags",
+            "type_statuses": "posts"
+        },
         "hashtags": "Hashtags",
         "no_results": "No results",
         "people": "People",

@@ -1,4 +1,3 @@
-import SearchBar from 'components/search_bar/search_bar.vue'
 import ConfirmModal from '../confirm_modal/confirm_modal.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -47,11 +46,9 @@ library.add(
 
 export default {
   components: {
-    SearchBar,
     ConfirmModal
   },
   data: () => ({
-    searchBarHidden: true,
     supportsMask: window.CSS && window.CSS.supports && (
       window.CSS.supports('mask-size', 'contain') ||
         window.CSS.supports('-webkit-mask-size', 'contain') ||
@@ -78,7 +75,7 @@ export default {
     logoBgStyle () {
       return Object.assign({
         'margin': `${this.$store.state.instance.logoMargin} 0`,
-        opacity: this.searchBarHidden ? 1 : 0
+        opacity: 1
       }, this.enableMask ? {} : {
         'background-color': this.enableMask ? '' : 'transparent'
       })
@@ -120,8 +117,8 @@ export default {
     scrollToTop () {
       window.scrollTo(0, 0)
     },
-    onSearchBarToggled (hidden) {
-      this.searchBarHidden = hidden
+    openSearchModal ()  {
+      this.$store.dispatch('openSearchModal')
     },
     openSettingsModal () {
       this.$store.dispatch('openSettingsModal')

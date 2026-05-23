@@ -353,8 +353,11 @@ const users = {
       store.commit('setDisplayBackground', url)
     },
     fetchUserIfMissing (store, id) {
-      if (!store.getters.findUser(id)) {
-        store.dispatch('fetchUser', id)
+      const cached_user = store.getters.findUser(id)
+      if (cached_user) {
+        return cached_user
+      } else {
+        return store.dispatch('fetchUser', id)
       }
     },
     fetchUser (store, id) {

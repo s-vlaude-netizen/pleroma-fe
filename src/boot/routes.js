@@ -76,7 +76,14 @@ export default (store) => {
     { name: 'notifications', path: '/:username/notifications', component: Notifications, props: () => ({ disableTeleport: true }), beforeEnter: validateAuthenticatedRoute },
     { name: 'login', path: '/login', component: AuthForm },
     { name: 'oauth-callback', path: '/oauth-callback', component: OAuthCallback, props: (route) => ({ code: route.query.code }) },
-    { name: 'search', path: '/search', component: Search, props: (route) => ({ query: route.query.query }) },
+    { name: 'search', path: '/search', component: Search, props: (route) => ({
+        query: route.query.query,
+        type: route.query.type,
+        resolve: route.query.resolve,
+        account_id: route.query.account_id,
+        following: route.query.following,
+      })
+    },
     { name: 'who-to-follow', path: '/who-to-follow', component: WhoToFollow, beforeEnter: validateAuthenticatedRoute },
     { name: 'about', path: '/about', component: About },
     { name: 'lists', path: '/lists', component: Lists },

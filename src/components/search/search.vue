@@ -5,22 +5,9 @@
         {{ $t('nav.search') }}
       </div>
     </div>
-    <div class="search-input-container">
-      <input
-        ref="searchInput"
-        v-model="searchTerm"
-        class="search-input"
-        :placeholder="$t('nav.search')"
-        @keyup.enter="newQuery(searchTerm)"
-      >
-      <button
-        class="btn button-default search-button"
-        type="submit"
-        @click="newQuery(searchTerm)"
-      >
-        <FAIcon icon="search" />
-      </button>
-    </div>
+    <SearchForm
+      ref="searchForm"
+    />
     <div
       v-if="loading"
       class="text-center loading-icon"
@@ -161,24 +148,6 @@
   padding: 10px;
   background-color: $fallback--fg;
   background-color: var(--panel, $fallback--fg);
-}
-
-.search-input-container {
-  padding: 0.8rem;
-  display: flex;
-  justify-content: center;
-
-  .search-input {
-    width: 100%;
-    line-height: 1.125rem;
-    font-size: 1rem;
-    padding: 0.5rem;
-    box-sizing: border-box;
-  }
-
-  .search-button {
-    margin-left: 0.5em;
-  }
 }
 
 .loading-icon {
