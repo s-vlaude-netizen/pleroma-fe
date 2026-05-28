@@ -24,7 +24,7 @@
 
   .search-form-modal-panel {
     flex-shrink: 0;
-    margin-top: 25%;
+    margin-top: 5%;
     margin-bottom: 2em;
     width: 100%;
     max-width: 700px;
