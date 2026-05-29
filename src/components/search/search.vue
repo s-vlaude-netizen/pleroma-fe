@@ -8,17 +8,7 @@
     <SearchForm
       ref="searchForm"
     />
-    <div
-      v-if="loading"
-      class="text-center loading-icon"
-    >
-      <FAIcon
-        icon="circle-notch"
-        spin
-        size="lg"
-      />
-    </div>
-    <div v-else-if="loaded">
+    <div v-if="!loading && loaded">
       <div class="search-nav-heading">
         <tab-switcher
           ref="tabSwitcher"
@@ -107,7 +97,37 @@
         </div>
       </div>
     </div>
-    <div class="search-result-footer text-center panel-footer faint" />
+    <div class="search-result-footer text-center panel-footer faint">
+      <div
+        v-if="loading"
+        class="text-center loading-icon"
+      >
+        <FAIcon
+          icon="circle-notch"
+          spin
+          size="lg"
+        />
+      </div>
+      <div
+        v-else-if="reachedEnd"
+      >
+        {{ $t('search.no_more_results') }}
+      </div>
+      <template v-else-if="loggedIn && loaded">
+        <div
+          v-if="!type"
+        >
+          {{ $t('search.pagination_not_allowed_without_type') }}
+        </div>
+        <button
+          v-else
+          class="btn button-default"
+          @click.stop.prevent="loadMore"
+        >
+          {{ $t('search.pagination_load_more') }}
+        </button>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -148,10 +168,6 @@
   padding: 10px;
   background-color: $fallback--fg;
   background-color: var(--panel, $fallback--fg);
-}
-
-.loading-icon {
-  padding: 1em;
 }
 
 .trend {

@@ -485,7 +485,10 @@
             "type_statuses": "posts"
         },
         "hashtags": "Hashtags",
+        "no_more_results": "No further results",
         "no_results": "No results",
+        "pagination_load_more": "Load more",
+        "pagination_not_allowed_without_type": "Load more only allowed when searching a single type",
         "people": "People",
         "people_talking": "{count} people talking",
         "person_talking": "{count} person talking"

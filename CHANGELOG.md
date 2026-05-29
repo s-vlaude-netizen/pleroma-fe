@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - user search can now be limited to followed users
     - resolving remote URLs or WebFinger lookups are now optional
     - search can be limited to a particular type for faster responses
+- search now allows fetching additional matches past the first page
 
 ### Changed
 - various minor visual styling enhancements

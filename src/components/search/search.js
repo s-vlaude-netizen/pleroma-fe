@@ -34,6 +34,7 @@ const Search = {
     return {
       loaded: false,
       loading: false,
+      reachedEnd: false,
       userIds: [],
       statuses: [],
       hashtags: [],
@@ -50,6 +51,9 @@ const Search = {
       return this.statuses.filter(status =>
         allStatusesObject[status.id] && !allStatusesObject[status.id].deleted
       )
+    },
+    loggedIn() {
+      return !!this.$store.state.users.currentUser
     }
   },
   mounted () {
@@ -72,26 +76,61 @@ const Search = {
         return
       }
 
-      this.loading = true
       this.userIds = []
       this.statuses = []
       this.hashtags = []
+      this.reachedEnd = false
 
-      // Use parameters from form where appropriate to get parsing/normalisation of e.g. bools
-      this.$store.dispatch('search', {
-        q: query,
-        type: this.type,
-        resolve: this.$refs.searchForm.resolve,
-        account_id: this.account_id,
-        following: this.$refs.searchForm.following
-      })
+      this.searchRequest(query, undefined)
         .then(data => {
-          this.loading = false
           this.userIds = map(data.accounts, 'id')
           this.statuses = data.statuses
           this.hashtags = data.hashtags
           this.currenResultTab = this.getActiveTab()
-          this.loaded = true
+        })
+    },
+    searchRequest (query, offset) {
+      this.loading = true
+
+      // Use parameters from form where appropriate to get parsing/normalisation of e.g. bools
+      return this.$store.dispatch('search', {
+        q: query,
+        type: this.type,
+        resolve: this.$refs.searchForm.resolve,
+        account_id: this.account_id,
+        following: this.$refs.searchForm.following,
+        offset
+      }).then(data => {
+        this.loading = false
+        this.loaded = true
+        return data
+      })
+    },
+    loadMore() {
+      if (!this.type) {
+        console.error('Refusing to load more search results without specific type!')
+        return
+      } else if (!this.query) {
+        console.error('Refusing to search more for empty query!')
+        return
+      }
+
+      const currentEntries = this.type === 'accounts' ? this.userIds : this[this.type]
+      const offset = currentEntries.length
+
+      this.searchRequest(this.query, offset)
+        .then(data => {
+          let newEntries = data[this.type]
+
+          if (newEntries.length == 0) {
+            this.reachedEnd = true
+          }
+
+          if (this.type === 'accounts') {
+            newEntries = map(newEntries, 'id')
+          }
+
+          currentEntries.push(...newEntries)
         })
     },
     resultCount (tabName) {
