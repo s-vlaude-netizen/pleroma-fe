@@ -1481,16 +1481,15 @@ const search2 = ({ credentials, q, resolve, limit, offset, following, type, acco
   let url = MASTODON_SEARCH_2
   let params = []
 
+  limit = limit ?? 20
+  params.push(['limit', limit])
+
   if (q) {
     params.push(['q', encodeURIComponent(q)])
   }
 
   if (resolve) {
     params.push(['resolve', resolve])
-  }
-
-  if (limit) {
-    params.push(['limit', limit])
   }
 
   if (offset) {
@@ -1525,7 +1524,11 @@ const search2 = ({ credentials, q, resolve, limit, offset, following, type, acco
     .then((data) => {
       data.accounts = data.accounts.slice(0, limit).map(u => parseUser(u))
       data.statuses = data.statuses.slice(0, limit).map(s => parseStatus(s))
-      return data
+
+      const reachedEnd = Object.values(data)
+        .every(results => results.length < limit)
+
+      return { data, reachedEnd }
     })
 }
 

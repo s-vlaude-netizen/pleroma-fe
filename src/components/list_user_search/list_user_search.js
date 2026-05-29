@@ -35,7 +35,7 @@ const ListUserSearch = {
       this.loading = true
       this.userIds = []
       this.$store.dispatch('search', { q: query, resolve: true, type: 'accounts', following: this.followingOnly })
-        .then(data => {
+        .then(({data}) => {
           this.loading = false
           this.$emit('results', data.accounts.map(a => a.id))
         })

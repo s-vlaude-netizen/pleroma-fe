@@ -760,10 +760,10 @@ const statuses = {
     },
     search (store, { q, resolve, limit, offset, following, type, account_id }) {
       return store.rootState.api.backendInteractor.search2({ q, resolve, limit, offset, following, type, account_id })
-        .then((data) => {
+        .then(({data, ...extra}) => {
           store.commit('addNewUsers', data.accounts)
           store.commit('addNewStatuses', { statuses: data.statuses })
-          return data
+          return {data, ...extra}
         })
     },
     setVirtualHeight ({ commit }, { statusId, height }) {

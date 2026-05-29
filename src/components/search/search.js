@@ -100,9 +100,10 @@ const Search = {
         account_id: this.account_id,
         following: this.$refs.searchForm.following,
         offset
-      }).then(data => {
+      }).then(({data, reachedEnd}) => {
         this.loading = false
         this.loaded = true
+        this.reachedEnd = reachedEnd
         return data
       })
     },
@@ -121,10 +122,6 @@ const Search = {
       this.searchRequest(this.query, offset)
         .then(data => {
           let newEntries = data[this.type]
-
-          if (newEntries.length == 0) {
-            this.reachedEnd = true
-          }
 
           if (this.type === 'accounts') {
             newEntries = map(newEntries, 'id')
