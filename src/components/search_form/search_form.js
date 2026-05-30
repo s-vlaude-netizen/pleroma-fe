@@ -3,10 +3,12 @@ import EmojiInput from '../emoji_input/emoji_input.vue'
 import suggestor from '../emoji_input/suggestor.js'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
+  faCircleQuestion,
   faSearch
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
+  faCircleQuestion,
   faSearch
 )
 
@@ -23,8 +25,9 @@ const SearchForm = {
     author_nick: undefined,
     // user search options
     following: undefined,
-    // error msg for UI
-    errorMsg: undefined
+    // UI
+    errorMsg: undefined,
+    showSyntaxHint: false
   }),
   watch: {
     '$route': function (route) {
@@ -42,6 +45,9 @@ const SearchForm = {
     }
   },
   methods: {
+    toggleSyntaxHint () {
+      this.showSyntaxHint = !this.showSyntaxHint;
+    },
     resetSearchState() {
       this.searchTerm = undefined,
       this.type = 'statuses',

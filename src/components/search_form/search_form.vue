@@ -1,6 +1,29 @@
 <template>
   <div class="SearchForm">
+    <div
+      v-if="showSyntaxHint"
+      class="search-syntax-hint-box"
+    >
+      <p>{{ $t('search.search_hint_general') }}</p>
+      <h3>{{ $t('search.syntax_hint_header') }}</h3>
+      <h4>{{ $t('search.syntax_hint_db_name') }}</h4>
+      <pre class="provider-description">{{ $t('search.syntax_hint_db_text') }}</pre>
+      <h4>{{ $t('search.syntax_hint_meili_name') }}</h4>
+      <pre class="provider-description">{{ $t('search.syntax_hint_meili_text') }}</pre>
+      <h4>{{ $t('search.syntax_hint_elastic_name') }}</h4>
+      <pre class="provider-description">{{ $t('search.syntax_hint_elastic_text') }}</pre>
+    </div>
     <div class="setting-row">
+      <button
+        class="button-unstyled search-syntax-hint-button"
+        :title="$t('search.syntax_hint_title')"
+        @click.stop.prevent="toggleSyntaxHint"
+      >
+        <FAIcon
+          class="icon"
+          icon="circle-question"
+        />
+      </button>
       <input
         id="search-bar-input"
         ref="searchInput"
@@ -148,6 +171,35 @@
     .search-bar-input {
       flex: 1 0 auto;
       margin-left: 0.5em;
+    }
+  }
+
+  .search-syntax-hint-button {
+    width: 1.7em;
+    height: 1.7em;
+    padding: 0 0.5em;
+    display: inline-block;
+
+    .icon {
+      vertical-align: middle;
+      height: inherit;
+      width: inherit;
+    }
+  }
+
+  .search-syntax-hint-box {
+    margin: 0.5em 1em;
+    padding: 0.5em;
+    border: 1px solid var(--border, $fallback--border);
+    border-radius: var(--tooltipRadius, $fallback--tooltipRadius);
+
+    text-align: center;
+    max-height: 220px;
+    overflow-y: scroll;
+
+    pre.provider-description {
+      font-family: var(--interfaceFont, sans-serif);
+      text-wrap-mode: wrap;
     }
   }
 }

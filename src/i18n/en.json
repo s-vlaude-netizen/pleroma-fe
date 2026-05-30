@@ -491,7 +491,16 @@
         "pagination_not_allowed_without_type": "Load more only allowed when searching a single type",
         "people": "People",
         "people_talking": "{count} people talking",
-        "person_talking": "{count} person talking"
+        "person_talking": "{count} person talking",
+        "search_hint_general": "Only public and unlisted posts are searchable usually.",
+        "syntax_hint_db_name": "Database Search (built-in)",
+        "syntax_hint_db_text": "Unquoted, each word is matched individually.\nQuote to match group as a whole: \"apple pie\".\nExclude words by prefixing a minus: -honey.\nThe unquoted word “or” acts as an operator.",
+        "syntax_hint_elastic_name": "OpenSearch / ElasticSearch",
+        "syntax_hint_elastic_text": "Unquoted, each word is matched individually.\nQuote to match group as a whole: \"apple pie\".\nFilter with instance:akko.example\nor with user:author_nick\nor with hashtag:cat.",
+        "syntax_hint_header": "Post Search Syntax",
+        "syntax_hint_title": "Toggle search syntax hint",
+        "syntax_hint_meili_name": "Meilisearch",
+        "syntax_hint_meili_text": "Processing is up to Meilisearch’s default matching strategy.\nConsult Meilisearch documentation."
     },
     "selectable_list": {
         "select_all": "Select all"
