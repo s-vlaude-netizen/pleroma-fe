@@ -11,9 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - resolving remote URLs or WebFinger lookups are now optional
     - search can be limited to a particular type for faster responses
 - search now allows fetching additional matches past the first page
+- further extended MFM support
+    (ruby, unixtime, fade, border, crop, animation loop count, animation delay and some fixes)
+- it is now possible to view poll results without voting
 
 ### Changed
 - various minor visual styling enhancements
+- overly long polls can and are now collapsed analogous to overly long status texts
 
 
 ## 2026.05 (3.19) - 2026-05-04

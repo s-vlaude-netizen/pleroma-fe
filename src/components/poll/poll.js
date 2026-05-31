@@ -16,6 +16,9 @@ export default {
   data () {
     return {
       loading: false,
+      peekingResults: false,
+      collapsable: false,
+      collapsed: false,
       choices: []
     }
   },
@@ -24,6 +27,10 @@ export default {
       this.$store.dispatch('mergeOrAddPoll', this.basePoll)
     }
     this.$store.dispatch('trackPoll', this.pollId)
+  },
+  mounted () {
+    this.collapsable = this.$refs.pollContainer?.scrollHeight > this.$refs.pollContainer?.clientHeight
+    this.collapsed = this.collapsable
   },
   unmounted () {
     this.$store.dispatch('untrackPoll', this.pollId)
@@ -48,8 +55,11 @@ export default {
     loggedIn () {
       return this.$store.state.users.currentUser
     },
+    canVote () {
+      return !(this.poll.voted || this.expired || !this.loggedIn)
+    },
     showResults () {
-      return this.poll.voted || this.expired || !this.loggedIn
+      return !this.canVote || this.peekingResults
     },
     totalVotesCount () {
       return this.poll.votes_count
@@ -61,9 +71,15 @@ export default {
       const total_base = this.poll.multiple ? this.poll.voters_count : this.poll.votes_count
       return total_base > 0 ? total_base : this.poll.votes_count
     },
-    containerClass () {
+    maxHeight () {
+      // keep in sync with CSS!
+      return 330; // in px
+    },
+    containerClasses () {
       return {
-        loading: this.loading
+        loading: this.loading,
+        collapsable: this.collapsable,
+        collapsed: this.collapsed
       }
     },
     choiceIndices () {
@@ -113,6 +129,12 @@ export default {
     },
     optionId (index) {
       return `poll${this.poll.id}-${index}`
+    },
+    peekResults (peeking) {
+      this.peekingResults = peeking
+    },
+    collapse(collapsed) {
+      this.collapsed = collapsed
     },
     vote () {
       if (this.choiceIndices.length === 0) return
