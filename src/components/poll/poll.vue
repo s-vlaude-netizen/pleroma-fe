@@ -81,6 +81,23 @@
       >
         {{ $t('polls.vote') }}
       </button>
+      <button
+        v-if="!showResults"
+        class="btn button-default poll-results-toggle-button"
+        type="button"
+        :disabled="!isDisabled"
+        @click="peekResults(true)"
+      >
+        {{ $t('polls.show_results') }}
+      </button>
+      <button
+        v-else-if="canVote"
+        class="btn button-default poll-results-toggle-button"
+        type="button"
+        @click="peekResults(false)"
+      >
+        {{ $t('polls.hide_results') }}
+      </button>
       <div class="total">
         <template v-if="typeof poll.voters_count === 'number'">
           {{ $tc("polls.people_voted_count", poll.voters_count, { count: poll.voters_count }) }}&nbsp;·&nbsp;
@@ -168,7 +185,7 @@
   &.loading * {
     cursor: progress;
   }
-  .poll-vote-button {
+  .poll-vote-button, .poll-results-toggle-button {
     padding: 0 0.5em;
     margin-right: 0.5em;
   }

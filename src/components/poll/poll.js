@@ -16,6 +16,7 @@ export default {
   data () {
     return {
       loading: false,
+      peekingResults: false,
       choices: []
     }
   },
@@ -48,8 +49,11 @@ export default {
     loggedIn () {
       return this.$store.state.users.currentUser
     },
+    canVote () {
+      return !(this.poll.voted || this.expired || !this.loggedIn)
+    },
     showResults () {
-      return this.poll.voted || this.expired || !this.loggedIn
+      return !this.canVote || this.peekingResults
     },
     totalVotesCount () {
       return this.poll.votes_count
@@ -113,6 +117,9 @@ export default {
     },
     optionId (index) {
       return `poll${this.poll.id}-${index}`
+    },
+    peekResults (peeking) {
+      this.peekingResults = peeking
     },
     vote () {
       if (this.choiceIndices.length === 0) return

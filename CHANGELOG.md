@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - search now allows fetching additional matches past the first page
 - further extended MFM support
     (ruby, unixtime, fade, border, crop, animation loop count, animation delay and some fixes)
+- it is now possible to view poll results without voting
 
 ### Changed
 - various minor visual styling enhancements
