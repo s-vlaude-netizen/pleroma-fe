@@ -155,8 +155,9 @@ const ExtraButtons = {
             replyTo: this.status.in_reply_to_status_id,
             repliedUser: repliedUser
           })
+        }).then(() => {
+          this.doDeleteStatus()
         })
-      this.doDeleteStatus()
     },
     showRedraftStatusConfirmDialog () {
       this.showingRedraftDialog = true
