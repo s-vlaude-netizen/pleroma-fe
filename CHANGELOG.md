@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - various minor visual styling enhancements
+- overly long polls can and are now collapsed analogous to overly long status texts
 
 
 ## 2026.05 (3.19) - 2026-05-04

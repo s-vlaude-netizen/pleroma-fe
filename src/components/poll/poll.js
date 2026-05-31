@@ -17,6 +17,8 @@ export default {
     return {
       loading: false,
       peekingResults: false,
+      collapsable: false,
+      collapsed: false,
       choices: []
     }
   },
@@ -25,6 +27,10 @@ export default {
       this.$store.dispatch('mergeOrAddPoll', this.basePoll)
     }
     this.$store.dispatch('trackPoll', this.pollId)
+  },
+  mounted () {
+    this.collapsable = this.$refs.pollContainer?.scrollHeight > this.$refs.pollContainer?.clientHeight
+    this.collapsed = this.collapsable
   },
   unmounted () {
     this.$store.dispatch('untrackPoll', this.pollId)
@@ -65,9 +71,15 @@ export default {
       const total_base = this.poll.multiple ? this.poll.voters_count : this.poll.votes_count
       return total_base > 0 ? total_base : this.poll.votes_count
     },
-    containerClass () {
+    maxHeight () {
+      // keep in sync with CSS!
+      return 330; // in px
+    },
+    containerClasses () {
       return {
-        loading: this.loading
+        loading: this.loading,
+        collapsable: this.collapsable,
+        collapsed: this.collapsed
       }
     },
     choiceIndices () {
@@ -120,6 +132,9 @@ export default {
     },
     peekResults (peeking) {
       this.peekingResults = peeking
+    },
+    collapse(collapsed) {
+      this.collapsed = collapsed
     },
     vote () {
       if (this.choiceIndices.length === 0) return

@@ -390,6 +390,8 @@
         "not_enough_options": "Too few unique options in poll",
         "option": "Option",
         "people_voted_count": "{count} person voted | {count} people voted",
+        "show_full": "Show full poll",
+        "show_less": "Collapse Poll details",
         "show_results": "Show results",
         "single_choice": "Single choice",
         "type": "Poll type",
