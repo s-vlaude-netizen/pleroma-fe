@@ -30,16 +30,22 @@ const RetweetButton = {
       }
     },
     doRetweet () {
+      let action
       if (!this.status.repeated) {
-        this.$store.dispatch('retweet', { id: this.status.id, visibility: this.retweetVisibility })
+        action = this.$store.dispatch('retweet', { id: this.status.id, visibility: this.retweetVisibility })
       } else {
-        this.$store.dispatch('unretweet', { id: this.status.id })
+        action = this.$store.dispatch('unretweet', { id: this.status.id })
       }
       this.animated = true
-      setTimeout(() => {
-        this.animated = false
-      }, 500)
       this.hideConfirmDialog()
+
+      action.then(() => {
+        this.animated = false
+        this.$store.dispatch('fetchRepeats', this.status.id)
+      })
+      .finally(() => {
+        this.animated = false
+      })
     },
     showConfirmDialog () {
       this.showingConfirmDialog = true

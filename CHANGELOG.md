@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     (ruby, unixtime, fade, border, crop, animation loop count, animation delay and some fixes)
 - it is now possible to view poll results without voting
 
+### Fixed
+- favourite and repeat indicators no longer occasionally disappear after a successfull interaction
+
 ### Changed
 - various minor visual styling enhancements
 - overly long polls can and are now collapsed analogous to overly long status texts

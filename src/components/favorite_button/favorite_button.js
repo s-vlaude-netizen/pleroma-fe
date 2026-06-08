@@ -19,15 +19,22 @@ const FavoriteButton = {
   },
   methods: {
     favorite () {
+      let action
       if (!this.status.favorited) {
-        this.$store.dispatch('favorite', { id: this.status.id })
+        action = this.$store.dispatch('favorite', { id: this.status.id })
       } else {
-        this.$store.dispatch('unfavorite', { id: this.status.id })
+        action = this.$store.dispatch('unfavorite', { id: this.status.id })
       }
+
       this.animated = true
-      setTimeout(() => {
+
+      action.then(() => {
         this.animated = false
-      }, 500)
+        this.$store.dispatch('fetchFavs', this.status.id)
+      })
+      .finally(() => {
+        this.animated = false
+      })
     }
   },
   computed: {

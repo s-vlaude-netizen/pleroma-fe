@@ -622,13 +622,13 @@ const statuses = {
     favorite ({ rootState, commit }, status) {
       // Optimistic favoriting...
       commit('setFavorited', { status, value: true })
-      rootState.api.backendInteractor.favorite({ id: status.id })
+      return rootState.api.backendInteractor.favorite({ id: status.id })
         .then(status => commit('setFavoritedConfirm', { status, user: rootState.users.currentUser }))
     },
     unfavorite ({ rootState, commit }, status) {
       // Optimistic unfavoriting...
       commit('setFavorited', { status, value: false })
-      rootState.api.backendInteractor.unfavorite({ id: status.id })
+      return rootState.api.backendInteractor.unfavorite({ id: status.id })
         .then(status => commit('setFavoritedConfirm', { status, user: rootState.users.currentUser }))
     },
     fetchPinnedStatuses ({ rootState, dispatch }, userId) {
@@ -658,13 +658,13 @@ const statuses = {
     retweet ({ rootState, commit }, {id, visibility}) {
       // Optimistic retweeting...
       commit('setRetweeted', { status: {id: id}, value: true })
-      rootState.api.backendInteractor.retweet({ id: id, visibility: visibility })
+      return rootState.api.backendInteractor.retweet({ id: id, visibility: visibility })
         .then(status => commit('setRetweetedConfirm', { status: status.retweeted_status, user: rootState.users.currentUser }))
     },
     unretweet ({ rootState, commit }, status) {
       // Optimistic unretweeting...
       commit('setRetweeted', { status, value: false })
-      rootState.api.backendInteractor.unretweet({ id: status.id })
+      return rootState.api.backendInteractor.unretweet({ id: status.id })
         .then(status => commit('setRetweetedConfirm', { status, user: rootState.users.currentUser }))
     },
     bookmark ({ rootState, commit }, status) {

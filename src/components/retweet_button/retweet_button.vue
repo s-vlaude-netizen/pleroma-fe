@@ -86,6 +86,10 @@
       animation-duration: 0.6s;
     }
 
+    .svg-inline--fa.fa-spin {
+      color: color-mix(in srgb-linear, var(--cGreen, $fallback--cGreen) 70%, currentColor);
+    }
+
     &:hover .svg-inline--fa,
     &.-repeated .svg-inline--fa {
       color: $fallback--cGreen;
