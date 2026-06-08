@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - favourite and repeat indicators no longer occasionally disappear after a successfull interaction
+- favourite and repeat indicators no longer wrongly pretend success after a failed interaction
 
 ### Changed
 - various minor visual styling enhancements
