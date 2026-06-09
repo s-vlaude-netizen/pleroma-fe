@@ -90,7 +90,11 @@
         "recent": "Recently used"
     },
     "errors": {
-        "storage_unavailable": "Pleroma could not access browser storage. Your login or your local settings won't be saved and you might encounter unexpected issues. Try enabling cookies."
+        "storage_unavailable": "Pleroma could not access browser storage. Your login or your local settings won't be saved and you might encounter unexpected issues. Try enabling cookies.",
+        "favorite": "Favoriting failed: {0}",
+        "favorite_undo": "Unfavoriting failed: {0}",
+        "repeat": "Repeating failed: {0}",
+        "repeat_undo": "Unrepeating failed: {0}"
     },
     "exporter": {
         "export": "Export",

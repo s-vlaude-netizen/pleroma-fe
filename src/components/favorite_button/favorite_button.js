@@ -19,8 +19,9 @@ const FavoriteButton = {
   },
   methods: {
     favorite () {
+      const undoing = this.status.favorited
       let action
-      if (!this.status.favorited) {
+      if (!undoing) {
         action = this.$store.dispatch('favorite', { id: this.status.id })
       } else {
         action = this.$store.dispatch('unfavorite', { id: this.status.id })
@@ -31,6 +32,14 @@ const FavoriteButton = {
       action.then(() => {
         this.animated = false
         this.$store.dispatch('fetchFavs', this.status.id)
+      })
+      .catch((error) => {
+        this.$store.dispatch('pushGlobalNotice', {
+          level: 'error',
+          messageKey: undoing ? 'errors.favorite_undo' : 'errors.favorite',
+          messageArgs: [error.message ?? error ?? 'unknown'],
+          timeout: 5000
+        })
       })
       .finally(() => {
         this.animated = false

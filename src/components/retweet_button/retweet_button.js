@@ -30,8 +30,9 @@ const RetweetButton = {
       }
     },
     doRetweet () {
+      const undoing = this.status.repeated
       let action
-      if (!this.status.repeated) {
+      if (!undoing) {
         action = this.$store.dispatch('retweet', { id: this.status.id, visibility: this.retweetVisibility })
       } else {
         action = this.$store.dispatch('unretweet', { id: this.status.id })
@@ -42,6 +43,14 @@ const RetweetButton = {
       action.then(() => {
         this.animated = false
         this.$store.dispatch('fetchRepeats', this.status.id)
+      })
+      .catch((error) => {
+        this.$store.dispatch('pushGlobalNotice', {
+          level: 'error',
+          messageKey: undoing ? 'errors.repeat_undo' : 'errors.repeat',
+          messageArgs: [error.message ?? error ?? 'unknown'],
+          timeout: 5000
+        })
       })
       .finally(() => {
         this.animated = false
