@@ -158,15 +158,23 @@ const parseMuteWords = (rawList) => {
   const regexEnd = '/'
 
   return rawList.map((word) => {
-       let predicate
+       let predicate = undefined
+
        if (word.startsWith(regexStart) && word.endsWith(regexEnd)) {
-         // case-insenstitive by default, but regex modifiers can locally reenable case sensitivity
-         const regex = new RegExp(word.slice(regexStart.length, -regexEnd.length), 'i')
-         predicate = (text, _textLowCased) => regex.test(text)
-       } else {
+         try {
+           // case-insenstitive by default, but regex modifiers can locally reenable case sensitivity
+           const regex = new RegExp(word.slice(regexStart.length, -regexEnd.length), 'i')
+           predicate = (text, _textLowCased) => regex.test(text)
+         } catch (e) {
+           console.warn(`Treating invalid regex filter ${word} as plain text: ${e.message || e}`)
+         }
+       }
+
+       if (predicate === undefined) {
          const muteWord = word.toLowerCase()
          predicate = (text, textLowCased) => (textLowCased || text?.toLowerCase())?.includes(muteWord)
        }
+
        return { name: word, predicate: predicate }
     })
 }
