@@ -29,6 +29,12 @@ body {
   }
 }
 
+noscript {
+  font-size: 500%;
+  font-weight: bold;
+  color: initial;
+}
+
 // ## Custom scrollbars
 // Only show custom scrollbars on devices which
 // have a cursor/pointer to operate them
