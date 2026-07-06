@@ -23,10 +23,10 @@
     </div>
     <div class="input-wrap">
       <input
-        type="checkbox"
         id="list-exclusive-input"
         ref="exclusive"
         v-model="exclusive"
+        type="checkbox"
       >
       <label for="list-exclusive-input">
         {{ $t('lists.exclusive_description') }}

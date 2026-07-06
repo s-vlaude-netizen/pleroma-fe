@@ -227,8 +227,8 @@
             </Select>
           </div>
           <div
-            class="user-profile-media-button"
             v-if="showMediaButton"
+            class="user-profile-media-button"
           >
             <button
               class="btn button-default"
