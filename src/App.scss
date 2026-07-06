@@ -29,7 +29,9 @@ body {
   }
 }
 
-noscript {
+// With some block/filter extensions, noscript elements are replaced
+// with custom div elements. Thus use class and subelement isntead of tag
+.noscript {
   font-size: 500%;
   font-weight: bold;
   color: initial;
