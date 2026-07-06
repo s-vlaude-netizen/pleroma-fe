@@ -14,10 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - further extended MFM support
     (ruby, unixtime, fade, border, crop, animation loop count, animation delay and some fixes)
 - it is now possible to view poll results without voting
+- poll result display now indicates which options oneself voted for
 
 ### Fixed
 - favourite and repeat indicators no longer occasionally disappear after a successfull interaction
 - favourite and repeat indicators no longer wrongly pretend success after a failed interaction
+- when viewing the frontend without Javascript, a fallback message is again visible
 
 ### Changed
 - various minor visual styling enhancements

@@ -30,6 +30,12 @@
           class="option-result"
         >
           <div class="option-result-label">
+            <span
+              v-if="ownVotes.length > 0"
+              class="result-vote-indicator"
+            >
+              {{ ownVotes.includes(index) ? '\u2714' : '' }}
+            </span>
             <span class="result-percentage">
               {{ percentageForOption(option.votes_count) }}%
             </span>
@@ -212,6 +218,11 @@
     padding: 0.1em 0.25em;
     z-index: 1;
     word-break: break-word;
+  }
+  .result-vote-indicator {
+    width: 1em;
+    margin-right: 0.5em;
+    text-align: center;
   }
   .result-percentage {
     width: 3.5em;

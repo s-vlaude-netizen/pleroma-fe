@@ -58,6 +58,9 @@ export default {
     canVote () {
       return !(this.poll.voted || this.expired || !this.loggedIn)
     },
+    ownVotes () {
+      return (this.poll.own_votes ?? [])
+    },
     showResults () {
       return !this.canVote || this.peekingResults
     },
