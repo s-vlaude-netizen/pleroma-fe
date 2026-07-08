@@ -14,8 +14,13 @@
       :title="attachment.description"
       @click.prevent
     >
-      <FAIcon :icon="placeholderIconClass" />
-      <b>{{ nsfw ? "NSFW / " : "" }}</b>{{ edit ? '' : placeholderName }}
+      <FAIcon
+        :icon="placeholderIconClass"
+        class="placeholder-icon"
+      />
+      <div class="placeholder-text">
+        <b>{{ nsfw ? "NSFW / " : "" }}</b>{{ edit ? '' : placeholderName }}
+      </div>
     </a>
     <div
       v-if="edit || remove"

@@ -108,6 +108,12 @@
 
     &:not(:first-child) {
       margin-top: 0.5em;
+
+      &.-minimal {
+        // minimal mode shows text instead of images.
+        // Increase spacing to better separate text blocks.
+        margin-top: 1.5em;
+      }
     }
   }
 
