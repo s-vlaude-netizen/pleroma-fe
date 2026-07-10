@@ -44,7 +44,7 @@ const FollowedTagList = withLoadMore({
   additionalPropNames: ['userId']
 })(List)
 
-const isUserPage = ({ name }) => name === 'user-profile' || name === 'external-user-profile'
+const isUserPage = ({ name }) => name === 'user-profile-id' || name === 'user-profile-nick'
 
 const UserProfile = {
   data () {
@@ -89,7 +89,7 @@ const UserProfile = {
       return this.$store.getters.findUser(this.userId)
     },
     isExternal () {
-      return this.$route.name === 'external-user-profile'
+      return !this.user.is_local
     },
     followsTabVisible () {
       return this.isUs || !this.user.hide_follows

@@ -111,7 +111,7 @@ const ReportCard = {
       this.$store.state.backendInteractor.deleteUser({ user: this.user })
         .then(e => {
           this.$store.dispatch('markStatusesAsDeleted', status => this.user.id === status.user.id)
-          const isProfile = this.$route.name === 'external-user-profile' || this.$route.name === 'user-profile'
+          const isProfile = this.$route.name === 'user-profile-id' || this.$route.name === 'user-profile-nick'
           const isTargetUser = this.$route.params.name === this.user.name || this.$route.params.id === this.user.id
           if (isProfile && isTargetUser) {
             window.history.back()
