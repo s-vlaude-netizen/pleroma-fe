@@ -5,22 +5,23 @@ import { compact, map, each, mergeWith, last, concat, uniq, isArray } from 'loda
 import { registerPushNotifications, unregisterPushNotifications } from '../services/push/push.js'
 import { getClientToken } from '../services/new_api/oauth.js'
 
-// TODO: Unify with mergeOrAdd in statuses.js
-export const mergeOrAdd = (arr, obj, item, key = 'id') => {
-  if (!item) { return false }
-  const oldItem = obj[item[key]]
-  if (oldItem) {
+const mergeOrAddNewUser = ({ users, usersObject, localNicksToId }, user) => {
+  if (!user) return
+
+  const oldUser = usersObject[user.id]
+
+  if (oldUser) {
     // We already have this, so only merge the new info.
-    mergeWith(oldItem, item, mergeArrayLength)
-    return { item: oldItem, new: false }
-  } else {
-    // This is a new item, prepare it
-    arr.push(item)
-    obj[item[key]] = item
-    if (item.screen_name && !item.screen_name.includes('@')) {
-      obj[item.screen_name.toLowerCase()] = item
-    }
-    return { item, new: true }
+    mergeWith(oldUser, user, mergeArrayLength)
+    return
+  }
+
+  // This is a new user, prepare it
+  users.push(user)
+  usersObject[user.id] = user
+
+  if (user.screen_name && !user.screen_name.includes('@')) {
+    localNicksToId[user.screen_name.toLowerCase()] = user.id
   }
 }
 
@@ -210,7 +211,7 @@ export const mutations = {
       if (user.relationship) {
         state.relationships[user.relationship.id] = user.relationship
       }
-      mergeOrAdd(state.users, state.usersObject, user)
+      mergeOrAddNewUser(state, user)
     })
   },
   updateUserRelationship (state, relationships) {
@@ -310,13 +311,25 @@ export const mutations = {
 }
 
 export const getters = {
+  // find either by id, or if local also by casefolded nick
   findUser: state => query => {
     const result = state.usersObject[query]
+    if (result) return result
+
     // In case it's a screen_name, we can try searching case-insensitive
-    if (!result && typeof query === 'string') {
-      return state.usersObject[query.toLowerCase()]
+    if (typeof query === 'string') {
+      const id = state.localNicksToId[query.toLowerCase()]
+      return id && state.usersObject[id]
     }
-    return result
+
+    return undefined
+  },
+  findUserById: state => id => {
+    return state.usersObject[id]
+  },
+  findLocalUserByNick: state => nick => {
+    const id = state.localNicksToId[nick]
+    return id && state.usersObject[id]
   },
   findUserByUrl: state => query => {
     return state.users
@@ -334,6 +347,7 @@ export const defaultState = {
   lastLoginName: false,
   currentUser: false,
   users: [],
+  localNicksToId: {},
   usersObject: {},
   displayBackground: null,
   signUpPending: false,
@@ -362,6 +376,13 @@ const users = {
     },
     fetchUser (store, id) {
       return store.rootState.api.backendInteractor.fetchUser({ id })
+        .then((user) => {
+          store.commit('addNewUsers', [user])
+          return user
+        })
+    },
+    lookupUser (store, nick) {
+      return store.rootState.api.backendInteractor.lookupUser({ nick })
         .then((user) => {
           store.commit('addNewUsers', [user])
           return user

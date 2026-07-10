@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### REMOVED
+- `/users/:arg` no longer accepts IDs as an path component, only nicknames.
+    Use `/users/by-id/:id` instead.
+    Nicknames and IDs could overlap, breaking some pages and/or creating misleading associations.
+
 ### Deprecated
 - root-level user profile page URLs like `/nickname` for local users
     are deprecated and now redirect to `/users/nickname`.

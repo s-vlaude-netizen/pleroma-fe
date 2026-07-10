@@ -64,6 +64,7 @@ const MASTODON_STATUS_CONTEXT_URL = id => `/api/v1/statuses/${id}/context`
 const MASTODON_STATUS_SOURCE_URL = id => `/api/v1/statuses/${id}/source`
 const MASTODON_STATUS_HISTORY_URL = id => `/api/v1/statuses/${id}/history`
 const MASTODON_USER_URL = id => `/api/v1/accounts/${id}?with_relationships=true`
+const MASTODON_USER_LOOKUP_URL = '/api/v1/accounts/lookup'
 const MASTODON_USER_RELATIONSHIPS_URL = '/api/v1/accounts/relationships'
 const MASTODON_USER_TIMELINE_URL = id => `/api/v1/accounts/${id}/statuses`
 const MASTODON_LIST_URL = id => `/api/v1/lists/${id}`
@@ -359,6 +360,17 @@ const fetchUser = ({ id, credentials }) => {
   const url = MASTODON_USER_URL(id)
   return promisedRequest({ url, credentials })
     .then((data) => parseUser(data))
+}
+
+const lookupUser = ({ nick, credentials }) => {
+  return promisedRequest({
+    url: MASTODON_USER_LOOKUP_URL,
+    credentials,
+    params: {
+      acct: nick,
+      with_relationships: "true"
+    }
+  }).then((data) => parseUser(data))
 }
 
 const fetchUserRelationship = ({ id, credentials }) => {
@@ -1872,6 +1884,7 @@ const apiService = {
   unblockUser,
   removeUserFromFollowers,
   fetchUser,
+  lookupUser,
   fetchUserRelationship,
   favorite,
   unfavorite,
