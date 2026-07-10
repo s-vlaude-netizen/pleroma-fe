@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Deprecated
+- root-level user profile page URLs like `/nickname` for local users
+    are deprecated and now redirect to `/users/nickname`.
+    This was and is too prone to collisions with other content.
+
 ### Added
 - the search interface now exposes more control knobs:
     - post search can now be limited to a single post author
@@ -24,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - various minor visual styling enhancements
 - overly long polls can and are now collapsed analogous to overly long status texts
+- remote user profile pages are now served under `/users/by-id/:id` isntead of `/users/:id`
 
 
 ## 2026.05 (3.19) - 2026-05-04
