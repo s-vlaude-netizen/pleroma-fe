@@ -125,7 +125,16 @@ const UserProfile = {
       }
     },
     load (userNameOrId) {
-      const loadById = (userId) => {
+      // Reset view
+      this.userId = null
+      this.error = false
+
+      const loadUser = (user) => {
+        this.note = user.relationship.note
+        this.$store.dispatch('setDisplayBackground', user.background_image)
+
+        const userId = user.id
+
         this.userId = userId
         const timelines = ['user', 'favorites', 'replies', 'media']
         timelines.forEach((timeline) => {
@@ -136,22 +145,14 @@ const UserProfile = {
         this.$store.dispatch('fetchPinnedStatuses', userId)
       }
 
-      // Reset view
-      this.userId = null
-      this.error = false
-
       // Check if user data is already loaded in store
       const user = this.$store.getters.findUser(userNameOrId)
       if (user) {
-        loadById(user.id)
-        this.note = user.relationship.note
-        this.$store.dispatch('setDisplayBackground', user.background_image)
+        loadUser(user)
       } else {
         this.$store.dispatch('fetchUser', userNameOrId)
-          .then(({ id, relationship, background_image }) => {
-            this.note = relationship.note
-            this.$store.dispatch('setDisplayBackground', background_image)
-            return loadById(id)
+          .then((user) => {
+            return loadUser(user)
           })
           .catch((reason) => {
             const errorMessage = get(reason, 'error.error')
