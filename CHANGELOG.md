@@ -25,6 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     (ruby, unixtime, fade, border, crop, animation loop count, animation delay and some fixes)
 - it is now possible to view poll results without voting
 - poll result display now indicates which options oneself voted for
+- when known (currently only for local users) user cards and profiles now link
+    a multi-format feed URL preferred by the backend, instead of hardcoding an RSS only client-side guess
 
 ### Fixed
 - favourite and repeat indicators no longer occasionally disappear after a successfull interaction

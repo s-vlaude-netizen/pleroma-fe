@@ -152,7 +152,7 @@
             </a>
             <a
               v-if="isOtherUser"
-              :href="user.statusnet_profile_url + '.rss'"
+              :href="feedUrl"
               target="_blank"
               class="button-unstyled external-link-button"
             >
