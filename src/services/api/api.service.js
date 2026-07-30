@@ -105,6 +105,7 @@ const MASTODON_STREAMING = '/api/v1/streaming'
 const MASTODON_KNOWN_DOMAIN_LIST_URL = '/api/v1/instance/peers'
 const MASTODON_ANNOUNCEMENTS_URL = '/api/v1/announcements'
 const MASTODON_ANNOUNCEMENTS_DISMISS_URL = id => `/api/v1/announcements/${id}/dismiss`
+const MASTODON_INSTANCE_URL = '/api/v1/instance'
 const PLEROMA_EMOJI_REACTIONS_URL = id => `/api/v1/pleroma/statuses/${id}/reactions`
 const PLEROMA_EMOJI_REACT_URL = (id, emoji) => `/api/v1/pleroma/statuses/${id}/reactions/${emoji}`
 const PLEROMA_EMOJI_UNREACT_URL = (id, emoji) => `/api/v1/pleroma/statuses/${id}/reactions/${emoji}`
@@ -1552,6 +1553,10 @@ const fetchDomainMutes = ({ credentials }) => {
   return promisedRequest({ url: MASTODON_DOMAIN_BLOCKS_URL, credentials })
 }
 
+const fetchInstanceInfo = ({ credentials }) => {
+  return promisedRequest({ url: MASTODON_INSTANCE_URL, credentials })
+}
+
 const muteDomain = ({ domain, credentials }) => {
   return promisedRequest({
     url: MASTODON_DOMAIN_BLOCKS_URL,
@@ -1962,6 +1967,7 @@ const apiService = {
   searchUsers,
   fetchKnownDomains,
   fetchDomainMutes,
+  fetchInstanceInfo,
   muteDomain,
   unmuteDomain,
   fetchAnnouncements,

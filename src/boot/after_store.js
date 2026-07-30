@@ -66,25 +66,23 @@ const resolveLanguage = (instanceLanguages) => {
 
 const getInstanceConfig = async ({ store }) => {
   try {
-    const res = await preloadFetch('/api/v1/instance')
-    if (res.ok) {
-      const data = await res.json()
-      const textlimit = data.max_toot_chars
-      const vapidPublicKey = data.pleroma.vapid_public_key
+    const data = await store.state.api.backendInteractor.fetchInstanceInfo()
 
-      store.dispatch('setInstanceOption', { name: 'textlimit', value: textlimit })
-      store.dispatch('setInstanceOption', { name: 'accountApprovalRequired', value: data.approval_required })
-      // don't override cookie if set
-      if (!Cookies.get('userLanguage')) {
-        store.dispatch('setOption', { name: 'interfaceLanguage', value: resolveLanguage(data.languages) })
-      }
+    const textlimit = data.max_toot_chars
+    const vapidPublicKey = data.pleroma.vapid_public_key
 
-      if (vapidPublicKey) {
-        store.dispatch('setInstanceOption', { name: 'vapidPublicKey', value: vapidPublicKey })
-      }
-    } else {
-      throw (res)
+    store.dispatch('setInstanceOption', { name: 'textlimit', value: textlimit })
+    store.dispatch('setInstanceOption', { name: 'accountApprovalRequired', value: data.approval_required })
+    // don't override cookie if set
+    if (!Cookies.get('userLanguage')) {
+      store.dispatch('setOption', { name: 'interfaceLanguage', value: resolveLanguage(data.languages) })
     }
+
+    if (vapidPublicKey) {
+      store.dispatch('setInstanceOption', { name: 'vapidPublicKey', value: vapidPublicKey })
+    }
+
+    store.dispatch('setFederationPolicy', data.pleroma?.metadata?.federation)
   } catch (error) {
     console.error('Could not load instance config, potentially fatal')
     console.error(error)

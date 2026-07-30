@@ -175,6 +175,14 @@ const instance = {
           : federation_data.enabled
       })
     },
+    refreshFederationPolicyData({ rootState, dispatch }) {
+      rootState.api.backendInteractor
+        .fetchInstanceInfo()
+        .then(data => {
+          const federation = data.pleroma?.metadata?.federation
+          dispatch('setFederationPolicy', federation)
+        })
+    },
     async getStaticEmoji ({ commit }) {
       try {
         const res = await window.fetch('/static/emoji.json')

@@ -681,6 +681,8 @@ const users = {
           store.dispatch('setLastTimeline', 'public-timeline')
           store.dispatch('setLayoutWidth', windowWidth())
           store.dispatch('setLayoutHeight', windowHeight())
+          // Refresh MRF info to discard details only accessible with authentication
+          store.dispatch('refreshFederationPolicyData')
         })
     },
     loginUser (store, accessToken) {
@@ -748,6 +750,9 @@ const users = {
               // Fetch our friends
               store.rootState.api.backendInteractor.fetchFriends({ id: user.id })
                 .then((friends) => commit('addNewUsers', friends))
+
+              // Refresh MRF info, now with authentication
+              store.dispatch('refreshFederationPolicyData')
             } else {
               const response = data.error
               // Authentication failed
