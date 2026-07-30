@@ -298,24 +298,9 @@ const getNodeInfo = async ({ store }) => {
       const frontendVersion = window.___pleromafe_commit_hash
       store.dispatch('setInstanceOption', { name: 'frontendVersion', value: frontendVersion })
 
-      const federation = metadata.federation
+      store.dispatch('setFederationPolicy', metadata?.federation)
 
-      store.dispatch('setInstanceOption', {
-        name: 'tagPolicyAvailable',
-        value: typeof federation.mrf_policies === 'undefined'
-          ? false
-          : metadata.federation.mrf_policies.includes('TagPolicy')
-      })
-
-      store.dispatch('setInstanceOption', { name: 'federationPolicy', value: federation })
       store.dispatch('setInstanceOption', { name: 'localBubbleInstances', value: metadata.localBubbleInstances })
-      store.dispatch('setInstanceOption', {
-        name: 'federating',
-        value: typeof federation.enabled === 'undefined'
-          ? true
-          : federation.enabled
-      })
-
       store.dispatch('setInstanceOption', { name: 'publicTimelineVisibility', value: metadata.publicTimelineVisibility })
       store.dispatch('setInstanceOption', { name: 'federatedTimelineAvailable', value: metadata.federatedTimelineAvailable })
 
