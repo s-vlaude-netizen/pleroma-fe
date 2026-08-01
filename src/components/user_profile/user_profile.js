@@ -44,7 +44,7 @@ const FollowedTagList = withLoadMore({
   additionalPropNames: ['userId']
 })(List)
 
-const isUserPage = ({ name }) => name === 'user-profile' || name === 'external-user-profile'
+const isUserPage = ({ name }) => name === 'user-profile-id' || name === 'user-profile-nick'
 
 const UserProfile = {
   data () {
@@ -63,7 +63,7 @@ const UserProfile = {
     const routeParams = this.$route.params
     const hash = (get(this.$route, 'hash') || defaultTabKey).replace(/^#/, '')
     if (hash !== '') this.tab = hash
-    this.load(routeParams.name || routeParams.id)
+    this.load({ name: routeParams.name, id: routeParams.id })
   },
   unmounted () {
     this.stopFetching()
@@ -89,7 +89,7 @@ const UserProfile = {
       return this.$store.getters.findUser(this.userId)
     },
     isExternal () {
-      return this.$route.name === 'external-user-profile'
+      return !this.user.is_local
     },
     followsTabVisible () {
       return this.isUs || !this.user.hide_follows
@@ -124,8 +124,17 @@ const UserProfile = {
         this.$store.dispatch('startFetchingTimeline', { timeline: timeline, userId: this.userId })
       }
     },
-    load (userNameOrId) {
-      const loadById = (userId) => {
+    load ({ id, name }) {
+      // Reset view
+      this.userId = null
+      this.error = false
+
+      const loadUser = (user) => {
+        this.note = user.relationship.note
+        this.$store.dispatch('setDisplayBackground', user.background_image)
+
+        const userId = user.id
+
         this.userId = userId
         const timelines = ['user', 'favorites', 'replies', 'media']
         timelines.forEach((timeline) => {
@@ -136,22 +145,27 @@ const UserProfile = {
         this.$store.dispatch('fetchPinnedStatuses', userId)
       }
 
-      // Reset view
-      this.userId = null
-      this.error = false
-
       // Check if user data is already loaded in store
-      const user = this.$store.getters.findUser(userNameOrId)
+      let user = undefined
+      if (id) {
+        user = this.$store.getters.findUserById(id)
+      } else if (name) {
+        user = this.$store.getters.findLocalUserByNick(id)
+      }
+
       if (user) {
-        loadById(user.id)
-        this.note = user.relationship.note
-        this.$store.dispatch('setDisplayBackground', user.background_image)
+        loadUser(user)
       } else {
-        this.$store.dispatch('fetchUser', userNameOrId)
-          .then(({ id, relationship, background_image }) => {
-            this.note = relationship.note
-            this.$store.dispatch('setDisplayBackground', background_image)
-            return loadById(id)
+        let query
+        if (id) {
+          query = this.$store.dispatch('fetchUser', id)
+        } else {
+          query = this.$store.dispatch('lookupUser', name)
+        }
+
+        query
+          .then((user) => {
+            return loadUser(user)
           })
           .catch((reason) => {
             const errorMessage = get(reason, 'error.error')
@@ -171,9 +185,9 @@ const UserProfile = {
       this.$store.dispatch('stopFetchingTimeline', 'favorites')
       this.$store.dispatch('stopFetchingTimeline', 'media')
     },
-    switchUser (userNameOrId) {
+    switchUser ({ id, name }) {
       this.stopFetching()
-      this.load(userNameOrId)
+      this.load({ id, name })
     },
     onTabSwitch (tab) {
       this.tab = tab
@@ -202,12 +216,12 @@ const UserProfile = {
   watch: {
     '$route.params.id': function (newVal) {
       if (isUserPage(this.$route) && newVal) {
-        this.switchUser(newVal)
+        this.switchUser({ id: newVal })
       }
     },
     '$route.params.name': function (newVal) {
       if (isUserPage(this.$route) && newVal) {
-        this.switchUser(newVal)
+        this.switchUser({ name: newVal })
       }
     },
     '$route.hash': function (newVal) {

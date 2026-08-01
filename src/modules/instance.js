@@ -157,6 +157,32 @@ const instance = {
           break
       }
     },
+    setFederationPolicy({ dispatch }, federation_data) {
+      federation_data = federation_data ?? {}
+
+      dispatch('setInstanceOption', {
+        name: 'tagPolicyAvailable',
+        value: typeof federation_data.mrf_policies === 'undefined'
+          ? false
+          : federation_data.mrf_policies.includes('TagPolicy')
+      })
+
+      dispatch('setInstanceOption', { name: 'federationPolicy', value: federation_data })
+      dispatch('setInstanceOption', {
+        name: 'federating',
+        value: typeof federation_data.enabled === 'undefined'
+          ? true
+          : federation_data.enabled
+      })
+    },
+    refreshFederationPolicyData({ rootState, dispatch }) {
+      rootState.api.backendInteractor
+        .fetchInstanceInfo()
+        .then(data => {
+          const federation = data.pleroma?.metadata?.federation
+          dispatch('setFederationPolicy', federation)
+        })
+    },
     async getStaticEmoji ({ commit }) {
       try {
         const res = await window.fetch('/static/emoji.json')

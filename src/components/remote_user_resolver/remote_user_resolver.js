@@ -16,7 +16,7 @@ const RemoteUserResolver = {
             this.$store.commit('addNewUsers', [externalUser])
             const id = externalUser.id
             this.$router.replace({
-              name: 'external-user-profile',
+              name: 'user-profile-id',
               params: { id }
             })
           }

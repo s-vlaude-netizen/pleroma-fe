@@ -100,6 +100,7 @@ export const parseUser = (data) => {
       output.instance = data.akkoma.instance
       output.status_ttl_days = data.akkoma.status_ttl_days
       output.permit_followback = data.akkoma.permit_followback
+      output.akkoma.web_feed = data.akkoma.web_feed
     }
 
     if (data.pleroma) {

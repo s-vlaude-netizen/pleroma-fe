@@ -65,7 +65,7 @@ export default (store) => {
       component: RemoteUserResolver,
       beforeEnter: validateAuthenticatedRoute
     },
-    { name: 'external-user-profile', path: '/users/:id', component: UserProfile, meta: { dontScroll: true } },
+    { name: 'user-profile-id', path: '/users/by-id/:id', component: UserProfile, meta: { dontScroll: true } },
     { name: 'interactions', path: '/users/:username/interactions', component: Interactions, beforeEnter: validateAuthenticatedRoute },
     { name: 'registration', path: '/registration', component: Registration },
     { name: 'registration-request-sent', path: '/registration-request-sent', component: RegistrationRequestSent },
@@ -90,7 +90,14 @@ export default (store) => {
     { name: 'list-timeline', path: '/lists/:id', component: ListTimeline },
     { name: 'list-edit', path: '/lists/:id/edit', component: ListEdit },
     { name: 'announcements', path: '/announcements', component: AnnouncementsPage },
-    { name: 'user-profile', path: '/:_(users)?/:name', component: UserProfile, meta: { dontScroll: true } }
+    { name: 'user-profile-nick', path: '/users/:name', component: UserProfile, meta: { dontScroll: true } },
+    // To be removed eventually. Causes a bunch of issues from nicknames potentially clashig with static files
+    // or other content, as well as URL-encoding issues. Also inconsistent with AP ID and backend display URL
+    { name: 'user-profile-legacy-display', path: '/:name', redirect: to => ({
+        name: 'user-profile-nick',
+        params: { name: to.params.name }
+      })
+    }
   ]
 
   return routes

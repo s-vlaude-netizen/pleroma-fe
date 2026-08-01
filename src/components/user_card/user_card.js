@@ -64,6 +64,9 @@ export default {
       const serverUrl = new URL(this.user.statusnet_profile_url)
       return `${serverUrl.protocol}//${serverUrl.host}/main/ostatus`
     },
+    feedUrl () {
+      return (this.user.akkoma?.web_feed || (this.user.statusnet_profile_url + '.rss'))
+    },
     loggedIn () {
       return this.$store.state.users.currentUser
     },

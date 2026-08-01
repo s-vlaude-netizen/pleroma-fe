@@ -66,25 +66,23 @@ const resolveLanguage = (instanceLanguages) => {
 
 const getInstanceConfig = async ({ store }) => {
   try {
-    const res = await preloadFetch('/api/v1/instance')
-    if (res.ok) {
-      const data = await res.json()
-      const textlimit = data.max_toot_chars
-      const vapidPublicKey = data.pleroma.vapid_public_key
+    const data = await store.state.api.backendInteractor.fetchInstanceInfo()
 
-      store.dispatch('setInstanceOption', { name: 'textlimit', value: textlimit })
-      store.dispatch('setInstanceOption', { name: 'accountApprovalRequired', value: data.approval_required })
-      // don't override cookie if set
-      if (!Cookies.get('userLanguage')) {
-        store.dispatch('setOption', { name: 'interfaceLanguage', value: resolveLanguage(data.languages) })
-      }
+    const textlimit = data.max_toot_chars
+    const vapidPublicKey = data.pleroma.vapid_public_key
 
-      if (vapidPublicKey) {
-        store.dispatch('setInstanceOption', { name: 'vapidPublicKey', value: vapidPublicKey })
-      }
-    } else {
-      throw (res)
+    store.dispatch('setInstanceOption', { name: 'textlimit', value: textlimit })
+    store.dispatch('setInstanceOption', { name: 'accountApprovalRequired', value: data.approval_required })
+    // don't override cookie if set
+    if (!Cookies.get('userLanguage')) {
+      store.dispatch('setOption', { name: 'interfaceLanguage', value: resolveLanguage(data.languages) })
     }
+
+    if (vapidPublicKey) {
+      store.dispatch('setInstanceOption', { name: 'vapidPublicKey', value: vapidPublicKey })
+    }
+
+    store.dispatch('setFederationPolicy', data.pleroma?.metadata?.federation)
   } catch (error) {
     console.error('Could not load instance config, potentially fatal')
     console.error(error)
@@ -298,24 +296,9 @@ const getNodeInfo = async ({ store }) => {
       const frontendVersion = window.___pleromafe_commit_hash
       store.dispatch('setInstanceOption', { name: 'frontendVersion', value: frontendVersion })
 
-      const federation = metadata.federation
+      store.dispatch('setFederationPolicy', metadata?.federation)
 
-      store.dispatch('setInstanceOption', {
-        name: 'tagPolicyAvailable',
-        value: typeof federation.mrf_policies === 'undefined'
-          ? false
-          : metadata.federation.mrf_policies.includes('TagPolicy')
-      })
-
-      store.dispatch('setInstanceOption', { name: 'federationPolicy', value: federation })
       store.dispatch('setInstanceOption', { name: 'localBubbleInstances', value: metadata.localBubbleInstances })
-      store.dispatch('setInstanceOption', {
-        name: 'federating',
-        value: typeof federation.enabled === 'undefined'
-          ? true
-          : federation.enabled
-      })
-
       store.dispatch('setInstanceOption', { name: 'publicTimelineVisibility', value: metadata.publicTimelineVisibility })
       store.dispatch('setInstanceOption', { name: 'federatedTimelineAvailable', value: metadata.federatedTimelineAvailable })
 

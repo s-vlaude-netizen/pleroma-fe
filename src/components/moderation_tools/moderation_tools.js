@@ -90,7 +90,7 @@ const ModerationTools = {
       store.state.api.backendInteractor.deleteUser({ user })
         .then(e => {
           this.$store.dispatch('markStatusesAsDeleted', status => user.id === status.user.id)
-          const isProfile = this.$route.name === 'external-user-profile' || this.$route.name === 'user-profile'
+          const isProfile = this.$route.name === 'user-profile-id' || this.$route.name === 'user-profile-nick'
           const isTargetUser = this.$route.params.name === name || this.$route.params.id === id
           if (isProfile && isTargetUser) {
             window.history.back()

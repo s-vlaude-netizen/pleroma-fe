@@ -64,6 +64,7 @@ const MASTODON_STATUS_CONTEXT_URL = id => `/api/v1/statuses/${id}/context`
 const MASTODON_STATUS_SOURCE_URL = id => `/api/v1/statuses/${id}/source`
 const MASTODON_STATUS_HISTORY_URL = id => `/api/v1/statuses/${id}/history`
 const MASTODON_USER_URL = id => `/api/v1/accounts/${id}?with_relationships=true`
+const MASTODON_USER_LOOKUP_URL = '/api/v1/accounts/lookup'
 const MASTODON_USER_RELATIONSHIPS_URL = '/api/v1/accounts/relationships'
 const MASTODON_USER_TIMELINE_URL = id => `/api/v1/accounts/${id}/statuses`
 const MASTODON_LIST_URL = id => `/api/v1/lists/${id}`
@@ -104,6 +105,7 @@ const MASTODON_STREAMING = '/api/v1/streaming'
 const MASTODON_KNOWN_DOMAIN_LIST_URL = '/api/v1/instance/peers'
 const MASTODON_ANNOUNCEMENTS_URL = '/api/v1/announcements'
 const MASTODON_ANNOUNCEMENTS_DISMISS_URL = id => `/api/v1/announcements/${id}/dismiss`
+const MASTODON_INSTANCE_URL = '/api/v1/instance'
 const PLEROMA_EMOJI_REACTIONS_URL = id => `/api/v1/pleroma/statuses/${id}/reactions`
 const PLEROMA_EMOJI_REACT_URL = (id, emoji) => `/api/v1/pleroma/statuses/${id}/reactions/${emoji}`
 const PLEROMA_EMOJI_UNREACT_URL = (id, emoji) => `/api/v1/pleroma/statuses/${id}/reactions/${emoji}`
@@ -359,6 +361,17 @@ const fetchUser = ({ id, credentials }) => {
   const url = MASTODON_USER_URL(id)
   return promisedRequest({ url, credentials })
     .then((data) => parseUser(data))
+}
+
+const lookupUser = ({ nick, credentials }) => {
+  return promisedRequest({
+    url: MASTODON_USER_LOOKUP_URL,
+    credentials,
+    params: {
+      acct: nick,
+      with_relationships: "true"
+    }
+  }).then((data) => parseUser(data))
 }
 
 const fetchUserRelationship = ({ id, credentials }) => {
@@ -1540,6 +1553,10 @@ const fetchDomainMutes = ({ credentials }) => {
   return promisedRequest({ url: MASTODON_DOMAIN_BLOCKS_URL, credentials })
 }
 
+const fetchInstanceInfo = ({ credentials }) => {
+  return promisedRequest({ url: MASTODON_INSTANCE_URL, credentials })
+}
+
 const muteDomain = ({ domain, credentials }) => {
   return promisedRequest({
     url: MASTODON_DOMAIN_BLOCKS_URL,
@@ -1872,6 +1889,7 @@ const apiService = {
   unblockUser,
   removeUserFromFollowers,
   fetchUser,
+  lookupUser,
   fetchUserRelationship,
   favorite,
   unfavorite,
@@ -1949,6 +1967,7 @@ const apiService = {
   searchUsers,
   fetchKnownDomains,
   fetchDomainMutes,
+  fetchInstanceInfo,
   muteDomain,
   unmuteDomain,
   fetchAnnouncements,

@@ -61,8 +61,10 @@ describe('The users module', () => {
       const user = { screen_name: 'Guy', id: '1' }
       const state = {
         usersObject: {
-          1: user,
-          guy: user
+          1: user
+        },
+        localNicksToId: {
+          guy: 1
         }
       }
       const name = 'Guy'
@@ -74,8 +76,10 @@ describe('The users module', () => {
       const user = { screen_name: 'Guy', id: '1' }
       const state = {
         usersObject: {
-          1: user,
-          guy: user
+          1: user
+        },
+        localNicksToId: {
+          guy: 1
         }
       }
       const id = '1'
