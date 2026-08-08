@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+### Added
+
+### Fixed
+
+### Changed
+
+## 2026.08 (3.20) - 2026-08-08
 ### REMOVED
 - `/users/:arg` no longer accepts IDs as an path component, only nicknames.
     Use `/users/by-id/:id` instead.
