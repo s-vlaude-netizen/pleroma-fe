@@ -78,7 +78,9 @@
             v-model="muteWordsString"
             class="resize-height"
           />
-          <div>{{ $t('settings.filtering_explanation') }}</div>
+          <div class="muteWordsExplanation">
+            {{ $t('settings.filtering_explanation') }}
+          </div>
         </li>
         <h3>{{ $t('settings.attachments') }}</h3>
         <li>
@@ -118,3 +120,15 @@
   </div>
 </template>
 <script src="./filtering_tab.js"></script>
+
+<style lang="scss">
+@import '../../../_variables.scss';
+
+.setting-list {
+  .muteWordsExplanation {
+    color: var(--faint, $fallback--faint);
+    font-size: 90%;
+    margin-top: 0.2em;
+  }
+}
+</style>

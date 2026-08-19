@@ -615,7 +615,7 @@
             "restore_settings": "Restore settings from file"
         },
         "filtering": "Filtering",
-        "filtering_explanation": "All posts containing these words will be muted, one per line",
+        "filtering_explanation": "All posts containing these words will be muted, one per line. Enclose a line in forward slashes to use ECMAScript regexes, e.g. /\\bbad\\b/; global modifiers are not supported. Matches are case-insensitive by default.",
         "follow_export": "Follow export",
         "follow_export_button": "Export your follows to a csv file",
         "follow_import": "Follow import",
