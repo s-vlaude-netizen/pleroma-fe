@@ -7,7 +7,7 @@ const REMOTE_INTERACTION_URL = '/main/ostatus'
 
 const defaultState = {
   // Stuff from apiConfig
-  name: 'Pleroma FE',
+  name: 'Akkoma FE',
   registrationOpen: true,
   server: 'http://localhost:4040/',
   textlimit: 5000,
@@ -50,13 +50,13 @@ const defaultState = {
   modalOnDeleteDMConversation: true,
   loginMethod: 'password',
   logo: '/static/logo.svg',
-  logoMargin: '.2em',
+  logoMargin: '.1em',
   logoMask: true,
   logoLeft: false,
   nsfwCensorImage: undefined,
   postContentType: 'text/plain',
   redirectRootLogin: '/main/friends',
-  redirectRootNoLogin: '/main/all',
+  redirectRootNoLogin: '/main/public',
   showFeaturesPanel: true,
   showInstanceSpecificPanel: false,
   showNavShortcuts: true,
@@ -64,7 +64,7 @@ const defaultState = {
   sidebarRight: false,
   widenTimeline: false,
   subjectLineBehavior: 'email',
-  theme: 'pleroma-dark',
+  theme: 'ihatebeingalive',
   virtualScrolling: true,
   sensitiveByDefault: false,
   sensitiveIfSubject: true,
