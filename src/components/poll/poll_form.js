@@ -21,8 +21,8 @@ export default {
   data: () => ({
     pollType: 'single',
     options: ['', ''],
-    expiryAmount: 10,
-    expiryUnit: 'minutes'
+    expiryAmount: 1,
+    expiryUnit: 'days'
   }),
   computed: {
     pollLimits () {
