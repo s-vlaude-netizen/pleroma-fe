@@ -16,6 +16,9 @@ const SearchFormModal = {
     }
   },
   methods: {
+    focus () {
+      this.$refs.searchForm.focusQueryInput()
+    },
     closeModal () {
       this.$store.dispatch('closeSearchModal')
       this.$refs.searchForm.resetSearchState()

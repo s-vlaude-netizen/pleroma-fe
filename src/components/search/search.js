@@ -59,6 +59,7 @@ const Search = {
   mounted () {
     // Forward and normalise/parse boolean query parameters
     this.$refs.searchForm.initFromQueryParams(this.$route.query)
+    this.$refs.searchForm.focusQueryInput()
     this.search(this.query)
   },
   watch: {

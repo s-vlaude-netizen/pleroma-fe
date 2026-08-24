@@ -11,6 +11,7 @@
       <SearchForm
         ref="searchForm"
         @searched="closeModal"
+        @vue:mounted="focus"
       />
     </div>
   </Modal>

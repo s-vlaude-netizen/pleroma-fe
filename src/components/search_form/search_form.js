@@ -77,6 +77,9 @@ const SearchForm = {
         return val
       }
     },
+    focusQueryInput () {
+      this.$refs.searchInput.focus()
+    },
     async find (searchTerm) {
       let account_id = undefined
       if (this.author_nick) {
@@ -111,7 +114,7 @@ const SearchForm = {
       } })
 
       this.errorMsg = undefined
-      this.$refs.searchInput.focus()
+      this.focusQueryInput()
       this.$emit('searched')
     }
   }
