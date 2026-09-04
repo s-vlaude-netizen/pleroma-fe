@@ -390,6 +390,7 @@
         "hide_results": "Hide results",
         "indicate_disclosure": "Source instance will publish voter indentity and their votes",
         "indicate_anonymous": "Source instance pledged to keep voter identity anonymous",
+        "missing_voter_count_hint": "Percentages are mis-scaled due to missing voters count. If poll is recent, this is likely an issue with the source instance.",
         "multiple_choices": "Multiple choices",
         "not_enough_options": "Too few unique options in poll",
         "option": "Option",

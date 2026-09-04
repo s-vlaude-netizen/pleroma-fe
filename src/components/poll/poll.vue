@@ -77,11 +77,17 @@
       </div>
       <div class="poll-hint">
         <div
+          v-if="showResults && isSkewedMultiChoice"
+          class="alert error"
+        >
+          <FAIcon icon="triangle-exclamation" />
+          {{ $t('polls.missing_voter_count_hint') }}
+        </div>
+        <div
           v-if="poll.akkoma?.anonymous === true"
           class="alert success"
         >
           <FAIcon icon="check-circle" />
-          &nbsp;
           {{ $t('polls.indicate_anonymous') }}
         </div>
         <div
@@ -89,7 +95,6 @@
           class="alert warning"
         >
           <FAIcon icon="triangle-exclamation" />
-          &nbsp;
           {{ $t('polls.indicate_disclosure') }}
         </div>
       </div>

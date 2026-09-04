@@ -74,6 +74,11 @@ export default {
       const total_base = this.poll.multiple ? this.poll.voters_count : this.poll.votes_count
       return total_base > 0 ? total_base : this.poll.votes_count
     },
+    isSkewedMultiChoice () {
+      // Multiple choice poll for which votersCount wasn’t federated but votes exist
+      // s.t. we can only fall back to treating it as single-choice for display
+      return (this.poll.multiple && !this.poll.voters_count && this.poll.votes_count > 0)
+    },
     maxHeight () {
       // keep in sync with CSS!
       return 330; // in px

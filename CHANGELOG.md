@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - fixed code markup being emojified
 
 ### Changed
+- multiple-choice polls with missing voter count now show hint about skewed results instead of silently misleading via the fallback scaling base
 
 ## 2026.08 (3.20) - 2026-08-08
 ### REMOVED
