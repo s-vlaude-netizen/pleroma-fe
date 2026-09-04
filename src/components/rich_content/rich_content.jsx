@@ -382,6 +382,10 @@ class RichContentParser {
     const mentionsLinePadding = this.#spacingPrefix(node)
 
     switch (Tag) {
+      case 'CODE':
+        this.#breakMentionChain()
+        return [mentionsLinePadding, this.#copyToVNode(node)]
+
       case 'BR':
         this.#breakMentionChain()
         return [<br />]
@@ -418,7 +422,23 @@ class RichContentParser {
       // ignore
     } else {
       // since we start with childs of <body> a parent node should be guaranteed
-      console.warn(`RichContentParser: Encountered unexpected node type (${node.nodeType}); dropping: ${node.outerHTML ?? node.textContent}`)
+      console.warn(`RichContentParser/processNode: Encountered unexpected node type (${node.nodeType}); dropping: ${node.outerHTML ?? node.textContent}`)
+    }
+    return []
+  }
+
+  #copyToVNode(node) {
+    if(node.nodeType === Node.TEXT_NODE) {
+      return node.textContent ?? ''
+    } else if (node.nodeType == Node.ELEMENT_NODE) {
+      const Tag = node.nodeName
+      const attrs = this.#nodeAttributeMap(node)
+      const pchilds = [...node.childNodes].map(n => this.#copyToVNode(n))
+      return <Tag {...attrs}>{ pchilds }</Tag>
+    } else if (node.nodeType == Node.COMMENT_NODE) {
+      // ignore
+    } else {
+      console.warn(`RichContentParser/copyToVNode: Encountered unexpected node type (${node.nodeType}); dropping: ${node.outerHTML ?? node.textContent}`)
     }
     return []
   }

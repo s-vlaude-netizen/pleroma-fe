@@ -292,6 +292,28 @@ describe('RichContent', () => {
     expect(wrapper.html().replace(/\n/g, '')).to.eql(compwrap(html))
   })
 
+  it('Does not insert emoji into code blocks', () => {
+    const html = '<pre><code>:cat:</code></pre><p><code class="inline">:cat:</code><p>:cat:</p>'
+    const expected = [
+      '<pre><code>:cat:</code></pre>',
+      '<p><code class="inline">:cat:</code></p>',
+      '<p><anonymous-stub src="about:blank" title=":cat:" alt=":cat:" class="emoji img"></anonymous-stub></p>'
+    ].join('')
+
+    const wrapper = shallowMount(RichContent, {
+      global,
+      props: {
+        attentions,
+        handleLinks: false,
+        greentext: false,
+        emoji: [{ url: 'about:blank', shortcode: 'cat' }],
+        html
+      }
+    })
+
+    expect(wrapper.html().replace(/\n/g, '')).to.eql(compwrap(expected))
+  })
+
   it('Greentext + last mentions', () => {
     const html = [
       '&gt;quote',
