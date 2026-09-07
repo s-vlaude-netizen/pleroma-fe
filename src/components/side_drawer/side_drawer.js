@@ -73,7 +73,7 @@ const SideDrawer = {
       return this.$store.state.instance.name
     },
     followRequestCount () {
-      return this.$store.state.api.followRequests.length
+      return this.$store.state.users.currentUser.follow_requests_count
     },
     privateMode () {
       return this.$store.state.instance.private

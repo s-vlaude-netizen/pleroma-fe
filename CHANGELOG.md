@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - the search dialogue now automatically focuses the input box whenever brought up
 - fixed code markup being emojified
+- the mobile layout’s side drawer now also reliably shows the count of pending follow requests
 
 ### Changed
 - multiple-choice polls with missing voter count now show hint about skewed results instead of silently misleading via the fallback scaling base
