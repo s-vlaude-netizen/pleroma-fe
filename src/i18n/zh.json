@@ -71,6 +71,27 @@
     "display_date": {
         "today": "今天"
     },
+    "dm_conv": {
+        "default_name": "对话 {id}",
+        "delete_confirm": "您确定要移除对话 {identifier} 吗？",
+        "delete_confirm_accept_button": "是的，移除",
+        "delete_confirm_cancel_button": "不，保留",
+        "delete_confirm_title": "移除私信对话",
+        "delete_tooltip": "从列表中移除对话",
+        "last_active_date": "最后活动时间",
+        "last_active_member": "最后活跃",
+        "last_message_title": "最后一条消息",
+        "mark_all_read_button": "全部标记为已读",
+        "mark_single_read_tooltip": "标记为已读",
+        "page_header": "私信对话",
+        "recipients_edit_add_new_title": "添加新成员：",
+        "recipients_edit_current_title": "除您之外的核心成员：",
+        "recipients_edit_mode_button": "编辑核心成员",
+        "recipients_edit_mode_button_tooltip": "编辑核心成员",
+        "recipients_edit_title": "{conversation_name} 的核心成员",
+        "recipients_save": "保存对核心成员的更改",
+        "unread_msg": "有未读消息"
+    },
     "domain_mute_card": {
         "mute": "静音",
         "mute_progress": "静音中…",
@@ -90,6 +111,10 @@
         "unicode": "Unicode 表情符号"
     },
     "errors": {
+        "favorite": "收藏失败：{0}",
+        "favorite_undo": "取消收藏失败：{0}",
+        "repeat": "转发失败：{0}",
+        "repeat_undo": "取消转发失败：{0}",
         "storage_unavailable": "Pleroma 无法访问浏览器储存。你的登录以及本地设置将不会被保存并且你也可能遇到未知问题。请尝试启用 cookies。"
     },
     "exporter": {
@@ -236,6 +261,7 @@
     "lists": {
         "create": "创建",
         "delete": "删除列表",
+        "exclusive_description": "将列表中的用户从主页时间线移除",
         "following_only": "限制于正在关注",
         "lists": "列表",
         "new": "新的列表",
@@ -306,6 +332,9 @@
         "bubble_timeline": "局域时间线",
         "bubble_timeline_description": "来自你所在实例相近实例的帖文，由管理员推荐",
         "chats": "聊天",
+        "dm_conv_list": "私信对话",
+        "dm_conversation": "私信对话",
+        "dm_conversations": "私信对话",
         "dms": "私信",
         "friend_requests": "关注请求",
         "home_timeline": "主页时间线",
@@ -358,10 +387,16 @@
         "expired": "投票已于 {0} 前结束",
         "expires_in": "投票于 {0} 后结束",
         "expiry": "投票期限",
+        "hide_results": "隐藏结果",
+        "indicate_anonymous": "源实例承诺保持投票者身份匿名",
+        "indicate_disclosure": "源实例将公布投票者的身份及其投票",
         "multiple_choices": "多选",
         "not_enough_options": "投票的选项太少",
         "option": "选项",
         "people_voted_count": "{count} 人已投票",
+        "show_full": "显示完整投票",
+        "show_less": "收起投票详情",
+        "show_results": "显示结果",
         "single_choice": "单选",
         "type": "投票类型",
         "vote": "投票",
@@ -445,11 +480,35 @@
         "searching_for": "搜索"
     },
     "search": {
+        "form": {
+            "author_limit_label": "限制帖文作者",
+            "author_limit_placeholder": "昵称或 ID",
+            "error_user_not_found": "找不到昵称或 ID 对应的用户：{nick}",
+            "following_limit_label": "仅限已关注的用户",
+            "resolve_setting_label": "获取新的远程资源",
+            "type_accounts": "用户",
+            "type_all": "全部",
+            "type_filter_label": "类型",
+            "type_hashtags": "话题标签",
+            "type_statuses": "帖文"
+        },
         "hashtags": "话题标签",
+        "no_more_results": "没有更多结果",
         "no_results": "没有搜索结果",
+        "pagination_load_more": "加载更多",
+        "pagination_not_allowed_without_type": "仅在搜索单一类型时才允许加载更多",
         "people": "人",
         "people_talking": "{count} 人讨论中",
-        "person_talking": "{count} 人讨论中"
+        "person_talking": "{count} 人讨论中",
+        "search_hint_general": "通常只有公开和不公开的帖文可以被搜索。",
+        "syntax_hint_db_name": "数据库搜索（内置）",
+        "syntax_hint_db_text": "不加引号时，每个单词单独匹配。\n加引号以整体匹配词组：\"apple pie\"。\n在词前加减号以排除该词：-honey。\n不加引号的“or”作为运算符。",
+        "syntax_hint_elastic_name": "OpenSearch / ElasticSearch",
+        "syntax_hint_elastic_text": "不加引号时，每个单词单独匹配。\n加引号以整体匹配词组：\"apple pie\"。\n使用 instance:akko.example 过滤，\n或使用 user:author_nick，\n或使用 hashtag:cat。",
+        "syntax_hint_header": "帖文搜索语法",
+        "syntax_hint_meili_name": "Meilisearch",
+        "syntax_hint_meili_text": "处理方式取决于 Meilisearch 的默认匹配策略。\n请查阅 Meilisearch 文档。",
+        "syntax_hint_title": "切换搜索语法提示"
     },
     "selectable_list": {
         "select_all": "选择全部"
@@ -509,6 +568,7 @@
         "confirm_dialogs_approve_follow": "接受关注请求",
         "confirm_dialogs_block": "屏蔽某人",
         "confirm_dialogs_delete": "删除帖文",
+        "confirm_dialogs_delete_dm_conv": "删除私信对话",
         "confirm_dialogs_deny_follow": "拒绝关注请求",
         "confirm_dialogs_mute": "静音某人",
         "confirm_dialogs_repeat": "转发帖文",
@@ -527,7 +587,7 @@
         "data_import_export_tab": "数据导入/导出",
         "default_vis": "默认可见范围",
         "delete_account": "删除账号",
-        "delete_account_description": "永久删除你的账号和所有数据。",
+        "delete_account_description": "永久删除你的数据并停用你的账号。",
         "delete_account_error": "删除账号时发生错误，如果一直删除不了，请联系实例管理员。",
         "delete_account_instructions": "在下面输入你的密码来确认删除账号。",
         "disable_sticky_headers": "不要把分栏的顶栏固定在屏幕的顶部",
@@ -608,6 +668,9 @@
         "mascot": "Mastodon FE 吉祥物",
         "max_depth_in_thread": "默认显示对话中的最大层数",
         "max_thumbnails": "每个帖文最多能显示的缩略图数量",
+        "media_alt_avatar": "头像替代文本",
+        "media_alt_background": "背景替代文本",
+        "media_alt_banner": "横幅替代文本",
         "mention_link_bolden_you": "当你被提及时突出显示提及你",
         "mention_link_display": "显示提及链接",
         "mention_link_display_full": "始终以全名的形式出现（例如：{'@'}foo{'@'}example.org）",
@@ -721,6 +784,7 @@
         "right_sidebar": "在右侧显示侧边栏",
         "save": "保存更改",
         "saving_err": "保存设置时发生错误",
+        "saving_err_details": "保存设置失败：{0}",
         "saving_ok": "设置已保存",
         "scope_copy": "回复时复制可见范围（私信中永远会复制）",
         "search_user_to_block": "搜索你想屏蔽的用户",
@@ -728,7 +792,7 @@
         "security": "安全",
         "security_tab": "安全",
         "sensitive_by_default": "默认标记帖文为敏感内容",
-        "sensitive_if_subject": "自动将图像标记为敏感内容如果内容警告已指定",
+        "sensitive_if_subject": "自动将帖文标记为敏感内容如果内容警告已指定",
         "set_new_avatar": "设置新头像",
         "set_new_mascot": "设置新吉祥物",
         "set_new_profile_background": "设置新的个人资料背景",
@@ -865,7 +929,7 @@
                 },
                 "filter_hint": {
                     "always_drop_shadow": "警告，此阴影设置会总是使用 {0} ，如果浏览器支持的话。",
-                    "avatar_inset": "请注意组合两个内部和非内部的阴影到头像上，在透明头像上可能会有意料之外的效果。",
+                    "avatar_inset": "请注意，在头像上同时组合内阴影和外阴影可能会在透明头像上产生意想不到的效果。",
                     "drop_shadow_syntax": "{0} 不支持参数 {1} 和关键词 {2} 。",
                     "inset_classic": "内阴影会使用 {0}",
                     "spread_zero": "阴影的扩散 > 0 会同设置成零一样"
@@ -958,7 +1022,7 @@
         "creating": "创建新的设置配置文件 \"{profile}\" 中...",
         "synchronization_error": "无法同步设置：{err}",
         "synchronized": "设置已同步！",
-        "synchronizing": "同步新的设置配置文件 \"{profile}\" 中..."
+        "synchronizing": "正在同步设置配置文件 \"{profile}\"..."
     },
     "status": {
         "ancestor_follow": "查看此帖文下其它 {numReplies} 条回复",
@@ -1184,6 +1248,7 @@
         "replies": "和回复",
         "report": "举报",
         "requested_by": "已请求关注你",
+        "show_profile_media": "显示个人资料图片及其替代文本",
         "show_repeats": "显示转发",
         "statuses": "帖文",
         "subscribe": "订阅",
