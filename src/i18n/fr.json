@@ -728,7 +728,7 @@
         "security": "Sécurité",
         "security_tab": "Sécurité",
         "sensitive_by_default": "Marquer les messages comme sensible par défaut",
-        "sensitive_if_subject": "Automatiquement marquer les images comme sensible quand le statut a un avertissement",
+        "sensitive_if_subject": "Automatiquement marquer le statut comme sensible s'il a un avertissement",
         "set_new_avatar": "Changer d'avatar",
         "set_new_mascot": "Changer de mascotte",
         "set_new_profile_background": "Changer d'image de fond",
@@ -950,6 +950,7 @@
             "title": "Version"
         },
         "virtual_scrolling": "Optimiser le rendu des flux",
+        "widen_timeline": "Élargir le flux pour remplir l’espace horizontal",
         "word_filter": "Filtrage par mots",
         "wordfilter": "Filtrage par mot-clé"
     },
