@@ -78,26 +78,19 @@ const editStatus = ({
     poll,
     mediaIds,
     contentType,
-  })
-    .then(({ data, timestamp }) => {
-      useStatusesStore().addNewStatuses({
-        statuses: [data],
-        timestamp,
-      })
-      useTimelinesStore().addStatusesToTimeline('friends', undefined, {
-        statuses: [data.id],
-        showImmediately: true,
-        noIdUpdate: true, // To prevent missing notices on next pull.
-      })
+  }).then(({ data, timestamp }) => {
+    useStatusesStore().addNewStatuses({
+      statuses: [data],
+      timestamp,
+    })
+    useTimelinesStore().addStatusesToTimeline('friends', undefined, {
+      statuses: [data.id],
+      showImmediately: true,
+      noIdUpdate: true, // To prevent missing notices on next pull.
+    })
 
-      return data
-    })
-    .catch((err) => {
-      console.error('Error editing status', err)
-      return {
-        error: err.message,
-      }
-    })
+    return data
+  })
 }
 
 const uploadMedia = ({ store, formData }) => {

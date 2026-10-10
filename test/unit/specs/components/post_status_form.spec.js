@@ -5,6 +5,7 @@ import { $t, mountOpts, waitForEvent } from 'test/fixtures/setup_test.js'
 import { vi } from 'vitest'
 import { nextTick } from 'vue'
 
+import EditStatusForm from 'src/components/edit_status_form/edit_status_form.vue'
 import PostStatusForm from 'src/components/post_status_form/post_status_form.vue'
 
 import { useDraftsStore } from 'src/stores/drafts.js'
@@ -12,6 +13,8 @@ import { useInstanceCapabilitiesStore } from 'src/stores/instance_capabilities.j
 import { useMergedConfigStore } from 'src/stores/merged_config.js'
 import { useStatusesStore } from 'src/stores/statuses.js'
 import { useUsersStore } from 'src/stores/users.js'
+
+import { storage } from 'src/lib/storage.js'
 
 const autoSaveOrNot = (caseFn, caseTitle, runFn) => {
   caseFn(`${caseTitle} with auto-save`, function () {
@@ -534,6 +537,293 @@ describe('PostStatusForm', () => {
       expect(useDraftsStore().draftsCount).to.equal(1)
       await flushPromises()
       await waitForEvent(wrapper, 'close-accepted')
+    })
+  })
+
+  describe('Draft lifecycle', () => {
+    const editProps = (statusText) => ({
+      statusId: 'edited-status',
+      statusText,
+      statusSubject: '',
+      statusIsSensitive: false,
+      statusFiles: [],
+      statusVisibility: 'public',
+      statusContentType: 'text/plain',
+    })
+
+    // Everything but the text and the ids, to build drafts by hand
+    const draftFields = {
+      mentions: '',
+      spoilerText: '',
+      quote: null,
+      files: [],
+      poll: null,
+      mediaDescriptions: {},
+      nsfw: false,
+      visibility: 'public',
+      contentType: 'text/plain',
+    }
+
+    const mountEditForm = (
+      statusText,
+      postHandler = vi.fn(() => Promise.resolve({})),
+    ) =>
+      mount(
+        PostStatusForm,
+        mountOpts({ props: { ...editProps(statusText), postHandler } }),
+      )
+
+    const typeAndWaitForAutoSave = async (wrapper, text) => {
+      await wrapper.get('textarea').setValue(text)
+      await vi.advanceTimersByTimeAsync(waitSaveTime)
+    }
+
+    const post = async (wrapper) => {
+      await wrapper.vm.postStatus()
+      await flushPromises()
+    }
+
+    const setAutoSave = (autoSaveDraft) => {
+      useMergedConfigStore().mergedConfig = {
+        ...useMergedConfigStore().mergedConfig,
+        autoSaveDraft,
+      }
+    }
+
+    beforeEach(() => {
+      setActivePinia(createTestingPinia({ stubActions: false }))
+      useUsersStore().currentUser = currentUser
+      setAutoSave(true)
+
+      // Drafts are persisted through the storage, we only care about the store here
+      vi.spyOn(storage, 'setItem').mockImplementation(() => ({}))
+      vi.spyOn(storage, 'getItem').mockImplementation(() => ({}))
+      vi.useFakeTimers()
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
+      vi.restoreAllMocks()
+      vi.unstubAllGlobals()
+    })
+
+    it('keeps updating one draft while a status is being edited', async () => {
+      const wrapper = mountEditForm('v1')
+
+      await typeAndWaitForAutoSave(wrapper, 'v2')
+      // Leave the form open for a while, it must not start piling up drafts
+      await vi.advanceTimersByTimeAsync(waitSaveTime * 5)
+
+      expect(useDraftsStore().draftsCount).to.equal(1)
+      expect(useDraftsStore().draftsArray[0]).to.include({
+        type: 'edit',
+        refId: 'edited-status',
+        status: 'v2',
+      })
+    })
+
+    it('removes the auto-saved draft once the edit is posted', async () => {
+      const postHandler = vi.fn(() => Promise.resolve({}))
+      const wrapper = mountEditForm('v1', postHandler)
+
+      await typeAndWaitForAutoSave(wrapper, 'v2')
+      expect(useDraftsStore().draftsCount).to.equal(1)
+
+      await post(wrapper)
+
+      expect(postHandler).to.have.been.calledOnce
+      expect(useDraftsStore().draftsCount).to.equal(0)
+    })
+
+    it('removes the auto-saved draft once a new status is posted', async () => {
+      const postHandler = vi.fn(() => Promise.resolve({}))
+      const wrapper = mount(
+        PostStatusForm,
+        mountOpts({ props: { postHandler } }),
+      )
+
+      await typeAndWaitForAutoSave(wrapper, 'hello')
+      expect(useDraftsStore().draftsCount).to.equal(1)
+
+      await post(wrapper)
+
+      expect(postHandler).to.have.been.calledOnce
+      expect(useDraftsStore().draftsCount).to.equal(0)
+    })
+
+    it('removes the auto-saved draft once a reply is posted', async () => {
+      const postHandler = vi.fn(() => Promise.resolve({}))
+      const wrapper = mount(
+        PostStatusForm,
+        mountOpts({ props: { repliedStatus, postHandler } }),
+      )
+
+      await typeAndWaitForAutoSave(wrapper, '@replied hello')
+      expect(useDraftsStore().draftsCount).to.equal(1)
+
+      await post(wrapper)
+
+      expect(postHandler).to.have.been.calledOnce
+      expect(useDraftsStore().draftsCount).to.equal(0)
+    })
+
+    it('starts every next edit from the current text, not from the first version', async () => {
+      // First edit, v1 -> v2 (the form is unmounted once the modal closes)
+      const first = mountEditForm('v1')
+      await typeAndWaitForAutoSave(first, 'v1, work in progress')
+      await typeAndWaitForAutoSave(first, 'v2')
+      await post(first)
+      first.unmount()
+      await flushPromises()
+
+      // Second edit, the backend hands us v2 as the current source
+      const second = mountEditForm('v2')
+      expect(second.vm.newStatus.status).to.equal('v2')
+      await typeAndWaitForAutoSave(second, 'v3')
+      await post(second)
+      second.unmount()
+      await flushPromises()
+
+      // And so on
+      const third = mountEditForm('v3')
+      expect(third.vm.newStatus.status).to.equal('v3')
+      expect(useDraftsStore().draftsCount).to.equal(0)
+    })
+
+    it('continues and then removes a draft it restored when the form was reopened', async () => {
+      const first = mountEditForm('v1')
+      await typeAndWaitForAutoSave(first, 'v1, half written')
+      first.unmount()
+      await flushPromises()
+      expect(useDraftsStore().draftsCount).to.equal(1)
+
+      const second = mountEditForm('v1')
+      // Restoring unfinished work is what drafts are for
+      expect(second.vm.newStatus.status).to.equal('v1, half written')
+      await typeAndWaitForAutoSave(second, 'v2')
+      expect(useDraftsStore().draftsCount).to.equal(1)
+      expect(useDraftsStore().draftsArray[0].status).to.equal('v2')
+
+      await post(second)
+      expect(useDraftsStore().draftsCount).to.equal(0)
+    })
+
+    it('restores the latest of several leftover drafts and drops them all once the edit is posted', async () => {
+      const store = useDraftsStore()
+      const edit = (id, refId, status) =>
+        store.addOrSaveDraft({
+          ...draftFields,
+          id,
+          type: 'edit',
+          refId,
+          status,
+        })
+      await edit('leftover-1', 'edited-status', 'oldest')
+      await edit('leftover-2', 'edited-status', 'newest')
+      await edit('other-edit', 'another-status', 'not related')
+      await store.addOrSaveDraft({
+        ...draftFields,
+        id: 'a-reply',
+        type: 'reply',
+        refId: 'edited-status',
+        status: 'not related either',
+      })
+
+      const wrapper = mountEditForm('current')
+      expect(wrapper.vm.newStatus.status).to.equal('newest')
+
+      await post(wrapper)
+
+      expect(store.draftsArray.map((draft) => draft.id)).to.have.members([
+        'other-edit',
+        'a-reply',
+      ])
+    })
+
+    it('does not overwrite a draft that was saved earlier with the next post of the same form', async () => {
+      setAutoSave(false)
+      const wrapper = mount(PostStatusForm, mountOpts())
+
+      await wrapper.get('textarea').setValue('first')
+      await wrapper.vm.saveDraft()
+      // Draft IDs are timestamps, so let some time pass like it would for a user
+      await vi.advanceTimersByTimeAsync(1000)
+      await wrapper.get('textarea').setValue('second')
+      await wrapper.vm.saveDraft()
+
+      expect(
+        useDraftsStore().draftsArray.map((draft) => draft.status),
+      ).to.have.members(['first', 'second'])
+    })
+
+    it('keeps the form, its text and the draft when the backend rejects the edit', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(() =>
+          Promise.resolve(
+            new Response(JSON.stringify({ error: 'Nope' }), {
+              status: 422,
+              headers: { 'content-type': 'application/json' },
+            }),
+          ),
+        ),
+      )
+      const wrapper = mount(
+        EditStatusForm,
+        mountOpts({ props: { params: editProps('v1') } }),
+      )
+      const form = wrapper.getComponent(PostStatusForm)
+
+      await typeAndWaitForAutoSave(form, 'v2')
+      expect(useDraftsStore().draftsCount).to.equal(1)
+
+      await post(form)
+
+      // Nothing was posted: the user has to see what went wrong and not lose the text
+      expect(form.vm.error).to.have.property('statusCode', 422)
+      expect(form.emitted('posted')).to.be.undefined
+      expect(form.vm.newStatus.status).to.equal('v2')
+      expect(useDraftsStore().draftsCount).to.equal(1)
+    })
+
+    describe('when opened from the drafts page', () => {
+      beforeEach(async () => {
+        await useDraftsStore().addOrSaveDraft({
+          ...draftFields,
+          id: 'draft-1',
+          type: 'new',
+          status: 'old text',
+        })
+      })
+
+      const mountDraft = (postHandler = vi.fn(() => Promise.resolve({}))) =>
+        mount(
+          PostStatusForm,
+          mountOpts({
+            props: { draftId: 'draft-1', hideDraft: true, postHandler },
+          }),
+        )
+
+      it('updates that draft in place', async () => {
+        const wrapper = mountDraft()
+        expect(wrapper.vm.newStatus.status).to.equal('old text')
+
+        await typeAndWaitForAutoSave(wrapper, 'new text')
+        await wrapper.vm.saveDraft()
+
+        expect(useDraftsStore().draftsCount).to.equal(1)
+        expect(useDraftsStore().drafts.get('draft-1').status).to.equal(
+          'new text',
+        )
+      })
+
+      it('removes that draft once it is posted', async () => {
+        const wrapper = mountDraft()
+
+        await post(wrapper)
+
+        expect(useDraftsStore().draftsCount).to.equal(0)
+      })
     })
   })
 })

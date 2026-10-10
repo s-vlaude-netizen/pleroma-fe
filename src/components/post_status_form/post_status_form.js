@@ -206,6 +206,9 @@ const PostStatusForm = {
       Object.keys(this.newStatus).forEach((key) => {
         this.newStatus[key] = draft[key] ?? this.newStatus[key]
       })
+      // From now on this form continues that draft: saving updates it,
+      // posting or discarding gets rid of it
+      this.newStatus.id = draft.id
     } else {
       Object.entries(this.defaultNewStatus).forEach(([key, value]) => {
         this.newStatus[key] = this.newStatus[key] ?? value
@@ -617,6 +620,8 @@ const PostStatusForm = {
       this.newStatus.quote = null
       this.newStatus.nsfw = this.defaultNewStatus.nsfw
       this.newStatus.mediaDescriptions = {}
+      // A blank form doesn't continue any draft anymore
+      delete this.newStatus.id
       this.$refs.mediaUpload?.clearFile()
       if (this.preserveFocus) {
         this.$nextTick(() => {
@@ -678,7 +683,7 @@ const PostStatusForm = {
 
       postHandler(this.postingOptions)
         .then((data) => {
-          this.abandonDraft()
+          this.abandonPostedDrafts()
           this.clearStatus()
           this.updateIdempotencyKey()
           this.$emit('posted', data)
@@ -987,8 +992,10 @@ const PostStatusForm = {
               type: this.statusType,
               refId: this.refId,
               ...this.newStatus,
-              // Draft ID overwrites status ID (which is undefined for fresh statuses)
-              id: this.draftId,
+              // Keep updating the draft this form works on (the one it was
+              // opened with, restored or saved earlier) rather than creating a
+              // new one on every save. Undefined for a fresh status.
+              id: this.draftId ?? this.newStatus.id,
             })
             .then((id) => {
               if (this.newStatus.id !== id) {
@@ -1021,7 +1028,25 @@ const PostStatusForm = {
       }
     },
     abandonDraft() {
-      return useDraftsStore().abandonDraft(this.draftId)
+      return this.abandonDrafts([this.draftId ?? this.newStatus.id])
+    },
+    // Once posted, the draft we've been working on is not needed anymore. When
+    // it was an edit, neither are the other drafts of editing this status
+    // (leftovers of older sessions): they are based on its older versions and
+    // would bring those back the next time it is edited.
+    abandonPostedDrafts() {
+      const ids = [this.draftId ?? this.newStatus.id]
+      if (this.statusType === 'edit') {
+        useDraftsStore()
+          .draftsByTypeAndRefId(this.statusType, this.refId)
+          .forEach((draft) => ids.push(draft.id))
+      }
+      return this.abandonDrafts(ids)
+    },
+    abandonDrafts(ids) {
+      const knownIds = ids.filter((id) => id !== undefined)
+      if (knownIds.length === 0) return Promise.resolve()
+      return useDraftsStore().abandonDrafts(knownIds)
     },
     getDraft() {
       const maybeDraft = useDraftsStore().drafts.get(this.draftId)
@@ -1034,7 +1059,9 @@ const PostStatusForm = {
         )
 
         if (existingDrafts.length) {
-          return existingDrafts[0]
+          // There should be just one. If there are more, those are leftovers
+          // of older sessions and the last one is the latest of them.
+          return existingDrafts[existingDrafts.length - 1]
         }
       }
       // No draft available, fall back

@@ -64,13 +64,16 @@ export const useDraftsStore = defineStore('drafts', {
       return id
     },
     async abandonDraft(id) {
-      this.drafts.delete(id)
-      await deleteDraftFromStorage([id])
+      await this.abandonDrafts([id])
     },
-    async abandonAllDrafts() {
-      const ids = [...this.drafts.keys()]
+    // Deleting is a read-modify-write of the whole storage entry, so several
+    // drafts have to go in one go: parallel deletions would undo each other
+    async abandonDrafts(ids) {
       ids.forEach((id) => this.drafts.delete(id))
       await deleteDraftFromStorage(ids)
+    },
+    async abandonAllDrafts() {
+      await this.abandonDrafts([...this.drafts.keys()])
     },
   },
 })
