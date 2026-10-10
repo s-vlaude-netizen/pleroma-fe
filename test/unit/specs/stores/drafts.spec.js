@@ -193,6 +193,36 @@ describe('Drafts store', () => {
       })
     })
 
+    describe('abandonDrafts', () => {
+      it('should remove several drafts from storage and cache in one go', async () => {
+        const store = useDraftsStore()
+        store.drafts.set('a', { id: 'a', status: 'draft' })
+        store.drafts.set('b', { id: 'b', status: 'draft' })
+        store.drafts.set('c', { id: 'c', status: 'draft' })
+        storage.getItem.mockResolvedValueOnce({
+          a: { id: 'a', status: 'draft' },
+          b: { id: 'b', status: 'draft' },
+          c: { id: 'c', status: 'draft' },
+        })
+
+        await store.abandonDrafts(['a', 'c'])
+
+        expect(store.drafts.get('a')).to.be.undefined
+        expect(store.drafts.get('b')).to.have.property('status', 'draft')
+        expect(store.drafts.get('c')).to.be.undefined
+
+        // Separate deletions would each write back what they read and undo one another
+        expect(storage.getItem).to.have.been.calledOnce
+        expect(storage.setItem).to.have.been.calledOnce
+        expect(storage.setItem).to.have.been.calledWith('pleroma-fe-drafts', {
+          b: {
+            id: 'b',
+            status: 'draft',
+          },
+        })
+      })
+    })
+
     describe('abandonAllDrafts', () => {
       it('should remove draft from storage and cache', async () => {
         const store = useDraftsStore()
