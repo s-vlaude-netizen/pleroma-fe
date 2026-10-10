@@ -29,17 +29,8 @@ const EditStatusForm = {
         contentType,
       }
 
-      return statusPosterService
-        .editStatus(params)
-        .then((data) => {
-          return data
-        })
-        .catch((err) => {
-          console.error('Error editing status', err)
-          return {
-            error: err.message,
-          }
-        })
+      // Failures are left to the form to show: it keeps the text it was given
+      return statusPosterService.editStatus(params)
     },
   },
 }

@@ -1,0 +1,1 @@
+Fixed a failed post edit being treated as successful: the editor closed and the text was lost without any error

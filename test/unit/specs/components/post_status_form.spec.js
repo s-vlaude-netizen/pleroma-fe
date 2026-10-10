@@ -5,6 +5,7 @@ import { $t, mountOpts, waitForEvent } from 'test/fixtures/setup_test.js'
 import { vi } from 'vitest'
 import { nextTick } from 'vue'
 
+import EditStatusForm from 'src/components/edit_status_form/edit_status_form.vue'
 import PostStatusForm from 'src/components/post_status_form/post_status_form.vue'
 
 import { useDraftsStore } from 'src/stores/drafts.js'
@@ -603,6 +604,7 @@ describe('PostStatusForm', () => {
     afterEach(() => {
       vi.useRealTimers()
       vi.restoreAllMocks()
+      vi.unstubAllGlobals()
     })
 
     it('keeps updating one draft while a status is being edited', async () => {
@@ -752,6 +754,36 @@ describe('PostStatusForm', () => {
       expect(
         useDraftsStore().draftsArray.map((draft) => draft.status),
       ).to.have.members(['first', 'second'])
+    })
+
+    it('keeps the form, its text and the draft when the backend rejects the edit', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(() =>
+          Promise.resolve(
+            new Response(JSON.stringify({ error: 'Nope' }), {
+              status: 422,
+              headers: { 'content-type': 'application/json' },
+            }),
+          ),
+        ),
+      )
+      const wrapper = mount(
+        EditStatusForm,
+        mountOpts({ props: { params: editProps('v1') } }),
+      )
+      const form = wrapper.getComponent(PostStatusForm)
+
+      await typeAndWaitForAutoSave(form, 'v2')
+      expect(useDraftsStore().draftsCount).to.equal(1)
+
+      await post(form)
+
+      // Nothing was posted: the user has to see what went wrong and not lose the text
+      expect(form.vm.error).to.have.property('statusCode', 422)
+      expect(form.emitted('posted')).to.be.undefined
+      expect(form.vm.newStatus.status).to.equal('v2')
+      expect(useDraftsStore().draftsCount).to.equal(1)
     })
 
     describe('when opened from the drafts page', () => {
