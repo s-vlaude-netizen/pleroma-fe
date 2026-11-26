@@ -3,6 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    <!-- must be a plain script and come first: it is there for when the app can't start -->
+    <script src="/static/boot_guard.js"></script>
     <link rel="preload" href="/static/config.json" as="fetch" crossorigin />
     <link rel="preload" href="/api/pleroma/frontend_configurations" as="fetch" crossorigin />
     <link rel="preload" href="/nodeinfo/2.0.json" as="fetch" crossorigin />
