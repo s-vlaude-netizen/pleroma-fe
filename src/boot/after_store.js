@@ -47,6 +47,7 @@ import { useUsersStore } from 'src/stores/users.js'
 import { apiUrl, setApiBase } from 'src/api/api_base.js'
 import { getRoutes } from 'src/boot/routes.js'
 import VBodyScrollLock from 'src/directives/body_scroll_lock'
+import { withTimeout } from 'src/lib/with_timeout.js'
 import {
   INSTANCE_DEFAULT_CONFIG_DEFINITIONS,
   INSTANCE_IDENTITY_DEFAULT_DEFINITIONS,
@@ -57,6 +58,10 @@ import {
   instanceConfig,
   isHosted,
 } from 'src/services/hosted/hosted.js'
+
+// A locked or damaged browser database may never answer, and the app can't
+// start without its settings. Past this it starts with the defaults instead.
+const STORAGE_LOAD_TIMEOUT = 10000
 
 let staticInitialResults = null
 
@@ -547,7 +552,11 @@ const afterStoreSetup = async ({ pinia, store, storageError, i18n }) => {
 
   let newStorageError
   try {
-    await waitForAllStoresToLoad()
+    await withTimeout(
+      waitForAllStoresToLoad(),
+      STORAGE_LOAD_TIMEOUT,
+      'the browser storage',
+    )
   } catch (e) {
     console.error('Cannot load stores:', e)
     newStorageError = e
@@ -596,14 +605,16 @@ const afterStoreSetup = async ({ pinia, store, storageError, i18n }) => {
 
   await setConfig({ store, staticConfig, backendConfig })
   try {
-    await useInterfaceStore()
-      .applyTheme()
-      .catch((e) => {
-        console.error('Error setting theme', e)
-      })
+    await useInterfaceStore().applyTheme()
   } catch (e) {
-    window.splashError(e)
-    throw e
+    // The interface stays hidden until a theme is applied, so a theme that
+    // can't be would leave nothing but the loading screen. Show it as it is.
+    console.error('Error setting theme', e)
+    useInterfaceStore().setThemeApplied()
+    useInterfaceStore().pushGlobalNotice({
+      messageKey: 'errors.theme_failed',
+      level: 'error',
+    })
   }
 
   applyStyleConfig(useMergedConfigStore().mergedConfig, i18n.global)

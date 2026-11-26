@@ -289,7 +289,8 @@
     "regional_indicator": "Regional indicator {letter}"
   },
   "errors": {
-    "storage_unavailable": "Pleroma could not access browser storage. Your login or your local settings won't be saved and you might encounter unexpected issues. Try enabling cookies."
+    "storage_unavailable": "Pleroma could not access browser storage. Your login or your local settings won't be saved and you might encounter unexpected issues. Try enabling cookies.",
+    "theme_failed": "The theme could not be applied, so the interface is shown without it. Try choosing another one in the appearance settings."
   },
   "interactions": {
     "favs_repeats": "Repeats and favorites",

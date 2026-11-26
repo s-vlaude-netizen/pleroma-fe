@@ -312,10 +312,17 @@ export default {
       }
     },
     removeSplash() {
-      document.querySelector('#status').textContent = this.$t(
-        'splash.fun_' + Math.ceil(Math.random() * 4),
-      )
+      // Nothing below may be able to keep the app hidden
+      document.querySelector('#app')?.classList.remove('hidden')
+
+      const status = document.querySelector('#status')
+      if (status) {
+        status.textContent = this.$t(
+          'splash.fun_' + Math.ceil(Math.random() * 4),
+        )
+      }
       const splashscreenRoot = document.querySelector('#splash')
+      if (!splashscreenRoot) return
       splashscreenRoot.addEventListener('transitionend', () => {
         splashscreenRoot.remove()
       })
@@ -323,7 +330,6 @@ export default {
         splashscreenRoot.remove() // forcibly remove it, should fix my plasma browser widget t. HJ
       }, 600)
       splashscreenRoot.classList.add('hidden')
-      document.querySelector('#app').classList.remove('hidden')
     },
   },
 }
