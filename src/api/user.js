@@ -94,10 +94,12 @@ export const MASTODON_DOMAIN_BLOCKS_URL = '/api/v1/domain_blocks'
 const MASTODON_ANNOUNCEMENTS_URL = '/api/v1/announcements'
 const MASTODON_ANNOUNCEMENTS_DISMISS_URL = (id) =>
   `/api/v1/announcements/${id}/dismiss`
+// The emoji is a part of the path. Keycap number sign starts with a plain #,
+// which would be taken for the start of the fragment and cut the path short
 export const PLEROMA_EMOJI_REACT_URL = (id, emoji) =>
-  `/api/v1/pleroma/statuses/${id}/reactions/${emoji}`
+  `/api/v1/pleroma/statuses/${id}/reactions/${encodeURIComponent(emoji)}`
 export const PLEROMA_EMOJI_UNREACT_URL = (id, emoji) =>
-  `/api/v1/pleroma/statuses/${id}/reactions/${emoji}`
+  `/api/v1/pleroma/statuses/${id}/reactions/${encodeURIComponent(emoji)}`
 const PLEROMA_BACKUP_URL = '/api/v1/pleroma/backups'
 const PLEROMA_BOOKMARK_FOLDERS_URL = '/api/v1/pleroma/bookmark_folders'
 const PLEROMA_BOOKMARK_FOLDER_URL = (id) =>
