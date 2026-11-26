@@ -341,6 +341,32 @@ describe('The SyncConfig store', () => {
         )
       })
     })
+    describe('pushSyncConfig', () => {
+      it('should neither throw nor push while nobody is logged in', () => {
+        const store = useSyncConfigStore()
+        store.updateCache = vi.fn()
+        store.setPreference({ path: 'simple.themeChecksum', value: 'abc' })
+        expect(store.dirty).toBe(true)
+
+        expect(() => store.pushSyncConfig()).not.toThrow()
+        expect(() => store.pushSyncConfig({ force: true })).not.toThrow()
+
+        expect(store.updateCache).not.toHaveBeenCalled()
+        // the change is not lost, it is pushed once there is somebody to push for
+        expect(store.dirty).toBe(true)
+      })
+
+      it('should let a preference be saved while nobody is logged in', () => {
+        const store = useSyncConfigStore()
+
+        expect(() =>
+          store.setSimplePrefAndSave({ path: 'themeChecksum', value: 'abc' }),
+        ).not.toThrow()
+
+        expect(store.prefsStorage.simple.themeChecksum).toBe('abc')
+      })
+    })
+
     describe('setPreference', () => {
       it('should set preference and update journal log accordingly', () => {
         const store = useSyncConfigStore()

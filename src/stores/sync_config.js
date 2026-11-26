@@ -823,7 +823,11 @@ export const useSyncConfigStore = defineStore('sync_config', {
     pushSyncConfig({ force = false } = {}) {
       const needPush = this.dirty || force
       if (!needPush) return
-      this.updateCache({ username: useUsersStore().currentUser.fqn })
+      // There is nobody to push for while logged out (or until the user is
+      // loaded at startup). The changes stay marked as dirty for later.
+      const { currentUser } = useUsersStore()
+      if (!currentUser) return
+      this.updateCache({ username: currentUser.fqn })
       const params = { pleroma_settings_store: { 'pleroma-fe': this.cache } }
       updateProfileJSON({
         params,

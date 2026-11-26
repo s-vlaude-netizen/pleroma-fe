@@ -9,6 +9,7 @@ import { useMergedConfigStore } from 'src/stores/merged_config.js'
 import { useSyncConfigStore } from 'src/stores/sync_config.js'
 
 import { promisedRequest } from 'src/api/helpers.js'
+import { withTimeout } from 'src/lib/with_timeout.js'
 import { ROOT_CONFIG } from 'src/modules/default_config_state.js'
 
 // On platforms where this is not supported, it will return undefined
@@ -148,11 +149,22 @@ const generateTheme = (inputRuleset, callbacks, debug) => {
   return { lazyProcessFunc: processChunk }
 }
 
+const THEME_CACHE_KEY = 'pleromafe-theme-cache'
+// The cache only saves time, the theme is compiled when it can't be had quickly
+const THEME_CACHE_TIMEOUT = 3000
+
 export const tryLoadCache = async () => {
   console.info('Trying to load compiled theme data from cache')
-  const cache = await localforage.getItem('pleromafe-theme-cache')
-  if (!cache) return null
+  // Storage that fails or never answers must not keep the theme from being
+  // applied: the interface stays hidden until it is
   try {
+    const cache = await withTimeout(
+      localforage.getItem(THEME_CACHE_KEY),
+      THEME_CACHE_TIMEOUT,
+      'the theme cache',
+    )
+    if (!cache) return null
+
     if (
       cache.engineChecksum === getEngineChecksum() &&
       cache.checksum !== undefined &&
@@ -170,10 +182,14 @@ export const tryLoadCache = async () => {
 
       console.info(`Loaded theme from cache`)
       return true
-    } else {
-      console.warn("Checksums don't match, cache not usable, clearing")
-      localStorage.removeItem('pleroma-fe-theme-cache')
     }
+
+    console.warn("Checksums don't match, cache not usable, clearing")
+    // it is replaced once the theme is compiled, no need to wait for this
+    localforage.removeItem(THEME_CACHE_KEY).catch((e) => {
+      console.warn('Could not clear theme cache:', e)
+    })
+    return null
   } catch (e) {
     console.error('Failed to load theme cache:', e)
     return false
@@ -224,13 +240,20 @@ export const applyTheme = (
           engineChecksum: getEngineChecksum(),
           data,
         }
-        useSyncConfigStore().setSimplePrefAndSave({
-          path: 'themeChecksum',
-          value: checksum,
-        })
+        try {
+          useSyncConfigStore().setSimplePrefAndSave({
+            path: 'themeChecksum',
+            value: checksum,
+          })
+        } catch (e) {
+          // the theme is applied whether or not its checksum could be saved
+          console.error('Could not save theme checksum:', e)
+        }
         onFinish(cache)
-        localforage.setItem('pleromafe-theme-cache', cache)
-        console.info('Theme cache stored')
+        localforage
+          .setItem(THEME_CACHE_KEY, cache)
+          .then(() => console.info('Theme cache stored'))
+          .catch((e) => console.error('Could not store theme cache:', e))
       },
     },
     debug,
