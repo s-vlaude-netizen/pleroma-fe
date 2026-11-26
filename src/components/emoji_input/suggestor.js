@@ -100,11 +100,11 @@ export const suggestUsers = () => {
 
     suggestions = []
     previousQuery = noPrefix
-    // Fetch more and wait, don't fetch if there's the 2nd @ because
-    // the backend user search can't deal with it.
+    // Fetch more and wait. A nick of a remote user has one @ after the prefix
+    // and the backend can search for it. More than one is not a nick at all.
     // Reference semantics make it so that we get the updated data after
     // the await.
-    if (!noPrefix.includes('@')) {
+    if ((noPrefix.match(/@/g)?.length ?? 0) <= 1) {
       await debounceUserSearch(noPrefix)
     }
 
