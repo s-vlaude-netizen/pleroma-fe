@@ -73,6 +73,16 @@ export default {
     totalVotesCount() {
       return this.poll.votes_count
     },
+    // What the shares of the options are of. In a multiple choice poll one
+    // person can pick several options, so the votes add up to more than the
+    // people, who are what the shares are about. Remote polls may come without
+    // the count of them (a backend bug): the votes have to do then.
+    totalFractionBase() {
+      const base = this.poll.multiple
+        ? this.poll.voters_count
+        : this.totalVotesCount
+      return base > 0 ? base : this.totalVotesCount
+    },
     containerClass() {
       return {
         loading: this.loading,
@@ -93,12 +103,12 @@ export default {
   },
   methods: {
     percentageForOption(count) {
-      return this.totalVotesCount === 0
+      return this.totalFractionBase === 0
         ? 0
-        : Math.round((count / this.totalVotesCount) * 100)
+        : Math.round((count / this.totalFractionBase) * 100)
     },
     resultTitle(option) {
-      return `${option.votes_count}/${this.totalVotesCount} ${this.$t('polls.votes')}`
+      return `${option.votes_count}/${this.totalFractionBase} ${this.$t('polls.votes')}`
     },
     activateOption(index, value) {
       let result
