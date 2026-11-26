@@ -597,6 +597,12 @@ const PostStatusForm = {
   },
   methods: {
     // Composing
+    // Enter in a single-line field makes the browser click the form's first
+    // submit button, which is not meant to do anything from there: the
+    // buttons here are not all submit buttons, and posting is not up to Enter
+    preventImplicitSubmit(event) {
+      if (event.target.tagName === 'INPUT') event.preventDefault()
+    },
     update() {
       Object.entries(this.defaultNewStatus).forEach(([key, value]) => {
         if (key === 'status') return

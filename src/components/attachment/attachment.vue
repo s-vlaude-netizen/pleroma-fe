@@ -1,5 +1,6 @@
 <template>
   <button
+    type="button"
     v-if="usePlaceholder"
     class="Attachment -placeholder button-default"
     :class="classNames"
@@ -22,6 +23,7 @@
       class="attachment-buttons"
     >
       <button
+        type="button"
         v-if="remove"
         class="button-default attachment-button -transparent"
         @click.prevent="onRemove"
@@ -99,6 +101,7 @@
           </template>
         </Popover>
         <button
+          type="button"
           v-if="!useModal && attachment.type !== 'unknown'"
           class="button-default attachment-button -transparent"
           :title="$t('status.show_attachment_in_modal')"
@@ -107,6 +110,7 @@
           <FAIcon icon="search-plus" />
         </button>
         <button
+          type="button"
           v-if="nsfw && hideNsfwLocal"
           class="button-default attachment-button -transparent"
           :title="$t('status.hide_attachment')"
@@ -115,6 +119,7 @@
           <FAIcon icon="times" />
         </button>
         <button
+          type="button"
           v-if="shiftUp"
           class="button-default attachment-button -transparent"
           :title="$t('status.move_up')"
@@ -123,6 +128,7 @@
           <FAIcon icon="chevron-left" />
         </button>
         <button
+          type="button"
           v-if="shiftDn"
           class="button-default attachment-button -transparent"
           :title="$t('status.move_down')"
@@ -131,6 +137,7 @@
           <FAIcon icon="chevron-right" />
         </button>
         <button
+          type="button"
           v-if="remove"
           class="button-default attachment-button -transparent"
           :title="$t('status.remove_attachment')"

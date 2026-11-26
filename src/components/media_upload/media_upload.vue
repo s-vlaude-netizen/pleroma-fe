@@ -1,5 +1,6 @@
 <template>
   <button
+    type="button"
     class="media-upload"
     :class="[normalButton ? 'button-default btn' : 'button-unstyled', { disabled }]"
     :title="$t('tool_tip.media_upload')"

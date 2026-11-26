@@ -23,6 +23,7 @@
         >
       </div>
       <button
+        type="button"
         v-if="options.length > 2"
         class="delete-option button-unstyled -hover-highlight"
         @click="deleteOption(index)"
@@ -31,6 +32,7 @@
       </button>
     </div>
     <button
+      type="button"
       v-if="options.length < maxOptions"
       class="add-option faint button-unstyled -hover-highlight"
       @click="addOption"

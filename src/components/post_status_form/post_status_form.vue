@@ -8,6 +8,7 @@
       autocomplete="off"
       @submit.prevent
       @dragover.prevent="fileDrag"
+      @keydown.enter.exact="preventImplicitSubmit"
     >
       <div class="form-group">
         <div
@@ -21,6 +22,7 @@
             scope="global"
           >
             <button
+              type="button"
               class="button-unstyled -link"
               @click="openProfileTab"
             >
@@ -305,6 +307,7 @@
             @all-uploaded="finishedUploadingFiles"
           />
           <button
+            type="button"
             v-if="pollsAvailable"
             class="bottom-left-button poll-icon button-unstyled"
             :class="{ toggled: pollFormVisible }"
@@ -314,6 +317,7 @@
             <FAIcon icon="poll-h" />
           </button>
           <button
+            type="button"
             v-if="quotingAvailable"
             class="bottom-left-button quote-icon button-unstyled"
             :disabled="quoteThreadToggled"
@@ -362,6 +366,7 @@
                   :class="{ disabled: !safeToSaveDraft }"
                 >
                   <button
+                    type="button"
                     v-if="!hideDraft || !disableDraft"
                     class="main-button"
                     role="menu"
@@ -410,6 +415,7 @@
           {{ error }}
         </span>
         <button
+          type="button"
           class="button-unstyled"
           @click="clearError"
         >
